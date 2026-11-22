@@ -1,0 +1,78 @@
+# CONSEQUARRY — Game Design Document (P0)
+
+*Working slogan: Every consequence must go somewhere.* Name is **provisional** (see research/trademark_preliminary_check.md).
+
+## 1. Pitch
+A turn-based systemic roguelite. An autonomous river-valley civilization keeps producing **consequences** — discrete, typed, sized orbs of harm and benefit. You never build anything. You **route, split, delay, transform** those consequences, or deliberately trigger **controlled crises**, across a living causal network of six systems. The valley remembers everything you do.
+
+Core experience: **Observe → Predict → Redirect → Transform → Adapt → Survive → Discover.**
+
+## 2. Run structure (P0)
+- 1 scenario ("The Valley Accord"), 12 seasons (turns), 3 actions per season (+1 when Reserve ≥ 15).
+- Deterministic seed; shareable seed code (`CQ-XXXX-XXXX`).
+- **Win:** after season 12, average health ≥ 55 and every system ≥ 25.
+- **Lose (irreversible):** Population collapses; any two systems collapse; or Instability reaches 100.
+- Tutorial scenario scripts the first two events so the signature mechanic is performed within ~60 seconds.
+
+## 3. Season loop
+1. **Present** – districts show health physically (buildings, ash, fire, smoke).
+2. **Reveal** – events fire; consequence orbs drop onto their destination districts. Next season's event is forecast.
+3. **Inspect** – click orbs (prediction: "If left alone: Energy −7 health (cushioned 10)"), click districts (vulnerabilities, causal links, process, crisis).
+4. **Intervene** – spend actions (undo allowed within the season).
+5. **Resolve** – every orb lands in ledger order; capacity cushions harm; overflow spills onward.
+6. **Propagate** – causal effects queued last season apply; new ones are queued and shown on the pipes.
+7. **Update** – regeneration, scars, cascades.
+8. **Remember** – world memory updates and announces changes.
+9. **Evaluate** – win/loss.
+10. **Feedback** – impact numbers, rings, bolts, banners, chronicle.
+
+## 4. Systems
+Energy, Industry, Infrastructure, Population, Agriculture, Environment. Each has health (0–max), a per-season **cushion** (capacity), vulnerability per consequence type, and causal links (support or pressure). See `data/content.json`.
+
+## 5. Consequences
+Types: **Damage** (triangle), **Heat** (diamond), **Pollution** (hexagon), **Unrest** (square), **Surplus** (circle with cross, positive). Shapes encode type independent of colour.
+Each consequence records: id, source, original magnitude, current magnitude, type, destination, created/landing season (duration), parent/children (transformation history), routing history.
+**Conservation:** a consequence closes only by landing or by passing its full magnitude to children. Enforced by `ConsequenceLedger.verify()` and tested on every action in tests and on every batch run.
+
+## 6. Interventions (5)
+| Verb | Cost | Effect | Trade-off |
+|---|---|---|---|
+| Redirect | 1 | Send to a causally connected system | 20% **leaks** and stays; receiving system grows **dependent** (capacity −1 per 2 redirects in) |
+| Split | 1 | Half goes to a connected system | Uses two cushions; also counts as dependency |
+| Delay | 1 | Lands next season | Adds **Deferred Strain** (+25%, separate consequence); max 2 per consequence; never past final season |
+| Transform | 1 | Convert at the matching site | Requires the orb to *be at* the site (Redirect→Transform combo), site health threshold, per-season process capacity; leaves a **residue** elsewhere |
+| Controlled Crisis | 2 + crises used | Spawns a Surplus gain and real fallout orbs | Instability, 3-season cooldown, escalating cost, **resistance** (yield −20% per repeat), banned if fallout would outlive the run |
+
+## 7. Transformations (3)
+- **Thermal Capture** (Energy): Heat → 60% Surplus (Energy) + Pollution residue → Environment.
+- **Soil Cycling** (Agriculture): Pollution → 50% Surplus (Agriculture) + Damage residue → Agriculture.
+- **Labor Mobilization** (Industry): Unrest → 55% Surplus (Industry) + Pollution residue → Environment.
+
+## 8. World memory (mechanical, not cosmetic)
+- **Resilience:** harm absorbed hardens a system (−1% future harm per 8 magnitude, cap 25%).
+- **Adaptation:** each transform raises that process's efficiency +5% (cap +20%).
+- **Dependency:** redirects into a system reduce its cushion.
+- **Resistance:** repeated crises on a system yield less and destabilise more.
+- **Familiarity:** repeated event types arrive 10% weaker per prior occurrence (cap 30%).
+- **Scars:** first drop below 20 health permanently lowers max health by 10.
+All changes are announced in the World Memory chronicle.
+
+## 9. Causal network
+10 directed edges (support/pressure) — see data. Support: healthy source gives up to +2; failing source drains up to −8; collapsed source drains −ceil(30% × weight). Pressure (Industry→Environment): thriving industry wears the environment (negative feedback loop). Effects are **delayed one season** and displayed on the pipes for prediction. Cascades: systems below 20 emit Damage to their strongest dependent next season; collapse emits a 10-magnitude cascade.
+
+## 10. Events (10)
+Industrial Accident, Heatwave, Blackout, Crop Blight, Toxic Spill, Labor Strike, Flood, Migration Wave, Wildfire, Grid Surge. Weak focus systems attract their events (×1.5 weight); magnitudes scale +8%/season plus instability/5%; repeated events are softened by familiarity.
+
+## 11. Identified weaknesses of the original concept and mitigations
+| Risk | Mitigation in P0 |
+|---|---|
+| Consequence routing collapses into "resource allocation" sliders | Discrete orbs with spatial routing restricted to causal adjacency; per-type vulnerability; per-season cushions; animations of physical landing |
+| Redirect becomes free optimal dodge | 20% leak, dependency capacity loss, 2-redirect limit (bot data: pure-redirect play went from 97% to ~81% win after leak; see DECISIONS D-006) |
+| Crisis spam | escalating cost, cooldown, resistance, instability (100 = loss), end-of-run lockout |
+| Delay as infinite loan (Anachrony precedent) | strain is a new consequence, 2-delay limit, cannot pass final season |
+| Opaque systemic failure (Fate of the World precedent) | exact landing previews (tested equal to resolution), queued causal deltas on pipes, forecast, post-mortem that names the true origins of damage |
+| Excess randomness | deterministic seeds, 1-season forecast, scripted tutorial |
+| Unavoidable defeats | batch runner measures seeds lost by every strategy (see reports) |
+
+## 12. Out of scope for P0
+Meta-progression, multiple scenarios/civilizations, replay clip export, localisation content, controller-first UI polish, daily seeds, achievements, Steam integration.

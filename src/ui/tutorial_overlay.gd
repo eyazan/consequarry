@@ -74,17 +74,23 @@ func _finish() -> void:
 	queue_free()
 
 
-## Called by GameView on player actions.
+## Called by GameView on player actions. If the player performs a later step
+## early, the tutorial fast-forwards instead of getting stuck.
 func notify(event: String, data: Dictionary = {}) -> void:
-	var wait: String = STEPS[step]["wait"]
-	var ok := false
+	for j in range(step, STEPS.size()):
+		if _matches(String(STEPS[j]["wait"]), event, data):
+			step = j
+			_advance()
+			return
+
+
+func _matches(wait: String, event: String, data: Dictionary) -> bool:
 	match wait:
-		"select_heat": ok = event == "select" and data.get("type", "") == "heat"
-		"redirect_energy": ok = event == "redirect" and data.get("target", "") == "energy"
-		"transform": ok = event == "transform"
-		"end_turn": ok = event == "end_turn_done"
-	if ok:
-		_advance()
+		"select_heat": return event == "select" and data.get("type", "") == "heat"
+		"redirect_energy": return event == "redirect" and data.get("target", "") == "energy"
+		"transform": return event == "transform"
+		"end_turn": return event == "end_turn_done"
+	return false
 
 
 func current_wait() -> String:
