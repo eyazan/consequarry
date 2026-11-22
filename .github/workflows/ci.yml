@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GODOT_VERSION: 4.7.2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          godot --version
+      - name: Import project
+        run: godot --headless --import || true
+      - name: Unit and integration tests
+        run: godot --headless --script res://tests/run_tests.gd
+      - name: Batch balance smoke (small)
+        run: godot --headless --script res://tools/batch_sim.gd -- 60 4 10000
+      - name: Upload balance summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: balance-summary
+          path: reports/balance_summary.md

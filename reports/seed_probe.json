@@ -1,0 +1,217 @@
+{
+  "count": 300,
+  "details": [
+    {
+      "avg": 55,
+      "min": 45,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 55, weakest system 45.",
+      "seed": 10003
+    },
+    {
+      "avg": 58,
+      "min": 41,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 58, weakest system 41.",
+      "seed": 10006
+    },
+    {
+      "avg": 57,
+      "min": 52,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 57, weakest system 52.",
+      "seed": 10030
+    },
+    {
+      "avg": 56,
+      "min": 41,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 56, weakest system 41.",
+      "seed": 10032
+    },
+    {
+      "avg": 58,
+      "min": 40,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 58, weakest system 40.",
+      "seed": 10041
+    },
+    {
+      "avg": 49,
+      "min": 39,
+      "outcome": "defeat",
+      "reason": "Survived, but unsustainably: average 49 (need 55), weakest 39 (need 25).",
+      "seed": 10086
+    },
+    {
+      "avg": 48,
+      "min": 39,
+      "outcome": "defeat",
+      "reason": "Survived, but unsustainably: average 48 (need 55), weakest 39 (need 25).",
+      "seed": 10102
+    },
+    {
+      "avg": 56,
+      "min": 39,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 56, weakest system 39.",
+      "seed": 10103
+    },
+    {
+      "avg": 57,
+      "min": 38,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 57, weakest system 38.",
+      "seed": 10119
+    },
+    {
+      "avg": 47,
+      "min": 43,
+      "outcome": "defeat",
+      "reason": "Survived, but unsustainably: average 47 (need 55), weakest 43 (need 25).",
+      "seed": 10147
+    },
+    {
+      "avg": 57,
+      "min": 48,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 57, weakest system 48.",
+      "seed": 10150
+    },
+    {
+      "avg": 55,
+      "min": 47,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 55, weakest system 47.",
+      "seed": 10174
+    },
+    {
+      "avg": 52,
+      "min": 45,
+      "outcome": "defeat",
+      "reason": "Survived, but unsustainably: average 52 (need 55), weakest 45 (need 25).",
+      "seed": 10177
+    },
+    {
+      "avg": 58,
+      "min": 44,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 58, weakest system 44.",
+      "seed": 10192
+    },
+    {
+      "avg": 62,
+      "min": 47,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 62, weakest system 47.",
+      "seed": 10194
+    },
+    {
+      "avg": 63,
+      "min": 45,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 63, weakest system 45.",
+      "seed": 10200
+    },
+    {
+      "avg": 57,
+      "min": 40,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 57, weakest system 40.",
+      "seed": 10217
+    },
+    {
+      "avg": 56,
+      "min": 45,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 56, weakest system 45.",
+      "seed": 10219
+    },
+    {
+      "avg": 60,
+      "min": 52,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 60, weakest system 52.",
+      "seed": 10239
+    },
+    {
+      "avg": 57,
+      "min": 44,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 57, weakest system 44.",
+      "seed": 10240
+    },
+    {
+      "avg": 62,
+      "min": 53,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 62, weakest system 53.",
+      "seed": 10241
+    },
+    {
+      "avg": 47,
+      "min": 40,
+      "outcome": "defeat",
+      "reason": "Survived, but unsustainably: average 47 (need 55), weakest 40 (need 25).",
+      "seed": 10258
+    },
+    {
+      "avg": 62,
+      "min": 51,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 62, weakest system 51.",
+      "seed": 10266
+    },
+    {
+      "avg": 55,
+      "min": 43,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 55, weakest system 43.",
+      "seed": 10268
+    },
+    {
+      "avg": 55,
+      "min": 47,
+      "outcome": "victory",
+      "reason": "The valley endures: average health 55, weakest system 47.",
+      "seed": 10277
+    }
+  ],
+  "lost_by_all_heuristics": [
+    10003,
+    10006,
+    10030,
+    10032,
+    10041,
+    10086,
+    10102,
+    10103,
+    10119,
+    10147,
+    10150,
+    10174,
+    10177,
+    10192,
+    10194,
+    10200,
+    10217,
+    10219,
+    10239,
+    10240,
+    10241,
+    10258,
+    10266,
+    10268,
+    10277
+  ],
+  "planner_rescued": 20,
+  "random_plans": 10,
+  "seed_base": 10000,
+  "still_lost": [
+    10086,
+    10102,
+    10147,
+    10177,
+    10258
+  ]
+}

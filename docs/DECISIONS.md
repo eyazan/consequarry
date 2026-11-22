@@ -11,3 +11,5 @@
 | D-007 | 2026-11-22 | Difficulty: regen 1/0, absorb effect 80%, +8%/season magnitude, extra event chance from season 3, win avg ≥55 & min ≥25 | Initial values let passive play win 98%. Tuned until passive ≈0%, random ≈1%. |
 | D-008 | 2026-11-22 | Bots are not human evidence; "expert" one-ply lookahead bot is myopic | It over-uses Delay (pushes harm past its horizon). Kept as a reachability probe, not a skill ceiling. |
 | D-009 | 2026-11-22 | Post-mortem attributes damage to the root origin through routing chains | "Split share (−26)" taught nothing; "Flood (routed)" does. |
+| D-010 | 2026-11-22 | No balance change for "unwinnable" seeds | Rollout planner rescued 20 of 25 seeds that every heuristic bot lost; remaining 5 are narrow misses. Evidence points to bot weakness, not impossible seeds. |
+| D-011 | 2026-11-22 | iPhone distribution via PWA on GitHub Pages from a separate public repo (`consequarry-play`), source repo stays private | Owner choice: free, no Mac, no 7-day re-signing; Godot web export already ships manifest, icons and offline service worker. |

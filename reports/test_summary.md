@@ -26,7 +26,7 @@ All results below were produced by commands actually executed in this environmen
 | Health bounds / negative values / non-termination | **0** |
 | Determinism re-check (50 seeds run twice, hash compare) | **0 mismatches** |
 | Dominant strategy (>85% win, non-expert) | **none flagged** |
-| Seeds lost by *every* strategy (300-seed expert sample) | **25 (8.3%)** — candidate unavoidable defeats; bots are imperfect, needs investigation (K-11) |
+| Seeds lost by *every* strategy (300-seed expert sample) | **25 (8.3%)**; rollout planner (`tools/seed_probe.gd`, `reports/seed_probe.json`) then won **20 of 25**; 5 remain narrow losses (K-11) |
 | Infinite resource generation | Not observed: reserve converts to at most +1 action/season; max surplus bounded by events/crises (no unbounded growth found in 12,300 runs) |
 | Performance | 13–43 ms per simulated run (bots); expert 3.3 s/run due to cloning |
 
