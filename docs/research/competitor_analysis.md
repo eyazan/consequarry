@@ -1,0 +1,46 @@
+# Competitor Analysis
+
+Access date for every web source below: **2026-11-22** (searches run from the development container through a web-search tool).
+Legend: **[V]** = verified from a cited source on the access date. **[K]** = background knowledge of the author, not re-verified this session — treat as an assumption until checked. **[A]** = analytical assumption.
+
+Limitations: SteamDB, BoardGameGeek and Reddit pages were not fetched directly; findings come from search-result summaries of storefronts, press reviews and aggregators. Store review counts and prices change daily.
+
+## 1. Direct references from the directive
+
+| Game | Core loop | What CONSEQUARRY must avoid / learn |
+|---|---|---|
+| **Democracy 4** (Positech) | Place/adjust policies on a radial web of causal effects; elections. | Players criticise it as "a policy-placing exercise more than managing a country", a cluttered interface, debt-spiral opacity, and being too close to Democracy 3 [V: Positech forum threads cataloguing negative Steam reviews — https://forums.positech.co.uk/t/steam-negative-reviews/17528/5 , https://forums.positech.co.uk/t/steam-negative-reviews-part-3/18270]. Steam user reviews overall are strong while GOG/Metacritic user scores are lower [V: https://store.steampowered.com/app/1410710 ; https://legacy.prod.metacritic.com/game/pc/democracy-4/user-reviews]. **Lesson:** a causal web shown as a spreadsheet/wheel reads as "sliders". Our causal network must be *spatial and animated*, and the player acts on discrete consequence objects, not policy sliders. |
+| **Fate of the World** (Red Redemption, 2011) | Turn-based global climate management using cards; 5-year turns; climate model from Oxford. | Reviewers: "very high degree of difficulty", "frustratingly badly explained", vague and lacking direct feedback; Metacritic "mixed or average" [V: https://pcgamer.com/fate-of-the-world-review ; https://www.Wikipedia.com/wiki/Fate_of_the_World ; https://legacy.prod.metacritic.com/game/pc/fate-of-the-world/user-reviews]. **Lesson:** our biggest design risk. Systemic depth without readable feedback produces opaque, cruel play. Every number change must be traceable to a visible consequence orb and a ledger entry. |
+| **Against the Storm** (Eremite) | Roguelite city builder; short settlements, meta progression, storm cycle, "impatience" countdown. | ~94% positive on ~37.8k Steam reviews, list price $29.99, frequent 70% discounts; difficulty sometimes called unbalanced [V: https://notebookcheck.net/with-94-positive-reviews-this-dark-fantasy-city-builder-is-70-off-on-steam.1376143.0.html ; https://store.steampowered.com/app/1336490/]. **Lesson:** "short run + persistent meta + escalating pressure" is proven in the city-builder audience. Our 12-turn run aligns with this. |
+| **Frostpunk / Frostpunk 2** (11 bit) | Survival city builder; laws with social consequences, discontent, factions. | Critics praise the laws/consequence politics; criticism of balance of extreme laws, difficulty spikes, UI learning curve [V: https://windowscentral.com/gaming/frostpunk-2-review ; https://shacknews.com/article/141448/frostpunk-2-review-score ; https://www.gamewatcher.com/frostpunk-2/review]. **Lesson:** "consequences of choices" is an established theme; we must not compete on narrative/moral dilemmas, but on *mechanical* manipulation of consequences. |
+| **Terra Nil** (Free Lives / Devolver) | "Reverse city builder": restore ecosystems, then remove your own infrastructure. | Praised concept; replayability criticised ("not enough content", 6–8 h main game), $24.99 called steep [V: https://itemlevel.net/terra-nil-review/ ; https://Techraptor.net/gaming/reviews/terra-nil-review ; https://nichegamer.com/reviews/terra-nil]. **Lesson:** an inverted-genre hook sells, but needs a replay engine (seeds, scenarios, run variety). |
+| **The Wandering Village** (Stray Fawn) | City builder on the back of a giant creature. | OpenCritic top critic avg 77; complaints: challenge modes weak for replay, premise "mechanically underutilized", flat rhythm [V: https://opencritic.com/game/13691/wandering-village ; https://checkpointgaming.net/reviews/2025/08/the-wandering-village-review-it-takes-a-village-to-raise-an-ondu]. **Lesson:** a striking premise must be *the* mechanic, not decoration. Consequence manipulation must be the core verb, not a side system. |
+| **Reus / Reus 2** (Abbey Games) | God game: shape a planet via giants; humans build autonomously. | Reus 2: Steam Very Positive (~2.1k reviews, third-party), OpenCritic 78; criticisms: slow start, controller support, UI/tutorial [V: https://www.wasdland.com/game/reus-2-1875060 ; https://opencritic.com/game/19570/reus-2 ; https://game8.co/articles/reviews/reus-2-review]. **Lesson:** "autonomous civilization + indirect player" is a known pattern; our differentiator must be that the player acts on *outcomes*, not on terrain/resources. Steam Deck/controller support is expected. |
+| **Anachrony** (board game, Mindclash) | Worker placement with time travel: borrow resources from the future; unpaid warps create paradoxes/anomalies. | Reviewers call time travel "a loan mechanic in fancy dress" [V: https://medium.com/board-games-digest/anachrony-review-worker-placement-with-a-time-travel-twist-5710b657f20a ; https://gamerules.com/rules/anachrony/]. **Conflict check:** our *Delay* intervention (push a consequence into the future with interest) is mechanically similar to a loan. Mitigation documented in originality_audit.md. |
+| **The Last Clockwinder** (Pontoco) | VR: record body loops as clones that repeat actions; automation puzzles. | Positive reviews [V: https://en.wikipedia.org/wiki/The_Last_Clockwinder ; https://uploadvr.com/the-last-clockwinder-review/]. **Lesson:** satisfying "watch your plan play out" moment. We adopt the *resolution playback* feel (End Turn → watch orbs travel), not the mechanic. |
+| **Balatro** (LocalThunk / Playstack) | Poker roguelike deckbuilder; multiplicative scoring. | 500k copies in 10 days, 1M in first month, 5M by Jan 2025 [V: https://pcgamer.com/games/card-games/poker-roguelike-sensation-balatro-sells-more-than-500000-copies-in-just-10-days ; https://shacknews.com/article/142804/balatro-5-million-copies-sold]. **Lesson:** a solo dev can win with one *legible* systemic twist, short runs and strong feedback ("number goes up" juice). We copy nothing from its presentation. |
+| **Factorio** | Automation, throughput, logistics. | [K] Players love making flows visible. **Lesson:** consequences as visible "flows" along pipes is a strong readability metaphor. |
+| **WorldBox** | God sandbox, emergent civs. | [K] Strong creator/YouTube appeal through emergent chaos. Sales figures not found this session. **Lesson:** emergent spectacle → shareable clips. |
+| **Cities: Skylines / Civilization** | Construction and expansion. | [K] Genre anchors; CONSEQUARRY explicitly avoids construction. |
+
+## 2. Independently discovered adjacent titles
+
+| Title | Status (per source) | Overlap |
+|---|---|---|
+| **Overflow** (Sharkbowl Games) | Announced; Steam demo listed for 3 Dec 2026, release 2027 [V-partial: press release summary https://www.gamespress.com/en-US/Sharkbowl-Games-announces-Overflow-a-tense-network-roguelite-where-one ; a second search could not find the Steam page]. | Real-time network roguelite where nodes fill with signals and one full node ends the run. **Overlap:** "node overflow" pressure. Our overflow is a *capacity spill* sub-rule, turn-based, and not the loss condition. Monitor. |
+| **Combolands: Roguelike Citybuilder** (Crux Games) | Steam page [V: https://store.steampowered.com/app/4075620/Combolands_Roguelike_Citybuilder/]. | Turn-based roguelite city builder with cascading combos. Overlap in "roguelite + cascade" tags, not in consequence manipulation. |
+| **Dark Rail** (Steam Veil Games) | Announced for 2026 [V: https://www.gamespress.com/Steam-Veil-Games-Announces-Dark-Rail-a-Turn-Based-Management-Roguelike]. | Turn-based management roguelike with revolt containment. Thematic overlap only. |
+| **Dawnfolk** | Released [V: https://www.moddb.com/games/dawnfolk]. | Choosing whether to face or ignore disasters. Light overlap. |
+
+## 3. Common player complaints across the genre (synthesis)
+
+1. **Opacity** — causal systems that don't explain themselves (Fate of the World, Democracy 4). → Every effect must be traceable.
+2. **Spreadsheet feel** (Democracy 4). → Map-first presentation; numbers secondary.
+3. **Replayability limits** (Terra Nil, Wandering Village). → Seeds, scenarios, event variety, world-memory divergence.
+4. **Difficulty spikes / unbalanced difficulty** (Against the Storm, Frostpunk 2). → 10k+ automated runs per balance pass; unavoidable-defeat check.
+5. **Controller / Steam Deck support** (Reus 2). → Input abstraction from day one; every action reachable via keyboard.
+
+## 4. Dominant-strategy risks observed in references [A]
+
+- Policy-web games tend to converge on a "best policy set" once the web is known. Our counter: randomized event mix per seed, world memory that punishes repetition (dependency/resistance), capacity limits.
+- Loan mechanics (Anachrony) degenerate when interest is lower than value of tempo. Our *Delay* charges interest as a new consequence, has a hard per-consequence limit (2), and cannot push past the final turn.

@@ -1,0 +1,280 @@
+extends SceneTree
+## Headless unit/integration test runner.
+## Usage: godot --headless --script res://tests/run_tests.gd
+## Exit code 0 = all passed, 1 = failures.
+
+var passed := 0
+var failed := 0
+var failures: Array[String] = []
+var current := ""
+
+
+func _init() -> void:
+	var tests := [
+		"test_rng_determinism", "test_new_run_deterministic", "test_full_run_determinism",
+		"test_conservation_random_play", "test_bounds_and_nan", "test_save_load_roundtrip",
+		"test_redirect", "test_split_conserves", "test_delay_strain", "test_transform",
+		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
+		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
+		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
+		"test_collapsed_target_rejected", "test_save_system_file",
+	]
+	for t in tests:
+		current = t
+		var before := failed
+		call(t)
+		print(("PASS  " if failed == before else "FAIL  ") + t)
+		if failed == before:
+			passed += 1
+	print("\n%d passed, %d failed" % [passed, failed])
+	for f in failures:
+		print("  - " + f)
+	quit(0 if failed == 0 else 1)
+
+
+func check(cond: bool, msg: String) -> void:
+	if not cond:
+		failed += 1
+		failures.append("%s: %s" % [current, msg])
+
+
+func _play_random(w: WorldState, rng: DetRng, verify_each: bool = false) -> void:
+	while not w.is_over():
+		BotStrategies.play_turn(w, "random", rng)
+		if verify_each:
+			var errs := w.ledger.verify()
+			check(errs.is_empty(), "ledger after actions: %s" % str(errs))
+		SimulationEngine.end_turn(w)
+		if verify_each:
+			var errs2 := w.ledger.verify()
+			check(errs2.is_empty(), "ledger after turn: %s" % str(errs2))
+
+
+func _first_pending(w: WorldState, type: String = "", dest: String = "") -> Consequence:
+	for c in w.ledger.pending():
+		if c.land_turn == w.turn and (type == "" or c.type == type) and (dest == "" or c.destination == dest):
+			return c
+	return null
+
+
+# ------------------------------------------------------------------ tests
+
+func test_rng_determinism() -> void:
+	var a := DetRng.new(42)
+	var b := DetRng.new(42)
+	for i in 1000:
+		check(a.next_u32() == b.next_u32(), "diverged at %d" % i)
+	var c := DetRng.new(43)
+	check(DetRng.new(42).next_u32() != c.next_u32(), "different seeds same output")
+
+
+func test_new_run_deterministic() -> void:
+	var w1 := SimulationEngine.new_run("p0_valley", 1234)
+	var w2 := SimulationEngine.new_run("p0_valley", 1234)
+	check(w1.state_hash() == w2.state_hash(), "same seed different initial state")
+	var w3 := SimulationEngine.new_run("p0_valley", 1235)
+	check(w1.state_hash() != w3.state_hash(), "different seeds identical state")
+
+
+func test_full_run_determinism() -> void:
+	for s in [1, 77, 9001]:
+		var w1 := SimulationEngine.new_run("p0_valley", s)
+		var w2 := SimulationEngine.new_run("p0_valley", s)
+		_play_random(w1, DetRng.new(s * 3))
+		_play_random(w2, DetRng.new(s * 3))
+		check(w1.state_hash() == w2.state_hash(), "seed %d diverged" % s)
+
+
+func test_conservation_random_play() -> void:
+	for s in range(100, 130):
+		var w := SimulationEngine.new_run("p0_valley", s)
+		_play_random(w, DetRng.new(s), true)
+
+
+func test_bounds_and_nan() -> void:
+	for s in range(200, 260):
+		var w := SimulationEngine.new_run("p0_valley", s)
+		var rng := DetRng.new(s)
+		while not w.is_over():
+			BotStrategies.play_turn(w, "crisis_focused" if s % 2 == 0 else "random", rng)
+			SimulationEngine.end_turn(w)
+			for sys: CivilizationSystem in w.systems.values():
+				check(sys.health >= 0 and sys.health <= sys.max_health, "health out of bounds %s=%d" % [sys.id, sys.health])
+				check(sys.max_health > 0, "max health <= 0")
+			check(w.instability >= 0 and w.instability <= 100, "instability out of bounds")
+			check(w.reserve >= 0, "negative reserve")
+			check(w.action_points >= 0, "negative AP")
+
+
+func test_save_load_roundtrip() -> void:
+	var w := SimulationEngine.new_run("p0_valley", 555)
+	var rng := DetRng.new(9)
+	for _i in 5:
+		BotStrategies.play_turn(w, "random", rng)
+		SimulationEngine.end_turn(w)
+	var saved := JSON.stringify(w.to_dict())
+	var restored := WorldState.from_dict(JSON.parse_string(saved))
+	check(restored.state_hash() == w.state_hash(), "hash changed after roundtrip")
+	var rng_a := DetRng.new(31)
+	var rng_b := DetRng.new(31)
+	while not w.is_over():
+		BotStrategies.play_turn(w, "balanced", rng_a)
+		SimulationEngine.end_turn(w)
+	while not restored.is_over():
+		BotStrategies.play_turn(restored, "balanced", rng_b)
+		SimulationEngine.end_turn(restored)
+	check(restored.state_hash() == w.state_hash(), "continuation diverged after load")
+
+
+func test_redirect() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	var heat := _first_pending(w, "heat", "industry")
+	check(heat != null, "tutorial must start with heat at industry")
+	if heat == null:
+		return
+	var err := SimulationEngine.apply(w, Intervention.redirect(heat.id, "energy"))
+	check(err == "", "redirect failed: " + err)
+	var moved := w.ledger.get_c(w.last_focus_id)
+	check(moved != null and moved.destination == "energy", "destination not changed")
+	check(heat.children.size() == 2, "redirect should leak part of the magnitude")
+	check(w.ledger.verify().is_empty(), "ledger invalid after redirect")
+	check(w.action_points == 2, "AP not spent")
+	var bad := SimulationEngine.apply(w, Intervention.redirect(moved.id, "agriculture"))
+	check(bad != "", "redirect to non-adjacent system should fail")
+
+
+func test_split_conserves() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	var heat := _first_pending(w, "heat")
+	var m := heat.current_magnitude
+	var err := SimulationEngine.apply(w, Intervention.split(heat.id, "energy"))
+	check(err == "", "split failed: " + err)
+	check(heat.children.size() == 2, "split should create 2 children")
+	var total := 0
+	for ch in heat.children:
+		total += w.ledger.get_c(ch).original_magnitude
+	check(total == m, "split leaked magnitude")
+	check(w.ledger.verify().is_empty(), "ledger invalid after split")
+
+
+func test_delay_strain() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	var dmg := _first_pending(w, "damage")
+	var before_total: int = w.ledger.totals()["created_roots"]
+	var err := SimulationEngine.apply(w, Intervention.delay(dmg.id))
+	check(err == "", "delay failed: " + err)
+	check(dmg.land_turn == 2, "not delayed")
+	var after_total: int = w.ledger.totals()["created_roots"]
+	check(after_total > before_total, "delay should create strain consequence")
+	SimulationEngine.apply(w, Intervention.delay(dmg.id))
+	# delays are only allowed for consequences arriving this turn, so second delay must fail
+	check(dmg.land_turn == 2, "second delay in same turn should be rejected (not arriving this season)")
+
+
+func test_transform() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	var heat := _first_pending(w, "heat", "industry")
+	var bad := SimulationEngine.apply(w, Intervention.transform(heat.id, "thermal_capture"))
+	check(bad != "", "transform away from site should fail")
+	SimulationEngine.apply(w, Intervention.redirect(heat.id, "energy"))
+	var moved := w.ledger.get_c(w.last_focus_id)
+	var err := SimulationEngine.apply(w, Intervention.transform(moved.id, "thermal_capture"))
+	check(err == "", "transform failed: " + err)
+	var types: Array = []
+	for ch in moved.children:
+		types.append(w.ledger.get_c(ch).type)
+	check(types.has("surplus") and types.has("pollution"), "transform should yield surplus + residue")
+	check(w.ledger.verify().is_empty(), "ledger invalid after transform")
+
+
+func test_transform_capacity() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	var c := w.ledger.create("heat", "test", 30, "energy", w.turn, w.turn)
+	var err := SimulationEngine.apply(w, Intervention.transform(c.id, "thermal_capture"))
+	check(err != "", "transform above capacity should fail")
+
+
+func test_crisis_escalation() -> void:
+	var w := SimulationEngine.new_run("p0_valley", 3)
+	w.action_points = 20
+	var c1 := SimulationEngine.cost_of(w, Intervention.crisis("energy"))
+	check(SimulationEngine.apply(w, Intervention.crisis("energy")) == "", "first crisis failed")
+	var c2 := SimulationEngine.cost_of(w, Intervention.crisis("industry"))
+	check(c2 > c1, "crisis cost should escalate")
+	check(SimulationEngine.apply(w, Intervention.crisis("energy")) != "", "cooldown not enforced")
+	check(w.instability > 0, "crisis should raise instability")
+
+
+func test_memory_adaptation() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	check(w.memory.adaptation("thermal_capture") == 0, "fresh adaptation")
+	var heat := _first_pending(w, "heat", "industry")
+	SimulationEngine.apply(w, Intervention.redirect(heat.id, "energy"))
+	SimulationEngine.apply(w, Intervention.transform(w.last_focus_id, "thermal_capture"))
+	check(w.memory.adaptation("thermal_capture") > 0, "adaptation should grow")
+
+
+func test_memory_dependency() -> void:
+	var w := SimulationEngine.new_run("p0_valley", 4)
+	var cap_before := w.system("energy").capacity(w.memory)
+	w.memory.redirects_in["energy"] = 6
+	check(w.system("energy").capacity(w.memory) < cap_before, "dependency should reduce capacity")
+
+
+func test_memory_familiarity() -> void:
+	var w := SimulationEngine.new_run("p0_valley", 5)
+	var m1 := EventDirector.scaled_magnitude(w, "flood", 20)
+	w.memory.events_seen["flood"] = 3
+	var m2 := EventDirector.scaled_magnitude(w, "flood", 20)
+	check(m2 < m1, "familiar events should be weaker")
+
+
+func test_runs_terminate() -> void:
+	for s in range(300, 340):
+		var w := SimulationEngine.new_run("p0_valley", s)
+		var turns := 0
+		while not w.is_over() and turns < 50:
+			SimulationEngine.end_turn(w)
+			turns += 1
+		check(w.is_over(), "run did not terminate")
+		check(turns <= 12, "run exceeded max turns")
+
+
+func test_spill_depth_bounded() -> void:
+	for s in range(400, 430):
+		var w := SimulationEngine.new_run("p0_valley", s)
+		_play_random(w, DetRng.new(s))
+		for c: Consequence in w.ledger.items.values():
+			if c.source.begins_with("spill:"):
+				check(c.depth <= int(ContentDB.rules()["spill_max_depth"]) + 3, "spill depth unbounded")
+
+
+func test_tutorial_script() -> void:
+	var w := SimulationEngine.new_run("tutorial", 999)
+	check(w.current_events == ["industrial_accident"], "tutorial turn 1 event")
+	check(w.forecast == ["labor_strike"], "tutorial turn 2 forecast")
+
+
+func test_no_crisis_fallout_past_end() -> void:
+	var w := SimulationEngine.new_run("p0_valley", 6)
+	w.turn = w.max_turns
+	w.action_points = 10
+	check(SimulationEngine.validate(w, Intervention.crisis("energy")) != "", "crisis with fallout after end must be blocked")
+
+
+func test_collapsed_target_rejected() -> void:
+	var w := SimulationEngine.new_run("tutorial", 1)
+	w.system("energy").health = 0
+	w.system("energy").collapsed = true
+	var heat := _first_pending(w, "heat", "industry")
+	check(SimulationEngine.validate(w, Intervention.redirect(heat.id, "energy")) != "", "redirect into collapsed")
+
+
+func test_save_system_file() -> void:
+	var w := SimulationEngine.new_run("p0_valley", 77)
+	var path := "user://test_save.json"
+	check(SaveSystem.save_world(w, path), "save failed")
+	var loaded := SaveSystem.load_world(path)
+	check(loaded != null and loaded.state_hash() == w.state_hash(), "file roundtrip mismatch")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	check(SaveSystem.load_world("user://does_not_exist.json") == null, "missing file must return null")
