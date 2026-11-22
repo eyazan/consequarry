@@ -11,9 +11,11 @@
 - [x] Balance passes D-005..D-007
 
 ## Next (P0.5, highest priority first)
-1. [ ] Owner: provide git remote (K-1)
-2. [ ] Export presets + builds for Windows / macOS / Linux; smoke on real hardware (K-2)
-3. [ ] Playtest kit: build + 5-question feedback form + local session log export (no network)
+1. [ ] Owner: create empty GitHub repo `consequarry` and connect GitHub to Claude (K-1)
+2. [x] Export presets + builds for Web / Windows / macOS / Linux / iOS project
+3. [x] Compact touch layout for phones; web build tested with touch emulation
+4. [x] Playtest kit: guide, feedback questions, in-game "Copy run report"
+5. [ ] Owner: test the web build on iPhone Safari (K-12) and report issues
 4. [ ] In-game "why did this happen?" replay of last season's landings
 5. [ ] Gamepad orb cursor (K-6)
 6. [ ] Translation table (K-5)

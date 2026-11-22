@@ -12,6 +12,9 @@ static var screen_shake: bool = true
 static var fullscreen: bool = false
 static var always_show_links: bool = true
 static var tutorial_done: bool = false
+static var layout_mode: int = 0  # 0 auto, 1 desktop, 2 compact (phones/tablets)
+const LAYOUT_NAMES := ["Auto", "Desktop", "Compact (touch)"]
+static var compact: bool = false
 static var _loaded := false
 
 
@@ -28,6 +31,7 @@ static func load_settings() -> void:
 	fullscreen = bool(cf.get_value("video", "fullscreen", fullscreen))
 	always_show_links = bool(cf.get_value("gameplay", "always_show_links", always_show_links))
 	tutorial_done = bool(cf.get_value("progress", "tutorial_done", tutorial_done))
+	layout_mode = clampi(int(cf.get_value("video", "layout_mode", layout_mode)), 0, 2)
 
 
 static func save_settings() -> void:
@@ -38,6 +42,7 @@ static func save_settings() -> void:
 	cf.set_value("video", "fullscreen", fullscreen)
 	cf.set_value("gameplay", "always_show_links", always_show_links)
 	cf.set_value("progress", "tutorial_done", tutorial_done)
+	cf.set_value("video", "layout_mode", layout_mode)
 	cf.save(PATH)
 
 
@@ -45,7 +50,7 @@ static func apply() -> void:
 	var bus := AudioServer.get_bus_index("Master")
 	AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(master_volume, 0.0001)))
 	AudioServer.set_bus_mute(bus, master_volume <= 0.001)
-	if DisplayServer.get_name() != "headless":
+	if DisplayServer.get_name() != "headless" and not OS.has_feature("web") and not OS.has_feature("mobile"):
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
 
 
@@ -53,3 +58,21 @@ static func apply() -> void:
 static func anim_scale() -> float:
 	var s: float = SPEEDS[anim_speed_index]
 	return 0.0 if s == 0.0 else 1.0 / s
+
+
+## Phones and small touch screens get a larger, decluttered layout.
+static func detect_compact() -> bool:
+	if OS.get_cmdline_user_args().has("--compact") or layout_mode == 2:
+		return true
+	if layout_mode == 1:
+		return false
+	if OS.has_feature("mobile") or OS.has_feature("web_ios") or OS.has_feature("web_android"):
+		return true
+	return false
+
+
+## Applies the logical canvas size: compact uses a smaller canvas so text and
+## touch targets render physically larger.
+static func apply_layout(window: Window) -> void:
+	compact = detect_compact()
+	window.content_scale_size = Vector2i(900, 460) if compact else Vector2i(1280, 720)

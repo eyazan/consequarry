@@ -64,10 +64,16 @@ func _process(delta: float) -> void:
 	if map == null:
 		return
 	var vr := get_viewport_rect().size
-	var avail_w := vr.x - 260.0 - 340.0
-	var s := clampf(minf(avail_w / 700.0, (vr.y - 110.0) / 600.0), 0.6, 1.5)
-	map.scale = Vector2(s, s)
-	map.position = Vector2(265.0 + avail_w * 0.5, 66.0 + (vr.y - 66.0) * 0.5 + 6.0 * s)
+	var lm := hud.left_reserved()
+	var rm := hud.right_reserved()
+	var top := 56.0 if GameSettings.compact else 66.0
+	var avail_w := vr.x - lm - rm
+	var s := clampf(minf(avail_w / 700.0, (vr.y - top - 30.0) / 600.0), 0.45, 1.5)
+	var target_scale := Vector2(s, s)
+	var target_pos := Vector2(lm + 5.0 + avail_w * 0.5, top + (vr.y - top) * 0.5 + 6.0 * s)
+	# Smoothly re-centre when side panels open/close (compact layout).
+	map.scale = map.scale.lerp(target_scale, minf(1.0, delta * 10.0)) if map.scale != Vector2.ONE else target_scale
+	map.position = map.position.lerp(target_pos, minf(1.0, delta * 10.0)) if map.position != Vector2.ZERO else target_pos
 	if _shake_t > 0.0:
 		_shake_t -= delta
 		map.position += Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 6.0 * _shake_t

@@ -10,6 +10,9 @@ var ui_theme: Theme
 func _ready() -> void:
 	GameSettings.load_settings()
 	GameSettings.apply()
+	GameSettings.apply_layout(get_window())
+	_build_rotate_overlay()
+	_install_symbol_fallback()
 	ui_theme = UIKit.make_theme()
 	RenderingServer.set_default_clear_color(Palette.BG)
 	var args := OS.get_cmdline_user_args()
@@ -119,8 +122,9 @@ func _show_menu() -> void:
 	_swap(root)
 	root.set_process(true)
 	var vr := get_viewport().get_visible_rect().size
-	map.position = Vector2(vr.x * 0.62, vr.y * 0.52)
-	map.scale = Vector2(1.05, 1.05)
+	var ms := 0.7 if GameSettings.compact else 1.05
+	map.position = Vector2(vr.x * 0.68, vr.y * 0.52)
+	map.scale = Vector2(ms, ms)
 
 
 func _start(scenario_id: String, run_seed: int) -> void:
@@ -144,3 +148,41 @@ func _launch(w: WorldState, tutorial: bool) -> void:
 	SaveSystem.save_world(w)
 	gv.exit_to_menu.connect(_show_menu)
 	gv.restart.connect(_start)
+
+
+# ------------------------------------------------------------------ portrait guard
+
+var _rotate_layer: CanvasLayer
+
+
+func _build_rotate_overlay() -> void:
+	_rotate_layer = CanvasLayer.new()
+	_rotate_layer.layer = 100
+	add_child(_rotate_layer)
+	var bg := ColorRect.new()
+	bg.color = Palette.BG
+	_rotate_layer.add_child(bg)
+	UIKit.fill_viewport(bg)
+	var l := UIKit.label("Rotate your device to landscape\nto play CONSEQUARRY.", 22, Palette.ACCENT, true)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_rotate_layer.add_child(l)
+	UIKit.fill_viewport(l)
+	_rotate_layer.visible = false
+
+
+func _process(_delta: float) -> void:
+	var ws := DisplayServer.window_get_size()
+	if _rotate_layer:
+		_rotate_layer.visible = ws.y > ws.x * 1.05
+
+
+## Web/mobile builds have no system fonts; DejaVu Sans supplies the symbols
+## (arrows, pips, triangles) missing from Godot's default font.
+func _install_symbol_fallback() -> void:
+	var dv: Font = load("res://assets/fonts/DejaVuSans.ttf")
+	var base := ThemeDB.fallback_font
+	if dv and base and not base.fallbacks.has(dv):
+		var fb := base.fallbacks.duplicate()
+		fb.append(dv)
+		base.fallbacks = fb

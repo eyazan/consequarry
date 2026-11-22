@@ -15,14 +15,14 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var p := PanelContainer.new()
 	p.set_anchors_preset(Control.PRESET_CENTER_LEFT)
-	p.offset_left = 60
+	p.offset_left = 20 if GameSettings.compact else 60
 	p.grow_vertical = Control.GROW_DIRECTION_BOTH
 	p.custom_minimum_size = Vector2(380, 0)
 	add_child(p)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 10)
 	p.add_child(vb)
-	vb.add_child(UIKit.label("CONSEQUARRY", 40, Palette.ACCENT))
+	vb.add_child(UIKit.label("CONSEQUARRY", 30 if GameSettings.compact else 40, Palette.ACCENT))
 	vb.add_child(UIKit.label("Every consequence must go somewhere.", 16, Palette.TEXT_DIM))
 	vb.add_child(HSeparator.new())
 	var first: Button = null

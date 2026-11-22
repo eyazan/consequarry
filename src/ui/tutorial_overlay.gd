@@ -7,12 +7,12 @@ signal finished
 
 const STEPS := [
 	{"text": "[b]You don't build this valley.[/b] Its people do.\nYou decide where the [color=#ffb347]consequences[/color] of what they do end up.", "wait": "next"},
-	{"text": "A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.\n\n[color=#ffb347]Click the orange Heat orb above Industry.[/color]", "wait": "select_heat"},
-	{"text": "Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).\n\n[color=#ffb347]Press Redirect, then click the glowing Energy district.[/color]", "wait": "redirect_energy"},
+	{"text": "A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.\n\n[color=#ffb347]Select the orange Heat orb above Industry.[/color]", "wait": "select_heat"},
+	{"text": "Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).\n\n[color=#ffb347]Press Redirect, then choose the glowing Energy district.[/color]", "wait": "redirect_energy"},
 	{"text": "Notice the small orb left at Industry: [b]20% always leaks[/b]. Rerouting is never clean.\n\n[color=#ffb347]Now select the Heat at Energy and press Transform: Thermal Capture.[/color]", "wait": "transform"},
-	{"text": "Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.\n\n[color=#ffb347]Press END SEASON (Space) and watch where everything lands.[/color]", "wait": "end_turn"},
+	{"text": "Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.\n\n[color=#ffb347]Press END (Space) and watch where everything lands.[/color]", "wait": "end_turn"},
 	{"text": "Pipes are [b]causal links[/b]: healthy systems support neighbours, failing ones drag them down next season (numbers on the pipes). The left panel forecasts next season's event.", "wait": "next"},
-	{"text": "[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.\n[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.\nClick a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.", "wait": "next"},
+	{"text": "[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.\n[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.\nSelect a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.", "wait": "next"},
 ]
 
 var step := 0
@@ -25,7 +25,7 @@ func _ready() -> void:
 	UIKit.fill_viewport(self)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel = PanelContainer.new()
-	panel.position = Vector2(10, 282)
+	panel.position = Vector2(10, 58) if GameSettings.compact else Vector2(10, 282)
 	panel.custom_minimum_size = Vector2(250, 0)
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.1, 0.09, 0.06, 0.95)
@@ -43,7 +43,7 @@ func _ready() -> void:
 	head.add_child(t)
 	head.add_child(UIKit.button("Skip", _finish))
 	vb.add_child(head)
-	text = UIKit.rich("", 13)
+	text = UIKit.rich("", 10 if GameSettings.compact else 13)
 	text.custom_minimum_size = Vector2(222, 0)
 	vb.add_child(text)
 	next_btn = UIKit.button("Next ▶", _advance)

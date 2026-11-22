@@ -39,7 +39,7 @@ func bob() -> Vector2:
 
 
 func contains_point(local: Vector2) -> bool:
-	return (local - bob()).length() <= radius() + 6
+	return (local - bob()).length() <= radius() + (16.0 if GameSettings.compact else 6.0)
 
 
 func _draw() -> void:

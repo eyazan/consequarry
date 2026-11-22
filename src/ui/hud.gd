@@ -25,15 +25,59 @@ var right_box: VBoxContainer
 var end_btn: Button
 var toast_label: Label
 var _toast_t := 0.0
+var left_panel: PanelContainer
+var right_panel: PanelContainer
+var right_scroll: ScrollContainer
+var title_label: Label
+var season_btn: Button
+var compact := false
+var top_hbox: HBoxContainer
+var settings_btn: Button
+var _right_active := false
 
 
 func _ready() -> void:
 	UIKit.fill_viewport(self)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	compact = GameSettings.compact
 	_build_top()
 	_build_left()
 	_build_right()
 	_build_bottom()
+	_apply_compact()
+
+
+func _apply_compact() -> void:
+	title_label.visible = not compact
+	top_seed.visible = not compact
+	season_btn.visible = compact
+	left_panel.visible = not compact
+	top_instab.custom_minimum_size = Vector2(50 if compact else 110, 14)
+	if compact:
+		top_hbox.add_theme_constant_override("separation", 10)
+		undo_btn.text = "Undo"
+		settings_btn.text = "Options"
+	if compact:
+		left_panel.position = Vector2(10, 56)
+		right_panel.offset_top = 56
+		end_btn.text = "END ▶"
+		end_btn.offset_left = -150
+		end_btn.offset_top = -58
+		end_btn.offset_right = -10
+		end_btn.offset_bottom = -10
+
+
+## Width of the screen-left area the map must avoid.
+func left_reserved() -> float:
+	return 260.0 if left_panel.visible else 10.0
+
+
+func right_reserved() -> float:
+	return 340.0 if right_panel.visible else 10.0
+
+
+func toggle_left() -> void:
+	left_panel.visible = not left_panel.visible
 
 
 func _build_top() -> void:
@@ -46,8 +90,11 @@ func _build_top() -> void:
 	var hb := HBoxContainer.new()
 	hb.add_theme_constant_override("separation", 18)
 	bar.add_child(hb)
-	var title := UIKit.label("CONSEQUARRY", 18, Palette.ACCENT)
-	hb.add_child(title)
+	top_hbox = hb
+	title_label = UIKit.label("CONSEQUARRY", 18, Palette.ACCENT)
+	hb.add_child(title_label)
+	season_btn = UIKit.button("Season ▾", toggle_left, "Events, forecast and world memory")
+	hb.add_child(season_btn)
 	top_season = UIKit.label("Season 1/12", 16)
 	hb.add_child(top_season)
 	top_ap = UIKit.label("Actions ●●●", 16, Palette.ACCENT)
@@ -90,7 +137,8 @@ func _build_top() -> void:
 	hb.add_child(top_seed)
 	undo_btn = UIKit.button("Undo (Z)", func(): undo_pressed.emit(), "Undo your last action this season")
 	hb.add_child(undo_btn)
-	hb.add_child(UIKit.button("Settings", func(): settings_pressed.emit()))
+	settings_btn = UIKit.button("Settings", func(): settings_pressed.emit())
+	hb.add_child(settings_btn)
 	hb.add_child(UIKit.button("Menu", func(): menu_pressed.emit()))
 
 
@@ -104,6 +152,7 @@ func _section(parent: Container, title: String) -> VBoxContainer:
 
 func _build_left() -> void:
 	var p := PanelContainer.new()
+	left_panel = p
 	p.position = Vector2(10, 66)
 	p.custom_minimum_size = Vector2(250, 0)
 	add_child(p)
@@ -126,10 +175,14 @@ func _build_right() -> void:
 	p.offset_top = 66
 	p.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	add_child(p)
+	right_panel = p
+	right_scroll = ScrollContainer.new()
+	right_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	p.add_child(right_scroll)
 	right_box = VBoxContainer.new()
 	right_box.custom_minimum_size = Vector2(296, 0)
 	right_box.add_theme_constant_override("separation", 7)
-	p.add_child(right_box)
+	right_scroll.add_child(right_box)
 
 
 func _build_bottom() -> void:
@@ -168,6 +221,14 @@ func _build_bottom() -> void:
 
 
 func _process(delta: float) -> void:
+	# Right panel grows with content but never past the screen; it scrolls instead.
+	var max_h := size.y - right_panel.offset_top - (10.0 if compact else 90.0) - 24.0
+	if compact:
+		end_btn.visible = not _right_active
+	var want := right_box.get_combined_minimum_size().y
+	right_scroll.custom_minimum_size = Vector2(300, clampf(want, 40.0, maxf(80.0, max_h)))
+	right_panel.size.y = 0
+	right_panel.visible = (not compact) or _right_active
 	if _toast_t > 0:
 		_toast_t -= delta
 		toast_label.modulate.a = clampf(_toast_t, 0, 1)
@@ -183,14 +244,15 @@ func toast(text: String, color: Color = Palette.ACCENT, dur: float = 3.0) -> voi
 # ------------------------------------------------------------------ refresh
 
 func refresh(w: WorldState, can_undo: bool, busy: bool) -> void:
-	top_season.text = "Season %d / %d" % [w.turn, w.max_turns]
-	top_ap.text = "Actions " + "●".repeat(w.action_points) + "○".repeat(maxi(0, w.actions_per_turn - w.action_points))
+	var pips := "●".repeat(w.action_points) + "○".repeat(maxi(0, w.actions_per_turn - w.action_points))
+	top_season.text = ("%d/%d" if compact else "Season %d / %d") % [w.turn, w.max_turns]
+	top_ap.text = pips if compact else "Actions " + pips
 	var st := w.stability_index()
-	top_stability.text = "Stability %d" % st
+	top_stability.text = ("Stab %d" if compact else "Stability %d") % st
 	top_stability.add_theme_color_override("font_color", Palette.GOOD if st >= 55 else (Palette.ACCENT if st >= 35 else Palette.BAD))
 	top_instab.value = w.instability
-	top_instab_label.text = "Instability %d" % w.instability
-	top_reserve.text = "Reserve %d" % w.reserve
+	top_instab_label.text = ("Inst %d" if compact else "Instability %d") % w.instability
+	top_reserve.text = ("Res %d" if compact else "Reserve %d") % w.reserve
 	top_seed.text = SeedCode.encode(w.run_seed)
 	undo_btn.disabled = not can_undo or busy
 	end_btn.disabled = busy or w.is_over()
@@ -247,7 +309,16 @@ func _fill_memory(w: WorldState) -> void:
 
 # ------------------------------------------------------------------ right panel
 
+func _close_row() -> void:
+	if compact:
+		var b := UIKit.button("✕ Close", func(): cancel_pressed.emit())
+		b.size_flags_horizontal = Control.SIZE_SHRINK_END
+		right_box.add_child(b)
+
+
 func show_idle(w: WorldState) -> void:
+	_right_active = false
+	right_scroll.scroll_vertical = 0
 	UIKit.clear(right_box)
 	right_box.add_child(UIKit.label("CONSEQUENCES", 13, Palette.TEXT_DIM))
 	right_box.add_child(UIKit.label("Every consequence must go somewhere.", 15, Palette.ACCENT, true))
@@ -266,7 +337,10 @@ func show_idle(w: WorldState) -> void:
 		if not ContentDB.is_positive(c.type):
 			harm += c.current_magnitude
 	right_box.add_child(UIKit.label("%d consequences arrive this season (%d harm)." % [arriving, harm], 13, Palette.TEXT_DIM, true))
-	right_box.add_child(UIKit.label("Keys: Tab next orb · 1-4 actions · Space end season · Z undo · Esc cancel", 11, Palette.TEXT_DIM, true))
+	if compact:
+		right_box.add_child(UIKit.label("Tap an orb to route it. Tap a district to inspect it.", 12, Palette.TEXT_DIM, true))
+	else:
+		right_box.add_child(UIKit.label("Keys: Tab next orb · 1-4 actions · Space end season · Z undo · Esc cancel", 11, Palette.TEXT_DIM, true))
 
 
 func _predict_text(pv: Dictionary, sys_name: String) -> String:
@@ -280,7 +354,9 @@ func _predict_text(pv: Dictionary, sys_name: String) -> String:
 
 
 func show_consequence(w: WorldState, c: Consequence, mode: String) -> void:
+	_right_active = true
 	UIKit.clear(right_box)
+	_close_row()
 	var td := ContentDB.type_def(c.type)
 	var hb := HBoxContainer.new()
 	hb.add_child(GlyphIcon.make(c.type, 30))
@@ -363,7 +439,10 @@ func _action_button(kind: String, text: String, tip: String, w: WorldState, c: C
 
 
 func show_district(w: WorldState, sid: String) -> void:
+	_right_active = true
+	right_scroll.scroll_vertical = 0
 	UIKit.clear(right_box)
+	_close_row()
 	var s := w.system(sid)
 	var sd := ContentDB.system_def(sid)
 	right_box.add_child(UIKit.label(String(sd["name"]).to_upper(), 22, Palette.system_color(sid)))

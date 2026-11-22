@@ -1,0 +1,83 @@
+<title>CONSEQUARRY</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* One-screen game page: the canvas fills the frame; a loader sits over it until the engine starts. Single dark look by design. */
+:root { --bg: #12141c; --panel: #1d2230; --fg: #e9e6dc; --dim: #9aa0ad; --accent: #ffb347; --bad: #ff5c57; color-scheme: dark; }
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); overflow: hidden; }
+body { font-family: "Inter", system-ui, -apple-system, sans-serif; }
+#canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; background: var(--bg); }
+#loader { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.card { display: grid; gap: 14px; width: min(420px, 100%); text-align: left; }
+h1 { margin: 0; font-size: 2rem; letter-spacing: 0.06em; color: var(--accent); text-wrap: balance; }
+.tag { margin: 0; color: var(--dim); }
+.bar { height: 8px; border-radius: 4px; background: var(--panel); overflow: hidden; }
+.fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.2s; }
+#status { margin: 0; font-size: 0.85rem; color: var(--dim); font-variant-numeric: tabular-nums; }
+#status.error { color: var(--bad); }
+.hint { margin: 0; font-size: 0.8rem; color: var(--dim); }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+</style>
+<canvas id="canvas" tabindex="0">Your browser does not support canvas.</canvas>
+<div id="loader">
+  <div class="card">
+    <h1>CONSEQUARRY</h1>
+    <p class="tag">Every consequence must go somewhere.</p>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <p id="status">Loading the valley…</p>
+    <p class="hint">P0 prototype. Best played in landscape. First load downloads about 40 MB.</p>
+  </div>
+</div>
+<script>
+// The engine binary is published in parts (hosting limit per file); stitch them
+// back together whenever the engine asks for index.wasm.
+(function () {
+  const PARTS = __PARTS__;
+  const realFetch = window.fetch.bind(window);
+  window.fetch = async function (input, init) {
+    const url = typeof input === 'string' ? input : input.url;
+    if (/index\.wasm(\?.*)?$/.test(url)) {
+      const chunks = [];
+      for (let i = 0; i < PARTS; i++) {
+        const r = await realFetch('index.part' + i + '.wasm');
+        if (!r.ok) throw new Error('Missing engine part ' + i + ' (HTTP ' + r.status + ')');
+        chunks.push(new Uint8Array(await r.arrayBuffer()));
+        setStatus('Loading engine ' + (i + 1) + '/' + PARTS + '…', (i + 1) / PARTS * 90);
+      }
+      const blob = new Blob(chunks, { type: 'application/wasm' });
+      return new Response(blob, { status: 200, headers: { 'Content-Type': 'application/wasm', 'Content-Length': String(blob.size) } });
+    }
+    if (/index\.pck(\?.*)?$/.test(url)) {
+      const r = await realFetch('index.pck.wasm');
+      const b = await r.arrayBuffer();
+      return new Response(b, { status: r.status, headers: { 'Content-Type': 'application/octet-stream', 'Content-Length': String(b.byteLength) } });
+    }
+    return realFetch(input, init);
+  };
+  window.setStatus = function (text, pct) {
+    document.getElementById('status').textContent = text;
+    if (pct !== undefined) document.getElementById('fill').style.width = Math.min(100, pct) + '%';
+  };
+})();
+</script>
+<script src="index.js"></script>
+<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":__PCK_SIZE__,"index.wasm":__WASM_SIZE__},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":""};
+const engine = new Engine(GODOT_CONFIG);
+const missing = Engine.getMissingFeatures({ threads: false });
+if (missing.length) {
+  const s = document.getElementById('status');
+  s.className = 'error';
+  s.textContent = 'This browser is missing: ' + missing.join(', ') + '. Try Safari or Chrome.';
+} else {
+  engine.startGame({
+    onProgress: function (cur, total) { if (total > 0) setStatus('Loading… ' + Math.round(cur / total * 100) + '%', cur / total * 100); },
+  }).then(function () {
+    document.getElementById('loader').hidden = true;
+  }, function (err) {
+    const s = document.getElementById('status');
+    s.className = 'error';
+    s.textContent = 'Could not start: ' + (err && err.message ? err.message : err);
+  });
+}
+</script>

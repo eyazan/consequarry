@@ -255,7 +255,7 @@ func _draw_label() -> void:
 	var name_s := String(ContentDB.system_def(system_id)["name"]).to_upper()
 	var y := H / 2 + T + 18
 	var col := Palette.system_color(system_id)
-	draw_string(font, Vector2(-80, y), name_s, HORIZONTAL_ALIGNMENT_CENTER, 160, 13, col.lightened(0.25))
+	draw_string(font, Vector2(-80, y), name_s, HORIZONTAL_ALIGNMENT_CENTER, 160, 15 if GameSettings.compact else 13, col.lightened(0.25))
 	# health bar
 	var bw := 108.0
 	var by := y + 6

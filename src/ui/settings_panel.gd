@@ -51,6 +51,13 @@ func _ready() -> void:
 	fs.button_pressed = GameSettings.fullscreen
 	fs.toggled.connect(func(v): GameSettings.fullscreen = v; GameSettings.apply())
 	vb.add_child(fs)
+	vb.add_child(UIKit.label("Layout (applies on restart)", 14))
+	var lo := OptionButton.new()
+	for n in GameSettings.LAYOUT_NAMES:
+		lo.add_item(n)
+	lo.selected = GameSettings.layout_mode
+	lo.item_selected.connect(func(i): GameSettings.layout_mode = i)
+	vb.add_child(lo)
 	vb.add_child(UIKit.label("Consequence types are always shape-coded for colour-blind play.", 12, Palette.TEXT_DIM, true))
 	var close := UIKit.button("Close", _close)
 	vb.add_child(close)

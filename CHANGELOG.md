@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1-p0.5 — 2026-11-22
+- Export presets for Web, Windows, macOS (universal, ad-hoc signed), Linux and iOS (Xcode project).
+- Compact touch layout for phones: larger canvas scale, collapsible Season panel, scrollable detail panel, bigger tap targets, rotate-to-landscape guard; Settings → Layout override.
+- Embedded DejaVu Sans symbol fallback (web/mobile have no system fonts).
+- "Copy run report" on the end screen and a playtest guide.
+- Web packaging script for size-limited hosting (split engine binary).
+
 ## 0.1.0-p0 — 2026-11-22
 - Deterministic integer simulation: 6 systems, 5 consequence types, 10 events, 5 interventions, 3 transformations, 6 controlled crises, causal graph, world memory, cascades, scars.
 - Consequence ledger with conservation invariants (I1–I3), verified in tests and every batch run.
