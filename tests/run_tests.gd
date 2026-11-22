@@ -17,7 +17,7 @@ func _init() -> void:
 		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
 		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
 		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
-		"test_collapsed_target_rejected", "test_save_system_file",
+		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution",
 	]
 	for t in tests:
 		current = t
@@ -278,3 +278,30 @@ func test_save_system_file() -> void:
 	check(loaded != null and loaded.state_hash() == w.state_hash(), "file roundtrip mismatch")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	check(SaveSystem.load_world("user://does_not_exist.json") == null, "missing file must return null")
+
+
+func test_seed_code() -> void:
+	for v in [0, 1, 12345, 2147483647, 99999999]:
+		check(SeedCode.decode(SeedCode.encode(v)) == v, "seed code roundtrip %d" % v)
+	check(SeedCode.decode("nonsense") == -1, "invalid code accepted")
+
+
+func test_preview_matches_resolution() -> void:
+	# For every consequence landing this turn, the exact preview must equal the resolution.
+	for seed_v in range(500, 540):
+		var w := SimulationEngine.new_run("p0_valley", seed_v)
+		var previews := {}
+		for c in w.ledger.pending_landing_on(w.turn):
+			if not ContentDB.is_positive(c.type):
+				previews[c.id] = SimulationEngine.preview_landing(w, c.type, c.current_magnitude, c.destination, c.id)
+		var health_before := {}
+		for id in w.systems:
+			health_before[id] = w.system(id).health
+		var report := SimulationEngine.end_turn(w)
+		var seen_dest := {}
+		for l in report["landings"]:
+			# Only the first landing per system is independent of earlier health clamping.
+			if previews.has(l["id"]) and not seen_dest.has(l["to"]):
+				check(l["delta"] == previews[l["id"]]["delta"], "seed %d C%d preview %d vs actual %d" % [seed_v, l["id"], previews[l["id"]]["delta"], l["delta"]])
+				check(l["absorbed"] == previews[l["id"]]["absorbed"], "absorbed mismatch")
+			seen_dest[l["to"]] = true

@@ -24,6 +24,7 @@ var current_events: Array = []        # event ids that fired this turn
 var queued_effects: Array = []        # causal deltas to apply at next resolution
 var actions_log: Array = []           # Intervention dicts with turn
 var history: Array = []               # per-turn {turn, health:{}, instability, reserve}
+var damage_by_source: Dictionary = {} # system -> {source label -> health lost}
 var outcome: String = ""              # "", "victory", "defeat"
 var outcome_reason: String = ""
 var last_focus_id: int = -1           # transient UI hint (not saved)
@@ -86,7 +87,7 @@ func to_dict() -> Dictionary:
 		"ledger": ledger.to_dict(), "memory": memory.to_dict(), "rng_state": rng.state,
 		"forecast": forecast.duplicate(), "current_events": current_events.duplicate(),
 		"queued_effects": queued_effects.duplicate(true), "actions_log": actions_log.duplicate(true),
-		"history": history.duplicate(true), "outcome": outcome, "outcome_reason": outcome_reason,
+		"history": history.duplicate(true), "damage_by_source": damage_by_source.duplicate(true), "outcome": outcome, "outcome_reason": outcome_reason,
 	}
 
 
@@ -132,6 +133,7 @@ static func from_dict(raw: Dictionary) -> WorldState:
 		w.queued_effects.append({"from": String(e["from"]), "to": String(e["to"]), "delta": int(e["delta"]), "kind": String(e["kind"])})
 	w.actions_log = d["actions_log"].duplicate(true)
 	w.history = d["history"].duplicate(true)
+	w.damage_by_source = d.get("damage_by_source", {}).duplicate(true)
 	w.outcome = String(d["outcome"])
 	w.outcome_reason = String(d["outcome_reason"])
 	return w

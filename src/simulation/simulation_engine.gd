@@ -276,6 +276,63 @@ static func available_actions(w: WorldState) -> Array[Intervention]:
 	return out
 
 
+## Predicted health change if `magnitude` of `type` landed on `dest` now.
+## Pure: does not mutate the world. Ignores spill (shown separately).
+## before_id: only consequences resolving earlier (lower id) claim capacity first;
+## -1 means "a new consequence" (resolves after everything already pending).
+static func preview_landing(w: WorldState, type: String, magnitude: int, dest: String, before_id: int = -1) -> Dictionary:
+	var s := w.system(dest)
+	var vuln := ContentDB.vulnerability(type, dest)
+	if ContentDB.is_positive(type):
+		var heal := ContentDB.pct(magnitude, vuln)
+		return {"delta": mini(heal, s.max_health - s.health), "absorbed": 0, "spill": 0}
+	# Capacity already claimed by other consequences landing here this turn.
+	var claimed := 0
+	for c in w.ledger.pending_landing_on(w.turn):
+		if c.destination == dest and not ContentDB.is_positive(c.type) and (before_id < 0 or c.id < before_id):
+			claimed += c.current_magnitude
+	var remaining := maxi(0, s.remaining_capacity(w.memory) - claimed)
+	var absorbed := mini(magnitude, remaining)
+	var excess := magnitude - absorbed
+	var spill := excess / 2 if excess >= _r("spill_min") * 2 and _spill_target(w, dest) != "" else 0
+	var landed := magnitude - spill
+	var effect := ContentDB.pct(absorbed, vuln * _r("absorb_effect_percent") / 100) + ContentDB.pct(landed - absorbed, vuln)
+	effect = ContentDB.pct(effect, 100 - w.memory.resilience(dest))
+	return {"delta": -mini(effect, s.health), "absorbed": absorbed, "spill": spill}
+
+
+## Follows routing (split/redirect/leak) back to the consequence's true origin,
+## so post-mortems blame the event, not the routing step.
+static func origin_label(w: WorldState, c: Consequence) -> String:
+	var cur := c
+	var routed := false
+	var guard := 0
+	while guard < 32 and cur.parent_id >= 0 and (cur.source.begins_with("split:") or cur.source.begins_with("redirect:") or cur.source.begins_with("leak:")):
+		routed = true
+		cur = w.ledger.get_c(cur.parent_id)
+		guard += 1
+	return source_label(cur.source) + (" (routed)" if routed else "")
+
+
+## Human-readable origin of a consequence source string.
+static func source_label(source: String) -> String:
+	var parts := source.split(":")
+	var kind := parts[0]
+	var rest := parts[1] if parts.size() > 1 else ""
+	match kind:
+		"event": return ContentDB.event_def(rest).get("name", rest)
+		"crisis": return ContentDB.crisis_def(rest).get("name", rest) + " (your crisis)"
+		"transform": return ContentDB.transformation_def(rest).get("name", rest)
+		"residue": return ContentDB.transformation_def(rest).get("name", rest) + " residue"
+		"spill": return "Overflow from " + ContentDB.system_def(rest).get("name", rest)
+		"cascade": return "Failure of " + ContentDB.system_def(rest).get("name", rest)
+		"delay": return "Deferred strain"
+		"redirect": return "Rerouted"
+		"leak": return "Rerouting leak"
+		"split": return "Split share"
+	return source
+
+
 # ---------------------------------------------------------------- resolution
 
 ## Resolves the turn. Returns a report the presentation layer animates.
@@ -338,6 +395,11 @@ static func _land_consequences(w: WorldState, report: Dictionary) -> void:
 			var was_collapsed := s.collapsed
 			s.apply_delta(-effect)
 			landing["delta"] = s.health - before
+			if before - s.health > 0:
+				var bucket: Dictionary = w.damage_by_source.get(s.id, {})
+				var label := origin_label(w, c)
+				bucket[label] = int(bucket.get(label, 0)) + (before - s.health)
+				w.damage_by_source[s.id] = bucket
 			landing["absorbed"] = absorbed
 			var r_before := w.memory.resilience(s.id)
 			w.memory.add(w.memory.harm_absorbed, s.id, landed)

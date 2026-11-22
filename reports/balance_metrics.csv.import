@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cmob0uv3yyrlg"
+
+[deps]
+
+files=["res://reports/balance_metrics.runs.translation", "res://reports/balance_metrics.win.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.redirect.translation", "res://reports/balance_metrics.split.translation", "res://reports/balance_metrics.delay.translation", "res://reports/balance_metrics.transform.translation", "res://reports/balance_metrics.crisis.translation", "res://reports/balance_metrics.unsustainable.translation", "res://reports/balance_metrics.multi.translation", "res://reports/balance_metrics.population.translation", "res://reports/balance_metrics.instability.translation", "res://reports/balance_metrics.avg.translation"]
+
+source_file="res://reports/balance_metrics.csv"
+dest_files=["res://reports/balance_metrics.runs.translation", "res://reports/balance_metrics.win.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.avg.translation", "res://reports/balance_metrics.redirect.translation", "res://reports/balance_metrics.split.translation", "res://reports/balance_metrics.delay.translation", "res://reports/balance_metrics.transform.translation", "res://reports/balance_metrics.crisis.translation", "res://reports/balance_metrics.unsustainable.translation", "res://reports/balance_metrics.multi.translation", "res://reports/balance_metrics.population.translation", "res://reports/balance_metrics.instability.translation", "res://reports/balance_metrics.avg.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
