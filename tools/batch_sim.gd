@@ -84,6 +84,7 @@ func _init() -> void:
 	f.store_string(JSON.stringify(summary, "  ", false))
 	f.close()
 	_write_csv(results)
+	preload("res://tools/report_writer.gd").write_md(summary)
 	print("total_runs=%d invariant_failures=%d determinism_failures=%d all_lost=%d dominant=%s elapsed=%.1fs mem=%.1fMB" % [
 		total_runs, invariant_failures.size(), det_fail, all_lost, str(dominant), summary["elapsed_s"], summary["peak_static_memory_mb"]])
 	quit(0 if invariant_failures.is_empty() and det_fail == 0 else 1)
@@ -182,3 +183,4 @@ func _write_csv(results: Dictionary) -> void:
 			int(o.get("unsustainable", 0)), int(o.get("multi_collapse", 0)), int(o.get("population_collapse", 0)),
 			int(o.get("instability", 0)), r["avg_ms_per_run"]])
 	f.close()
+
