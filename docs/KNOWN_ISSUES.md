@@ -12,3 +12,4 @@
 | K-8 | Minor | Audio is placeholder synthesis; no music. | P1. |
 | K-9 | Minor | On narrow aspect ratios (< 1100 px wide logical) side panels can overlap the map. | Responsive layout pass in P1. |
 | K-10 | Info | Trademark/name is provisional; databases (USPTO/EUIPO/WIPO) not searched. | Owner action before Steam page. |
+| K-11 | Medium | 25 of 300 sampled seeds were lost by every bot strategy — possible unavoidable defeats, or bot weakness. | Replay those seeds by hand / with a stronger bot; if truly unwinnable, cap early event magnitude. |
