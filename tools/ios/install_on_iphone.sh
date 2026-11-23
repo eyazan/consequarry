@@ -11,6 +11,8 @@
 # Usage: tools/ios/install_on_iphone.sh            (auto-detects team id and device)
 #        TEAM_ID=ABCDE12345 tools/ios/install_on_iphone.sh
 set -euo pipefail
+# Use Apple's own tools first: third-party curl/python builds (e.g. Anaconda) can be the wrong CPU type.
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 
 GODOT_VERSION="4.7.2"
 BUNDLE_ID="${BUNDLE_ID:-com.eyazan.consequarry}"
@@ -33,13 +35,13 @@ say "Checking Godot ${GODOT_VERSION}"
 mkdir -p "$CACHE"
 GODOT="$CACHE/Godot.app/Contents/MacOS/Godot"
 if [[ ! -x "$GODOT" ]]; then
-  curl -L --fail -o "$CACHE/godot.zip" "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip"
+  /usr/bin/curl -L --fail -o "$CACHE/godot.zip" "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip"
   (cd "$CACHE" && unzip -q -o godot.zip && rm godot.zip)
   xattr -dr com.apple.quarantine "$CACHE/Godot.app" 2>/dev/null || true
 fi
 if [[ ! -f "$TEMPLATES/ios.zip" ]]; then
   say "Downloading Godot export templates (about 1.3 GB, one time only)"
-  curl -L --fail -o "$CACHE/templates.tpz" "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+  /usr/bin/curl -L --fail -o "$CACHE/templates.tpz" "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
   mkdir -p "$TEMPLATES"
   (cd "$CACHE" && unzip -q -o templates.tpz "templates/ios.zip" "templates/version.txt" && mv templates/* "$TEMPLATES/" && rm -rf templates templates.tpz)
 fi
@@ -86,12 +88,15 @@ rm -rf "$OUT" && mkdir -p "$OUT"
 "$GODOT" --headless --import >/dev/null 2>&1 || true
 "$GODOT" --headless --export-release "iOS" "$OUT/Consequarry.ipa" || fail "Godot iOS export failed."
 [[ -d "$OUT/Consequarry.xcodeproj" ]] || fail "Xcode project was not produced."
+# Godot sets the Release config to "Apple Distribution"; a free Apple ID can only sign for development.
+sed -i '' 's/"Apple Distribution"/"Apple Development"/g' "$OUT/Consequarry.xcodeproj/project.pbxproj"
 
 say "Building and signing (Xcode)"
 xcodebuild -project "$OUT/Consequarry.xcodeproj" -scheme Consequarry -configuration Release \
   -destination "id=$DEVICE_ID" -derivedDataPath "$DERIVED" \
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration \
   DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+  IPHONEOS_DEPLOYMENT_TARGET=15.0 \
   build | tail -20
 APP="$(find "$DERIVED/Build/Products" -maxdepth 2 -name '*.app' -path '*iphoneos*' | head -1)"
 [[ -n "$APP" ]] || fail "Build finished but no .app was found."

@@ -12,7 +12,7 @@ Built with `godot --headless --export-release "<preset>" <path>` (presets in `ex
 | iOS | `builds/ios/` Xcode project | ⚠️ Project exported, not built | Needs a Mac with Xcode, see below |
 
 ## iOS native install by cable (owner has a Mac)
-`tools/ios/install_on_iphone.sh` on the Mac: downloads Godot + iOS template (one time), detects the Apple team from Xcode, exports, builds/signs with `xcodebuild -allowProvisioningUpdates`, installs with `xcrun devicectl`. Free Apple ID: app expires after 7 days (re-run). Not yet executed on real hardware.
+`tools/ios/install_on_iphone.sh` on the Mac: downloads Godot + iOS template (one time), detects the Apple team from Xcode, exports, builds/signs with `xcodebuild -allowProvisioningUpdates`, installs with `xcrun devicectl`. Free Apple ID: app expires after 7 days (re-run). **Verified 2026-11-23:** built with Xcode 27.2 and installed on an iPhone 14 Pro Max (bundle `com.eyazan.consequarry`). Fixes needed on the way: system `curl` (Anaconda curl is x86), iOS minimum 15.0, Release signing identity switched to Apple Development.
 
 ## Steam readiness
 Windows/macOS/Linux builds are already produced in a Steam-compatible form (self-contained executables, offline, no accounts). Remaining for Steam: Steamworks partner account + app fee (USD 100, **paid — needs owner approval**), store page assets, optional Steamworks SDK (achievements/cloud) via GodotSteam, SteamPipe upload scripts. Planned for P1 after human playtest validation.
