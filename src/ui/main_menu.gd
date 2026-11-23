@@ -22,12 +22,19 @@ func _ready() -> void:
 	p.grow_vertical = Control.GROW_DIRECTION_BOTH
 	p.custom_minimum_size = Vector2(380, 0)
 	add_child(p)
+	# Scrolls on short (phone) screens instead of running off the top and bottom.
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	p.add_child(scroll)
 	var vb := VBoxContainer.new()
-	vb.add_theme_constant_override("separation", 10)
-	p.add_child(vb)
-	vb.add_child(UIKit.label("CONSEQUARRY", 30 if GameSettings.compact else 40, Palette.ACCENT))
-	vb.add_child(UIKit.label("Every consequence must go somewhere.", 16, Palette.TEXT_DIM))
-	vb.add_child(HSeparator.new())
+	vb.add_theme_constant_override("separation", 6 if GameSettings.compact else 10)
+	vb.custom_minimum_size = Vector2(356, 0)
+	scroll.add_child(vb)
+	vb.resized.connect(func(): scroll.custom_minimum_size = Vector2(360, minf(vb.size.y, size.y - 24.0)))
+	vb.add_child(UIKit.label("CONSEQUARRY", 26 if GameSettings.compact else 40, Palette.ACCENT))
+	if not GameSettings.compact:
+		vb.add_child(UIKit.label("Every consequence must go somewhere.", 16, Palette.TEXT_DIM))
+		vb.add_child(HSeparator.new())
 	var first: Button = null
 	if SaveSystem.has_run():
 		first = UIKit.button("Continue", func(): continue_run.emit())
@@ -41,7 +48,7 @@ func _ready() -> void:
 		vb.add_child(tut)
 		vb.add_child(newb)
 	if first == null:
-		first = vb.get_child(3) as Button
+		first = tut if not GameSettings.tutorial_done else newb
 	var d := SeedCode.today()
 	var best := GameSettings.daily_best(d["date"])
 	var daily_btn := UIKit.button(Loc.t("Daily valley · %s · %s") % [d["date"], Loc.scenario(d["scenario"])], func(): start_daily.emit(),
@@ -59,7 +66,8 @@ func _ready() -> void:
 	scenario_desc.custom_minimum_size = Vector2(340, 0)
 	scenario_pick.item_selected.connect(func(_i): _update_desc())
 	vb.add_child(scenario_pick)
-	vb.add_child(scenario_desc)
+	if not GameSettings.compact:
+		vb.add_child(scenario_desc)
 	_update_desc()
 	var row := HBoxContainer.new()
 	seed_edit = LineEdit.new()
