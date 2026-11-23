@@ -17,7 +17,7 @@ func _init() -> void:
 		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
 		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
 		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
-		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution",
+		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score",
 	]
 	for t in tests:
 		current = t
@@ -305,3 +305,47 @@ func test_preview_matches_resolution() -> void:
 				check(l["delta"] == previews[l["id"]]["delta"], "seed %d C%d preview %d vs actual %d" % [seed_v, l["id"], previews[l["id"]]["delta"], l["delta"]])
 				check(l["absorbed"] == previews[l["id"]]["absorbed"], "absorbed mismatch")
 			seen_dest[l["to"]] = true
+
+
+func test_scenarios() -> void:
+	for sid in ["p0_valley", "dry_season", "boomtown"]:
+		var a := SimulationEngine.new_run(sid, 4242)
+		var b := SimulationEngine.new_run(sid, 4242)
+		_play_random(a, DetRng.new(3), true)
+		_play_random(b, DetRng.new(3))
+		check(a.state_hash() == b.state_hash(), "%s not deterministic" % sid)
+		check(a.is_over(), "%s did not finish" % sid)
+	var d := SimulationEngine.new_run("dry_season", 1)
+	check(absi(d.system("agriculture").health - 62) <= 4, "dry_season start health override not applied")
+	var bt := SimulationEngine.new_run("boomtown", 1)
+	check(absi(bt.system("industry").health - 84) <= 4, "boomtown start health override not applied")
+	# Event weighting: heat-themed events dominate a dry season.
+	var heat := 0
+	var other := 0
+	for k in 200:
+		var w := SimulationEngine.new_run("dry_season", 1000 + k)
+		for e in w.current_events:
+			if e == "heatwave" or e == "wildfire":
+				heat += 1
+			else:
+				other += 1
+	check(heat * 3 > other, "dry season should favour heat events (%d vs %d)" % [heat, other])
+
+
+func test_daily_and_score() -> void:
+	var a := SeedCode.daily({"year": 2026, "month": 11, "day": 23})
+	var b := SeedCode.daily({"year": 2026, "month": 11, "day": 23})
+	var c := SeedCode.daily({"year": 2026, "month": 11, "day": 24})
+	check(a == b, "daily not stable for a date")
+	check(a["seed"] != c["seed"], "daily seed should change per day")
+	check(a["scenario"] != c["scenario"], "daily scenario should rotate")
+	check(ContentDB.scenario_def(a["scenario"]).size() > 0, "daily scenario exists")
+	var w := SimulationEngine.new_run("p0_valley", 9)
+	w.daily_date = "2026-11-23"
+	var r := WorldState.from_dict(w.to_dict())
+	check(r.daily_date == "2026-11-23", "daily date not saved")
+	_play_random(w, DetRng.new(9))
+	check(w.score() >= 0, "score negative")
+	var v := w.clone()
+	v.outcome = "victory"
+	check(v.score() > w.score() or w.outcome == "victory", "victory must dominate score")

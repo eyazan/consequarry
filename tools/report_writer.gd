@@ -1,7 +1,7 @@
 extends RefCounted
 ## Writes reports/balance_summary.md from a batch summary dictionary.
 static func write_md(summary: Dictionary) -> void:
-	var f := FileAccess.open("res://reports/balance_summary.md", FileAccess.WRITE)
+	var f := FileAccess.open("res://reports/balance_summary%s.md" % ("" if String(summary.get("scenario", "p0_valley")) == "p0_valley" else "_" + String(summary["scenario"])), FileAccess.WRITE)
 	f.store_line("# Balance Summary (auto-generated)\n")
 	f.store_line("Generated %s with Godot %s. %d runs in %.1f s. **Bot results are not human engagement evidence.**\n" % [summary["generated_at"], summary["engine"], summary["total_runs"], summary["elapsed_s"]])
 	f.store_line("| Strategy | Runs | Win % | Avg final avg health | Avg final min health | Main loss reason | ms/run |")

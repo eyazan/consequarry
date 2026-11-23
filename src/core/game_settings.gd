@@ -76,3 +76,27 @@ static func detect_compact() -> bool:
 static func apply_layout(window: Window) -> void:
 	compact = detect_compact()
 	window.content_scale_size = Vector2i(900, 460) if compact else Vector2i(1280, 720)
+
+
+# ------------------------------------------------------------------ daily best (local only)
+
+const DAILY_PATH := "user://daily.cfg"
+
+
+static func daily_best(date: String) -> int:
+	var cf := ConfigFile.new()
+	if cf.load(DAILY_PATH) != OK:
+		return -1
+	return int(cf.get_value("best", date, -1))
+
+
+## Returns true if this is a new best for the date.
+static func record_daily(date: String, score: int) -> bool:
+	var cf := ConfigFile.new()
+	cf.load(DAILY_PATH)
+	var prev := int(cf.get_value("best", date, -1))
+	if score > prev:
+		cf.set_value("best", date, score)
+		cf.save(DAILY_PATH)
+		return true
+	return false

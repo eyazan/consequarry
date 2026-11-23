@@ -3,10 +3,13 @@ extends Control
 ## Title screen over a living, decorative valley.
 
 signal start_run(scenario_id: String, run_seed: int)
+signal start_daily
 signal continue_run
 signal open_settings
 
 var seed_edit: LineEdit
+var scenario_pick: OptionButton
+var scenario_desc: Label
 var error_label: Label
 
 
@@ -30,7 +33,7 @@ func _ready() -> void:
 		first = UIKit.button("Continue", func(): continue_run.emit())
 		vb.add_child(first)
 	var tut := UIKit.button("Tutorial (2 min)" if not GameSettings.tutorial_done else "Replay tutorial", func(): start_run.emit("tutorial", 20261122))
-	var newb := UIKit.button("New valley", func(): start_run.emit("p0_valley", SeedCode.random_seed()))
+	var newb := UIKit.button("New valley", func(): start_run.emit(_scenario(), SeedCode.random_seed()))
 	if GameSettings.tutorial_done:
 		vb.add_child(newb)
 		vb.add_child(tut)
@@ -39,6 +42,25 @@ func _ready() -> void:
 		vb.add_child(newb)
 	if first == null:
 		first = vb.get_child(3) as Button
+	var d := SeedCode.today()
+	var best := GameSettings.daily_best(d["date"])
+	var daily_btn := UIKit.button("Daily valley · %s · %s" % [d["date"], ContentDB.scenario_def(d["scenario"])["name"]], func(): start_daily.emit(),
+		"Everyone gets the same valley today. Best score is kept on this device.")
+	vb.add_child(daily_btn)
+	if best >= 0:
+		vb.add_child(UIKit.label("Today's best score: %d" % best, 12, Palette.GOOD))
+	scenario_pick = OptionButton.new()
+	for sc in ContentDB.data()["scenarios"]:
+		if sc["id"] != "tutorial":
+			scenario_pick.add_item(String(sc["name"]))
+			scenario_pick.set_item_metadata(scenario_pick.item_count - 1, String(sc["id"]))
+	scenario_pick.tooltip_text = "Scenario"
+	scenario_desc = UIKit.label("", 12, Palette.TEXT_DIM, true)
+	scenario_desc.custom_minimum_size = Vector2(340, 0)
+	scenario_pick.item_selected.connect(func(_i): _update_desc())
+	vb.add_child(scenario_pick)
+	vb.add_child(scenario_desc)
+	_update_desc()
 	var row := HBoxContainer.new()
 	seed_edit = LineEdit.new()
 	seed_edit.placeholder_text = "CQ-XXXX-XXXX"
@@ -60,4 +82,12 @@ func _play_seed() -> void:
 	if v < 0:
 		error_label.text = "Invalid seed code."
 		return
-	start_run.emit("p0_valley", v)
+	start_run.emit(_scenario(), v)
+
+
+func _scenario() -> String:
+	return String(scenario_pick.get_item_metadata(scenario_pick.selected))
+
+
+func _update_desc() -> void:
+	scenario_desc.text = String(ContentDB.scenario_def(_scenario()).get("description", ""))

@@ -28,7 +28,8 @@ static func new_run(scenario_id: String, run_seed: int) -> WorldState:
 		var s := CivilizationSystem.new()
 		s.id = String(sd["id"])
 		# Small seeded variation so no two valleys start identical.
-		s.health = int(sd["start_health"]) + w.rng.between(-4, 4)
+		var base_health := int(sc.get("start_health", {}).get(s.id, sd["start_health"]))
+		s.health = base_health + w.rng.between(-4, 4)
 		s.base_capacity = int(sd["capacity"])
 		w.systems[s.id] = s
 	w.forecast = EventDirector.roll_events(w, 1)

@@ -17,7 +17,9 @@ func _ready() -> void:
 	RenderingServer.set_default_clear_color(Palette.BG)
 	var args := OS.get_cmdline_user_args()
 	var i := args.find("--autostart")
-	if i >= 0 and args.size() > i + 2:
+	if args.has("--daily"):
+		_start_daily()
+	elif i >= 0 and args.size() > i + 2:
 		_start(args[i + 1], int(args[i + 2]))
 	else:
 		_show_menu()
@@ -115,6 +117,7 @@ func _show_menu() -> void:
 	layer.add_child(menu)
 	menu.start_run.connect(_start)
 	menu.continue_run.connect(_continue)
+	menu.start_daily.connect(_start_daily)
 	menu.open_settings.connect(func():
 		var sp := SettingsPanel.new()
 		sp.theme = ui_theme
@@ -131,6 +134,14 @@ func _start(scenario_id: String, run_seed: int) -> void:
 	SaveSystem.clear_run()
 	var w := SimulationEngine.new_run(scenario_id, run_seed)
 	_launch(w, scenario_id == "tutorial")
+
+
+func _start_daily() -> void:
+	SaveSystem.clear_run()
+	var d := SeedCode.today()
+	var w := SimulationEngine.new_run(d["scenario"], d["seed"])
+	w.daily_date = d["date"]
+	_launch(w, false)
 
 
 func _continue() -> void:

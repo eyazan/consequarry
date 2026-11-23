@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.2 — 2026-11-23
+- Two new scenarios: **Dry Season** (heat/fire-heavy, weakened fields and forests) and **Boomtown** (booming industry, frequent accidents, strikes and spills). Scenario picker in the main menu.
+- Daily valley: same seed and scenario for everyone per UTC date (offline), run score, local best score per day.
 - Season report panel: every landing traced from origin to impact, causal-link drag, cascades, collapses and new world memory; reopenable from the idle panel.
 - iPhone install verified on device via `tools/ios/install_on_iphone.sh`.
 

@@ -13,3 +13,5 @@
 | D-009 | 2026-11-22 | Post-mortem attributes damage to the root origin through routing chains | "Split share (−26)" taught nothing; "Flood (routed)" does. |
 | D-010 | 2026-11-22 | No balance change for "unwinnable" seeds | Rollout planner rescued 20 of 25 seeds that every heuristic bot lost; remaining 5 are narrow misses. Evidence points to bot weakness, not impossible seeds. |
 | D-011 | 2026-11-22 | iPhone distribution via PWA on GitHub Pages from a separate public repo (`consequarry-play`), source repo stays private | Owner choice: free, no Mac, no 7-day re-signing; Godot web export already ships manifest, icons and offline service worker. |
+| D-012 | 2026-11-23 | Scenario tuning: Dry Season win avg ≥50 / min ≥20, start agri 62 / env 60, heat events ×2.2; Boomtown win 55/25 | First Dry Season pass: best bot 21% (too harsh). After: best ~50% (hard), passive 0%. Boomtown: best ~54%, passive 0.3%. 2,410 runs each, 0 invariant failures. |
+| D-013 | 2026-11-23 | Daily valley rotates scenarios by day index; score = 1000×victory + 10×avg + 5×min + reserve − 2×instability + 20×seasons | Offline, deterministic, shareable; victory always outranks any defeat. |

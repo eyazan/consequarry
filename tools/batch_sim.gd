@@ -10,6 +10,7 @@ func _init() -> void:
 	var runs := int(args[0]) if args.size() > 0 else 1500
 	var expert_runs := int(args[1]) if args.size() > 1 else 300
 	var seed_base := int(args[2]) if args.size() > 2 else 10000
+	scenario_id = args[3] if args.size() > 3 else "p0_valley"
 	var t0 := Time.get_ticks_msec()
 	var results := {}
 	var per_seed_outcomes := {}  # seed -> {strategy: outcome}
@@ -66,7 +67,7 @@ func _init() -> void:
 	var summary := {
 		"generated_at": Time.get_datetime_string_from_system(true),
 		"engine": Engine.get_version_info()["string"],
-		"seed_base": seed_base, "total_runs": total_runs,
+		"seed_base": seed_base, "scenario": scenario_id, "total_runs": total_runs,
 		"elapsed_s": snappedf((Time.get_ticks_msec() - t0) / 1000.0, 0.1),
 		"peak_static_memory_mb": snappedf(peak_mem / 1048576.0, 0.1),
 		"invariant_failure_runs": invariant_failures.size(),
@@ -80,18 +81,22 @@ func _init() -> void:
 		"disclaimer": "Automated bot results. Not evidence of human engagement or fun.",
 	}
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://reports"))
-	var f := FileAccess.open("res://reports/simulation_results.json", FileAccess.WRITE)
+	var suffix := "" if scenario_id == "p0_valley" else "_" + scenario_id
+	var f := FileAccess.open("res://reports/simulation_results%s.json" % suffix, FileAccess.WRITE)
 	f.store_string(JSON.stringify(summary, "  ", false))
 	f.close()
-	_write_csv(results)
+	_write_csv(results, suffix)
 	preload("res://tools/report_writer.gd").write_md(summary)
 	print("total_runs=%d invariant_failures=%d determinism_failures=%d all_lost=%d dominant=%s elapsed=%.1fs mem=%.1fMB" % [
 		total_runs, invariant_failures.size(), det_fail, all_lost, str(dominant), summary["elapsed_s"], summary["peak_static_memory_mb"]])
 	quit(0 if invariant_failures.is_empty() and det_fail == 0 else 1)
 
 
+var scenario_id := "p0_valley"
+
+
 func _run_one(strategy: String, run_seed: int) -> Dictionary:
-	var w := SimulationEngine.new_run("p0_valley", run_seed)
+	var w := SimulationEngine.new_run(scenario_id, run_seed)
 	var rng := DetRng.new(run_seed * 7 + 1)
 	var errors: Array = []
 	var guard := 0
@@ -170,8 +175,8 @@ func _finalize_agg(agg: Dictionary) -> Dictionary:
 		"avg_ms_per_run": agg.get("avg_ms_per_run", 0.0)}
 
 
-func _write_csv(results: Dictionary) -> void:
-	var f := FileAccess.open("res://reports/balance_metrics.csv", FileAccess.WRITE)
+func _write_csv(results: Dictionary, suffix: String = "") -> void:
+	var f := FileAccess.open("res://reports/balance_metrics%s.csv" % suffix, FileAccess.WRITE)
 	f.store_line("strategy,runs,win_rate,avg_final_avg_health,avg_final_min_health,avg_turns,avg_final_instability,redirect,split,delay,transform,crisis,unsustainable,multi_collapse,population_collapse,instability_loss,avg_ms_per_run")
 	for s in results:
 		var r: Dictionary = results[s]

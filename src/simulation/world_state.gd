@@ -27,6 +27,7 @@ var history: Array = []               # per-turn {turn, health:{}, instability, 
 var damage_by_source: Dictionary = {} # system -> {source label -> health lost}
 var outcome: String = ""              # "", "victory", "defeat"
 var outcome_reason: String = ""
+var daily_date: String = ""          # "YYYY-MM-DD" when this is the daily valley
 var last_focus_id: int = -1           # transient UI hint (not saved)
 
 
@@ -87,7 +88,7 @@ func to_dict() -> Dictionary:
 		"ledger": ledger.to_dict(), "memory": memory.to_dict(), "rng_state": rng.state,
 		"forecast": forecast.duplicate(), "current_events": current_events.duplicate(),
 		"queued_effects": queued_effects.duplicate(true), "actions_log": actions_log.duplicate(true),
-		"history": history.duplicate(true), "damage_by_source": damage_by_source.duplicate(true), "outcome": outcome, "outcome_reason": outcome_reason,
+		"history": history.duplicate(true), "damage_by_source": damage_by_source.duplicate(true), "outcome": outcome, "outcome_reason": outcome_reason, "daily_date": daily_date,
 	}
 
 
@@ -136,6 +137,7 @@ static func from_dict(raw: Dictionary) -> WorldState:
 	w.damage_by_source = d.get("damage_by_source", {}).duplicate(true)
 	w.outcome = String(d["outcome"])
 	w.outcome_reason = String(d["outcome_reason"])
+	w.daily_date = String(d.get("daily_date", ""))
 	return w
 
 
@@ -146,3 +148,12 @@ func state_hash() -> String:
 
 func clone() -> WorldState:
 	return WorldState.from_dict(to_dict())
+
+
+## Run score for comparing attempts (daily valley, shared seeds).
+## Victory dominates; then health, the weakest system and reserves; instability costs.
+func score() -> int:
+	var sc := average_health() * 10 + min_health() * 5 + reserve - instability * 2 + history.size() * 20
+	if outcome == "victory":
+		sc += 1000
+	return maxi(0, sc)

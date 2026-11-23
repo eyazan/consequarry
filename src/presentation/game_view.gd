@@ -567,7 +567,7 @@ func _show_game_over() -> void:
 	g.theme = hud.theme
 	ui_layer.add_child(g)
 	g.replay_seed.connect(func(): restart.emit("p0_valley" if world.scenario_id == "tutorial" else world.scenario_id, world.run_seed))
-	g.new_run.connect(func(): restart.emit("p0_valley", SeedCode.random_seed()))
+	g.new_run.connect(func(): restart.emit("p0_valley" if world.scenario_id == "tutorial" else world.scenario_id, SeedCode.random_seed()))
 	g.to_menu.connect(func(): exit_to_menu.emit())
 	if tutorial:
 		tutorial.queue_free()

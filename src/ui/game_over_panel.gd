@@ -63,6 +63,11 @@ func _ready() -> void:
 	var title := "THE VALLEY ENDURES" if win else ("UNSUSTAINABLE" if world.outcome_reason.begins_with("Survived") else "COLLAPSE")
 	vb.add_child(UIKit.label(title, 34, Palette.GOOD if win else Palette.BAD))
 	vb.add_child(UIKit.label(world.outcome_reason, 16, Palette.TEXT, true))
+	var score_txt := "Score %d" % world.score()
+	if world.daily_date != "":
+		var is_best := GameSettings.record_daily(world.daily_date, world.score())
+		score_txt += "  ·  Daily valley %s  ·  %s" % [world.daily_date, "New best today!" if is_best else "Best today: %d" % GameSettings.daily_best(world.daily_date)]
+	vb.add_child(UIKit.label(score_txt, 18, Palette.ACCENT))
 	var chart := HealthChart.new()
 	chart.history = world.history
 	chart.custom_minimum_size = Vector2(680, 110 if GameSettings.compact else 150)
@@ -143,6 +148,7 @@ static func run_report(w: WorldState) -> String:
 	lines.append("CONSEQUARRY run report v1 (%s)" % ProjectSettings.get_setting("application/config/version"))
 	lines.append("seed=%s scenario=%s outcome=%s seasons=%d" % [SeedCode.encode(w.run_seed), w.scenario_id, w.outcome, w.history.size()])
 	lines.append("reason=%s" % w.outcome_reason)
+	lines.append("score=%d daily=%s" % [w.score(), w.daily_date if w.daily_date != "" else "no"])
 	lines.append("avg_health=%d min_health=%d instability=%d reserve=%d" % [w.average_health(), w.min_health(), w.instability, w.reserve])
 	lines.append("actions redirect=%d split=%d delay=%d transform=%d crisis=%d" % [kinds["redirect"], kinds["split"], kinds["delay"], kinds["transform"], kinds["crisis"]])
 	var hs: Array = []

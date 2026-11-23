@@ -17,6 +17,7 @@ var top_instab: ProgressBar
 var top_instab_label: Label
 var top_reserve: Label
 var top_seed: Label
+var scenario_label: Label
 var undo_btn: Button
 var events_box: VBoxContainer
 var forecast_box: VBoxContainer
@@ -160,6 +161,8 @@ func _build_left() -> void:
 	vb.custom_minimum_size = Vector2(226, 0)
 	vb.add_theme_constant_override("separation", 6)
 	p.add_child(vb)
+	scenario_label = UIKit.label("", 13, Palette.ACCENT)
+	vb.add_child(scenario_label)
 	events_box = _section(vb, "THIS SEASON")
 	vb.add_child(HSeparator.new())
 	forecast_box = _section(vb, "FORECAST — NEXT SEASON")
@@ -254,6 +257,7 @@ func refresh(w: WorldState, can_undo: bool, busy: bool) -> void:
 	top_instab_label.text = ("Inst %d" if compact else "Instability %d") % w.instability
 	top_reserve.text = ("Res %d" if compact else "Reserve %d") % w.reserve
 	top_seed.text = SeedCode.encode(w.run_seed)
+	scenario_label.text = ("DAILY %s · " % w.daily_date if w.daily_date != "" else "") + String(w.scenario().get("name", "")).to_upper()
 	undo_btn.disabled = not can_undo or busy
 	end_btn.disabled = busy or w.is_over()
 	_fill_events(w)

@@ -21,7 +21,7 @@ static func roll_events(w: WorldState, for_turn: int) -> Array:
 	for _i in count:
 		var weights: Array = []
 		for e in defs:
-			var wgt := int(e["weight"]) * 10
+			var wgt := int(e["weight"]) * int(sc.get("event_weights", {}).get(e["id"], 100)) / 10
 			if chosen.has(e["id"]):
 				wgt = 0
 			else:
@@ -40,7 +40,8 @@ static func roll_events(w: WorldState, for_turn: int) -> Array:
 ## Magnitude after turn scaling, instability and familiarity (world memory).
 static func scaled_magnitude(w: WorldState, event_id: String, base: int) -> int:
 	var r := ContentDB.rules()
-	var scale := 100 + int(r["magnitude_turn_scale"]) * (w.turn - 1) + w.instability / 5
+	var turn_scale := int(w.scenario().get("magnitude_turn_scale", r["magnitude_turn_scale"]))
+	var scale := 100 + turn_scale * (w.turn - 1) + w.instability / 5
 	var m := ContentDB.pct(base, scale)
 	m = ContentDB.pct(m, 100 - w.memory.event_familiarity_percent(event_id))
 	return maxi(1, m)
