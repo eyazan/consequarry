@@ -271,9 +271,8 @@ func _update_guide(delta: float) -> void:
 func _process(delta: float) -> void:
 	_update_guide(delta)
 	# Right panel grows with content but never past the screen; it scrolls instead.
-	var max_h := size.y - right_panel.offset_top - (10.0 if compact else 90.0) - 24.0
-	if compact:
-		end_btn.visible = not _right_active
+	# The panel always stops above the END button, which stays visible.
+	var max_h := size.y - right_panel.offset_top - (66.0 if compact else 90.0) - 24.0
 	var want := right_box.get_combined_minimum_size().y
 	right_scroll.custom_minimum_size = Vector2(300, clampf(want, 40.0, maxf(80.0, max_h)))
 	right_panel.size.y = 0

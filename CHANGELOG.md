@@ -8,6 +8,8 @@
 - Engine: scenarios can use a subset of districts, an event pool, unlocked moves, rule overrides (`rules`), and a magnitude multiplier.
 - Difficulty calibrated with bots by binary search per level: novice (random) win rate falls from ~78% (level 1) to ~5% (level 30); good-bot win rate from 100% to ~80–96% (`reports/campaign_calibration.md`).
 - Classic 12-season mode, daily valley and scenarios remain under "Classic mode".
+- Map zooms to the districts in play (3-district levels fill the phone screen); on phones the map shifts right while the tutorial panel is open.
+- Fixes found with real touch events on a phone-sized web build: the side panel no longer opens mid-drag (the map moved under the finger); a drop no longer selects the moved piece (which hid END on phones); END always stays visible; overlays no longer react to resizes after closing.
 
 ## 0.1.3 — 2026-11-23 (onboarding)
 - Owner playtest: game was not understood without the tutorial. Response:

@@ -359,3 +359,5 @@ func _drag_gesture(a: Vector2, b: Vector2) -> void:
 	up.global_position = b
 	Input.parse_input_event(up)
 	await get_tree().process_frame
+
+

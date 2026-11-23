@@ -89,12 +89,23 @@ func _process(delta: float) -> void:
 		return
 	var vr := get_viewport_rect().size
 	var lm := hud.left_reserved()
+	if tutorial and GameSettings.compact:
+		lm = maxf(lm, 270.0)
 	var rm := hud.right_reserved()
 	var top := 56.0 if GameSettings.compact else 66.0
 	var avail_w := vr.x - lm - rm
-	var s := clampf(minf(avail_w / 700.0, (vr.y - top - 30.0) / 600.0), 0.45, 1.5)
+	var avail_h := vr.y - top - 10.0
+	# Fit the districts actually in play (campaign levels may use only three).
+	var bounds := Rect2()
+	var first := true
+	for id in map.districts:
+		var p: Vector2 = map.districts[id].position
+		var r := Rect2(p + Vector2(-DistrictView.W * 0.5 - 10.0, -150.0), Vector2(DistrictView.W + 20.0, 150.0 + 95.0))
+		bounds = r if first else bounds.merge(r)
+		first = false
+	var s := clampf(minf(avail_w / bounds.size.x, avail_h / bounds.size.y), 0.45, 1.6)
 	var target_scale := Vector2(s, s)
-	var target_pos := Vector2(lm + 5.0 + avail_w * 0.5, top + (vr.y - top) * 0.5 + 6.0 * s)
+	var target_pos := Vector2(lm + avail_w * 0.5, top + avail_h * 0.5) - bounds.get_center() * s
 	# Smoothly re-centre when side panels open/close (compact layout).
 	map.scale = map.scale.lerp(target_scale, minf(1.0, delta * 10.0)) if map.scale != Vector2.ONE else target_scale
 	map.position = map.position.lerp(target_pos, minf(1.0, delta * 10.0)) if map.position != Vector2.ZERO else target_pos
@@ -789,7 +800,8 @@ func _drag_motion(pos: Vector2) -> void:
 			var c := world.ledger.get_c(drag_id)
 			tutorial.notify("select", {"type": c.type, "dest": c.destination})
 			tutorial.notify("mode", {"mode": "redirect"})
-		_refresh_ui()
+		# Keep the map still under the finger: no side panel while dragging.
+		_apply_selection_visuals()
 	if dragging and orbs.has(drag_id):
 		orbs[drag_id].position = _map_point(pos) - Vector2(0, 10)
 		var hd := _district_at(pos)
@@ -811,6 +823,9 @@ func _drag_release(pos: Vector2) -> void:
 		selected_id = id
 		mode = "redirect"
 		_do_target(target)
+		# A drop is a complete move: do not open the details panel for the moved piece.
+		selected_id = -1
+		_refresh_ui()
 		return
 	# Not a valid drop: snap back and explain.
 	mode = ""

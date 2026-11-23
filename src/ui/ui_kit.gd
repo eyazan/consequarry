@@ -84,10 +84,16 @@ static func fill_viewport(c: Control) -> void:
 	c.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var vp := c.get_viewport()
 	var fit := func():
-		c.position = Vector2.ZERO
-		c.size = vp.get_visible_rect().size
+		if is_instance_valid(c) and is_instance_valid(vp):
+			c.position = Vector2.ZERO
+			c.size = vp.get_visible_rect().size
 	fit.call()
 	vp.size_changed.connect(fit)
+	# Disconnect when the control leaves the tree (e.g. a closed overlay), so a
+	# later resize or rotation never calls into a freed control.
+	c.tree_exiting.connect(func():
+		if is_instance_valid(vp) and vp.size_changed.is_connected(fit):
+			vp.size_changed.disconnect(fit))
 
 
 static func hex(c: Color) -> String:
