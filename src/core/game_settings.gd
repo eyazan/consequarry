@@ -44,8 +44,18 @@ static func load_settings() -> void:
 	language = String(cf.get_value("general", "language", language))
 
 
+static func next_attempt(level_id: String) -> int:
+	var cf := ConfigFile.new()
+	cf.load(PATH)
+	var n := int(cf.get_value("attempts", level_id, 0)) + 1
+	cf.set_value("attempts", level_id, n)
+	cf.save(PATH)
+	return n
+
+
 static func save_settings() -> void:
 	var cf := ConfigFile.new()
+	cf.load(PATH)  # keep other sections (attempt counters)
 	cf.set_value("audio", "master_volume", master_volume)
 	cf.set_value("audio", "music_volume", music_volume)
 	cf.set_value("audio", "sfx_volume", sfx_volume)

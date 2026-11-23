@@ -5,6 +5,8 @@ extends Node2D
 
 signal exit_to_menu
 signal restart(scenario_id: String, run_seed: int)
+signal open_map
+signal play_level(level_id: String)
 
 var world: WorldState
 var map: IsoMap
@@ -27,6 +29,11 @@ var report_open := false
 var guide: GuidePointer
 var hint_it: Intervention = null
 var hint_end := false
+# drag & drop
+var drag_id := -1
+var drag_start := Vector2.ZERO
+var dragging := false
+const DRAG_THRESHOLD := 14.0
 var _shake_t := 0.0
 var _target_cursor := 0
 
@@ -35,7 +42,7 @@ func start(w: WorldState, with_tutorial: bool) -> void:
 	world = w
 	map = IsoMap.new()
 	add_child(map)
-	map.build()
+	map.build(w.systems.keys())
 	orb_layer = Node2D.new()
 	map.add_child(orb_layer)
 	fx = FxLayer.new()
@@ -59,9 +66,15 @@ func start(w: WorldState, with_tutorial: bool) -> void:
 	hud.menu_pressed.connect(func(): SaveSystem.save_world(world); exit_to_menu.emit())
 	if with_tutorial:
 		tutorial = TutorialOverlay.new()
+		tutorial.use_set(w.scenario_id if TutorialOverlay.LEVEL_SETS.has(w.scenario_id) else "classic")
 		tutorial.theme = hud.theme
 		ui_layer.add_child(tutorial)
 		tutorial.finished.connect(func(): tutorial = null)
+	if Campaign.is_level(w.scenario_id) and w.turn == 1 and w.actions_log.is_empty() and not OS.get_cmdline_user_args().has("--no-intro"):
+		var intro := LevelIntro.new()
+		intro.setup(w)
+		intro.theme = hud.theme
+		ui_layer.add_child(intro)
 	_sync_districts(true)
 	_rebuild_orbs(true)
 	_refresh_ui()
@@ -235,6 +248,12 @@ func _pick(screen_pos: Vector2) -> Dictionary:
 func _unhandled_input(event: InputEvent) -> void:
 	if world == null or busy or world.is_over():
 		return
+	if event is InputEventMouseMotion and drag_id >= 0:
+		_drag_motion(event.position)
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed and drag_id >= 0:
+		_drag_release(event.position)
+		return
 	if event is InputEventMouseMotion:
 		var p := _pick(event.position)
 		var ho: int = p.get("orb", -1)
@@ -244,7 +263,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			hovered_district = hd
 			_apply_selection_visuals()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_click(_pick(event.position))
+		var p := _pick(event.position)
+		if p.has("orb") and mode == "" and _draggable(int(p["orb"])):
+			drag_id = int(p["orb"])
+			drag_start = event.position
+			dragging = false
+		else:
+			_click(p)
 	elif event.is_action_pressed("cancel_selection") or event.is_action_pressed("ui_cancel"):
 		_cancel()
 	elif event.is_action_pressed("end_turn"):
@@ -587,6 +612,18 @@ func _open_settings() -> void:
 
 func _show_game_over() -> void:
 	sfx.play("victory" if world.outcome == "victory" else "defeat")
+	if Campaign.is_level(world.scenario_id):
+		var r := LevelResult.new()
+		r.setup(world)
+		r.theme = hud.theme
+		ui_layer.add_child(r)
+		r.next_level.connect(func(): play_level.emit(Campaign.next_level_id(world.scenario_id)))
+		r.retry.connect(func(): play_level.emit(world.scenario_id))
+		r.to_map.connect(func(): open_map.emit())
+		if tutorial:
+			tutorial.queue_free()
+			tutorial = null
+		return
 	var g := GameOverPanel.new()
 	g.setup(world)
 	g.theme = hud.theme
@@ -641,6 +678,11 @@ func _resolve(t: Dictionary) -> Dictionary:
 			if selected_district != String(t["id"]):
 				return {"map": map.district_pos(String(t["id"])) + Vector2(0, -10)}
 			return {"ui": "crisis"}
+		"drag":
+			var from_id := _orb_matching(t.get("orb", {}))
+			if from_id < 0:
+				return {}
+			return {"drag_from": orbs[from_id].position + orbs[from_id].bob(), "drag_to": map.district_pos(String(t["to"])) + Vector2(0, -10)}
 		"end":
 			return {"ui": "end"}
 		"hint":
@@ -659,6 +701,8 @@ func _guide_target() -> Dictionary:
 		Intervention.CRISIS:
 			return {"kind": "crisis", "id": hint_it.system}
 		Intervention.REDIRECT, Intervention.SPLIT:
+			if hint_it.kind == Intervention.REDIRECT and Campaign.is_level(world.scenario_id) and mode == "":
+				return {"kind": "drag", "orb": {"orb_id": hint_it.consequence_id}, "to": hint_it.target}
 			return {"kind": "district", "id": hint_it.target, "via": hint_it.kind, "orb": {"orb_id": hint_it.consequence_id}}
 	return {"kind": "action", "id": hint_it.kind, "orb": {"orb_id": hint_it.consequence_id}}
 
@@ -669,7 +713,10 @@ func _update_guide() -> void:
 		hud.set_guide("")
 		return
 	var r := _resolve(_guide_target())
-	guide.point_at(r.get("map", null))
+	if r.has("drag_from") and not dragging:
+		guide.drag_between(r["drag_from"], r["drag_to"])
+	else:
+		guide.point_at(r.get("map", null))
 	hud.set_guide(String(r.get("ui", "")))
 
 
@@ -708,4 +755,67 @@ func _hint() -> void:
 		selected_id = -1
 	hud.toast(Loc.t("Hint: %s") % _describe(pick), Palette.ACCENT, 6.0)
 	sfx.play("select", 1.2)
+	_refresh_ui()
+
+
+# ------------------------------------------------------------------ drag & drop
+
+## District under a screen point, ignoring orbs (the dragged orb sits under the finger).
+func _district_at(screen_pos: Vector2) -> String:
+	var m := _map_point(screen_pos)
+	var ids := map.districts.keys()
+	ids.sort_custom(func(a, b): return map.districts[a].position.y > map.districts[b].position.y)
+	for id in ids:
+		var dv: DistrictView = map.districts[id]
+		if dv.contains_point(m - dv.position):
+			return id
+	return ""
+
+
+func _draggable(id: int) -> bool:
+	var c := world.ledger.get_c(id)
+	return c != null and c.is_pending() and c.land_turn == world.turn and SimulationEngine.is_unlocked(world, Intervention.REDIRECT)
+
+
+func _drag_motion(pos: Vector2) -> void:
+	if not dragging and pos.distance_to(drag_start) > DRAG_THRESHOLD:
+		dragging = true
+		selected_id = drag_id
+		selected_district = ""
+		report_open = false
+		mode = "redirect"
+		sfx.play("select")
+		if tutorial:
+			var c := world.ledger.get_c(drag_id)
+			tutorial.notify("select", {"type": c.type, "dest": c.destination})
+			tutorial.notify("mode", {"mode": "redirect"})
+		_refresh_ui()
+	if dragging and orbs.has(drag_id):
+		orbs[drag_id].position = _map_point(pos) - Vector2(0, 10)
+		var hd := _district_at(pos)
+		if hd != hovered_district:
+			hovered_district = hd
+			_apply_selection_visuals()
+
+
+func _drag_release(pos: Vector2) -> void:
+	var id := drag_id
+	var was_dragging := dragging
+	drag_id = -1
+	dragging = false
+	if not was_dragging:
+		_click({"orb": id})
+		return
+	var target := _district_at(pos)
+	if target != "" and SimulationEngine.validate(world, Intervention.redirect(id, target)) == "":
+		selected_id = id
+		mode = "redirect"
+		_do_target(target)
+		return
+	# Not a valid drop: snap back and explain.
+	mode = ""
+	_rebuild_orbs(false)
+	if target != "" and target != world.ledger.get_c(id).destination:
+		hud.toast(Loc.m(SimulationEngine.validate_msg(world, Intervention.redirect(id, target))), Palette.BAD)
+		sfx.play("error")
 	_refresh_ui()

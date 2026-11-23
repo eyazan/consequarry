@@ -292,7 +292,25 @@ func toast(text: String, color: Color = Palette.ACCENT, dur: float = 3.0) -> voi
 
 # ------------------------------------------------------------------ refresh
 
+var _campaign_applied := false
+
+
+## Campaign levels: fewer panels; the Season panel and instability bar appear
+## only when they matter.
+func _apply_campaign(w: WorldState) -> void:
+	_campaign_applied = true
+	if not Campaign.is_level(w.scenario_id):
+		return
+	season_btn.visible = true
+	left_panel.visible = false
+	var crisis_on := SimulationEngine.is_unlocked(w, Intervention.CRISIS)
+	top_instab.get_parent().visible = crisis_on
+	top_reserve.visible = SimulationEngine.is_unlocked(w, Intervention.TRANSFORM)
+
+
 func refresh(w: WorldState, can_undo: bool, busy: bool) -> void:
+	if not _campaign_applied:
+		_apply_campaign(w)
 	var pips := "●".repeat(w.action_points) + "○".repeat(maxi(0, w.actions_per_turn - w.action_points))
 	top_season.text = (Loc.t("%d/%d") if compact else Loc.t("Season %d / %d")) % [w.turn, w.max_turns]
 	top_ap.text = pips if compact else Loc.t("Actions") + " " + pips
@@ -374,7 +392,10 @@ func show_idle(w: WorldState, has_report: bool = false) -> void:
 	UIKit.clear(right_box)
 	right_box.add_child(UIKit.label("CONSEQUENCES", 13, Palette.TEXT_DIM))
 	right_box.add_child(UIKit.label("Every consequence must go somewhere.", 15, Palette.ACCENT, true))
-	right_box.add_child(UIKit.label("Click an orb to route it. Click a district to inspect it or trigger a controlled crisis.", 13, Palette.TEXT, true))
+	if Campaign.is_level(w.scenario_id):
+		right_box.add_child(UIKit.label("Drag a shape onto a glowing district to move it. Tap a shape for more options.", 13, Palette.TEXT, true))
+	else:
+		right_box.add_child(UIKit.label("Click an orb to route it. Click a district to inspect it or trigger a controlled crisis.", 13, Palette.TEXT, true))
 	right_box.add_child(HSeparator.new())
 	for t in ContentDB.data()["consequence_types"]:
 		var hb := HBoxContainer.new()
@@ -441,7 +462,9 @@ func show_consequence(w: WorldState, c: Consequence, mode: String) -> void:
 		_action_button("split", "2  Split", "Send half to a connected system to use two cushions.", w, c)
 		_action_button("delay", "3  Delay", "Push it to next season. Adds +25% Deferred Strain.", w, c)
 		var rule := _rule_for(c)
-		if rule.is_empty():
+		if not SimulationEngine.is_unlocked(w, Intervention.TRANSFORM):
+			pass
+		elif rule.is_empty():
 			var none := UIKit.button("4  Transform", func(): pass)
 			none.disabled = true
 			right_box.add_child(none)
@@ -467,6 +490,8 @@ func _rule_for(c: Consequence) -> Dictionary:
 
 
 func _action_button(kind: String, text: String, tip: String, w: WorldState, c: Consequence) -> void:
+	if not SimulationEngine.is_unlocked(w, kind.split(":")[0]):
+		return
 	var reason := ""
 	match kind:
 		"redirect", "split":

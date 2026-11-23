@@ -4,6 +4,7 @@ extends Control
 
 signal start_run(scenario_id: String, run_seed: int)
 signal start_daily
+signal open_campaign
 signal language_changed
 signal continue_run
 signal open_settings
@@ -49,19 +50,19 @@ func _ready() -> void:
 		vb.add_child(UIKit.label("Every consequence must go somewhere.", 16, Palette.TEXT_DIM))
 		vb.add_child(HSeparator.new())
 	var first: Button = null
+	var play := UIKit.button(Loc.t("Play ▶  (★ %d)") % Campaign.total_stars(), func(): open_campaign.emit())
+	play.add_theme_font_size_override("font_size", 22)
+	play.add_theme_color_override("font_color", Palette.ACCENT)
+	vb.add_child(play)
+	first = play
 	if SaveSystem.has_run():
-		first = UIKit.button("Continue", func(): continue_run.emit())
-		vb.add_child(first)
-	var tut := UIKit.button(Loc.t("Tutorial (2 min)") if not GameSettings.tutorial_done else Loc.t("Replay tutorial"), func(): start_run.emit("tutorial", 20261122))
+		vb.add_child(UIKit.button("Continue", func(): continue_run.emit()))
+	vb.add_child(UIKit.label("CLASSIC MODE (12 SEASONS)", 11, Palette.TEXT_DIM))
 	var newb := UIKit.button("New valley", func(): start_run.emit(_scenario(), SeedCode.random_seed()))
-	if GameSettings.tutorial_done:
-		vb.add_child(newb)
+	vb.add_child(newb)
+	var tut := UIKit.button("Classic tutorial", func(): start_run.emit("tutorial", 20261122))
+	if not GameSettings.compact:
 		vb.add_child(tut)
-	else:
-		vb.add_child(tut)
-		vb.add_child(newb)
-	if first == null:
-		first = tut if not GameSettings.tutorial_done else newb
 	var d := SeedCode.today()
 	var best := GameSettings.daily_best(d["date"])
 	var daily_btn := UIKit.button(Loc.t("Daily valley · %s · %s") % [d["date"], Loc.scenario(d["scenario"])], func(): start_daily.emit(),

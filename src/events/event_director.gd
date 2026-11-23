@@ -16,7 +16,18 @@ static func roll_events(w: WorldState, for_turn: int) -> Array:
 	if for_turn >= int(sc["extra_event_from_turn"]) and w.rng.chance_percent(40):
 		count += 1
 	count = mini(count, 3)
-	var defs: Array = ContentDB.data()["events"]
+	# Only events whose focus and targets exist in this world (and, for campaign
+	# levels, that the level's event pool allows).
+	var pool: Array = sc.get("events", [])
+	var defs: Array = []
+	for e in ContentDB.data()["events"]:
+		if not pool.is_empty() and not pool.has(e["id"]):
+			continue
+		var ok: bool = w.systems.has(e["focus"])
+		for spec in e["consequences"]:
+			ok = ok and w.systems.has(spec["to"])
+		if ok:
+			defs.append(e)
 	var chosen: Array = []
 	for _i in count:
 		var weights: Array = []
@@ -44,4 +55,5 @@ static func scaled_magnitude(w: WorldState, event_id: String, base: int) -> int:
 	var scale := 100 + turn_scale * (w.turn - 1) + w.instability / 5
 	var m := ContentDB.pct(base, scale)
 	m = ContentDB.pct(m, 100 - w.memory.event_familiarity_percent(event_id))
+	m = ContentDB.pct(m, int(w.scenario().get("magnitude_percent", 100)))
 	return maxi(1, m)

@@ -7,8 +7,11 @@ extends RefCounted
 var edges: Array = []  # Array[Dictionary] {from, to, weight, kind}
 
 
-func _init() -> void:
-	edges = ContentDB.data()["causal_edges"].duplicate(true)
+## active: system ids present in this world (campaign levels may use a subset).
+func _init(active: Array = []) -> void:
+	for e in ContentDB.data()["causal_edges"]:
+		if active.is_empty() or (active.has(e["from"]) and active.has(e["to"])):
+			edges.append(e.duplicate(true))
 
 
 func neighbors(system_id: String) -> Array[String]:

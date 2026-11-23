@@ -24,7 +24,10 @@ static func new_run(scenario_id: String, run_seed: int) -> WorldState:
 	w.rng.set_seed(run_seed)
 	w.max_turns = int(sc["turns"])
 	w.actions_per_turn = int(sc["actions_per_turn"])
+	var active: Array = sc.get("systems", ContentDB.system_ids())
 	for sd in ContentDB.data()["systems"]:
+		if not active.has(sd["id"]):
+			continue
 		var s := CivilizationSystem.new()
 		s.id = String(sd["id"])
 		# Small seeded variation so no two valleys start identical.
@@ -32,9 +35,22 @@ static func new_run(scenario_id: String, run_seed: int) -> WorldState:
 		s.health = base_health + w.rng.between(-4, 4)
 		s.base_capacity = int(sd["capacity"])
 		w.systems[s.id] = s
+	w.graph = CausalGraph.new(w.systems.keys())
 	w.forecast = EventDirector.roll_events(w, 1)
 	begin_turn(w)
 	return w
+
+
+## Per-scenario override of a global rule (campaign levels tune e.g. leak).
+static func _rw(w: WorldState, key: String) -> int:
+	var o: Dictionary = w.scenario().get("rules", {})
+	return int(o[key]) if o.has(key) else _r(key)
+
+
+## Interventions this scenario allows (campaign levels unlock them gradually).
+static func is_unlocked(w: WorldState, kind: String) -> bool:
+	var allowed: Array = w.scenario().get("allowed", [])
+	return allowed.is_empty() or allowed.has(kind)
 
 
 static func begin_turn(w: WorldState) -> void:
@@ -77,6 +93,8 @@ static func validate(w: WorldState, i: Intervention) -> String:
 static func validate_msg(w: WorldState, i: Intervention) -> Dictionary:
 	if w.is_over():
 		return Msg.make("The run is over.")
+	if not is_unlocked(w, i.kind):
+		return Msg.make("Not unlocked yet.")
 	var cost := cost_of(w, i)
 	if cost > w.action_points:
 		return Msg.make("Not enough actions (%d needed).", [cost])
@@ -110,6 +128,8 @@ static func validate_msg(w: WorldState, i: Intervention) -> Dictionary:
 				return Msg.make("%s only converts %s.", [rule["name"], rule["input"]])
 			if rule["at"] != c.destination:
 				return Msg.make("Must first reach %s.", [ContentDB.system_def(rule["at"])["name"]])
+			if not w.systems.has(String(rule["output_to"])) or not w.systems.has(String(rule["residue_to"])):
+				return Msg.make("Not unlocked yet.")
 			var site := w.system(rule["at"])
 			if site.collapsed or site.health < int(rule["min_health"]):
 				return Msg.make("%s is too weak to run %s (needs %d).", [ContentDB.system_def(rule["at"])["name"], rule["name"], int(rule["min_health"])])
@@ -176,7 +196,8 @@ static func _do_redirect(w: WorldState, i: Intervention) -> Consequence:
 	var moved: Consequence
 	var leak := 0
 	if m >= 3:
-		leak = maxi(1, ContentDB.pct(m, _r("redirect_leak_percent")))
+		var leak_pct := _rw(w, "redirect_leak_percent")
+		leak = maxi(1, ContentDB.pct(m, leak_pct)) if leak_pct > 0 else 0
 	if leak > 0:
 		w.ledger.close_passed_on(c, Consequence.State.SPLIT, w.turn, "redirected %s -> %s, %d leaked" % [from, i.target, leak])
 		moved = w.ledger.create(c.type, "redirect:C%d" % c.id, m - leak, i.target, w.turn, c.land_turn, c)
@@ -491,13 +512,18 @@ static func _evaluate(w: WorldState, _report: Dictionary) -> void:
 	var sc := w.scenario()
 	var loss: Dictionary = sc["loss"]
 	for crit in loss["critical"]:
-		if w.system(crit).collapsed:
+		if w.systems.has(crit) and w.system(crit).collapsed:
 			w.outcome = "defeat"
 			_set_reason(w, "%s collapsed. Without people, there is no civilization.", [ContentDB.system_def(crit)["name"]])
 			return
 	if w.collapsed_count() >= int(loss["max_collapsed"]):
 		w.outcome = "defeat"
-		_set_reason(w, "%d systems collapsed. The valley can no longer hold together.", [w.collapsed_count()])
+		if w.collapsed_count() == 1:
+			for s: CivilizationSystem in w.systems.values():
+				if s.collapsed:
+					_set_reason(w, "%s collapsed. The valley could not hold.", [ContentDB.system_def(s.id)["name"]])
+		else:
+			_set_reason(w, "%d systems collapsed. The valley can no longer hold together.", [w.collapsed_count()])
 		return
 	if w.instability >= int(loss["max_instability"]):
 		w.outcome = "defeat"
@@ -508,6 +534,14 @@ static func _evaluate(w: WorldState, _report: Dictionary) -> void:
 		if w.average_health() >= int(win["avg_health"]) and w.min_health() >= int(win["min_health"]):
 			w.outcome = "victory"
 			_set_reason(w, "The valley endures: average health %d, weakest system %d.", [w.average_health(), w.min_health()])
+		elif int(win["avg_health"]) <= 0:
+			# Campaign levels only ask that every district stays above a line.
+			w.outcome = "defeat"
+			var weakest := ""
+			for s: CivilizationSystem in w.systems.values():
+				if weakest == "" or s.health < w.system(weakest).health:
+					weakest = s.id
+			_set_reason(w, "Survived, but %s ended at %d health (needed %d).", [ContentDB.system_def(weakest)["name"], w.min_health(), int(win["min_health"])])
 		else:
 			w.outcome = "defeat"
 			_set_reason(w, "Survived, but unsustainably: average %d (need %d), weakest %d (need %d).", [w.average_health(), int(win["avg_health"]), w.min_health(), int(win["min_health"])])

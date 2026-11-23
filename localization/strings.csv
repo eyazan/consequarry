@@ -24,6 +24,7 @@ turn %s at %s into a bonus,turn %s at %s into a bonus,%s (%s): bonusa dönüşt�
 No urgent move. Tap END to finish the season.,No urgent move. Tap END to finish the season.,Acil bir hamle yok. Sezonu bitirmek için BİTİR'e dokunun.
 Hint: %s,Hint: %s,İpucu: %s
 The run is over.,The run is over.,Oyun bitti.
+Not unlocked yet.,Not unlocked yet.,Henüz açılmadı.
 Not enough actions (%d needed).,Not enough actions (%d needed).,Yeterli hamle yok (%d gerekli).
 That consequence no longer exists.,That consequence no longer exists.,Bu sonuç artık yok.
 Only consequences arriving this season can be handled.,Only consequences arriving this season can be handled.,Yalnızca bu sezon gelen sonuçlara müdahale edilebilir.
@@ -62,9 +63,11 @@ Split share,Split share,Bölünmüş pay
 %s is scarred: it will never fully recover (max %d).,%s is scarred: it will never fully recover (max %d).,%s yaralandı: asla tam iyileşemeyecek (en fazla %d).
 %s COLLAPSED. Its dependents will feel it.,%s COLLAPSED. Its dependents will feel it.,%s ÇÖKTÜ. Ona bağlı olanlar bunu hissedecek.
 "%s collapsed. Without people, there is no civilization.","%s collapsed. Without people, there is no civilization.",%s çöktü. İnsan olmadan medeniyet olmaz.
+%s collapsed. The valley could not hold.,%s collapsed. The valley could not hold.,%s çöktü. Vadi ayakta kalamadı.
 %d systems collapsed. The valley can no longer hold together.,%d systems collapsed. The valley can no longer hold together.,%d sistem çöktü. Vadi artık bir arada duramıyor.
 Instability reached 100. Order dissolved.,Instability reached 100. Order dissolved.,İstikrarsızlık 100'e ulaştı. Düzen dağıldı.
 "The valley endures: average health %d, weakest system %d.","The valley endures: average health %d, weakest system %d.","Vadi ayakta: ortalama sağlık %d, en zayıf sistem %d."
+"Survived, but %s ended at %d health (needed %d).","Survived, but %s ended at %d health (needed %d).",Dayandınız ama %s sağlığı %d ile bitti (%d gerekiyordu).
 "Survived, but unsustainably: average %d (need %d), weakest %d (need %d).","Survived, but unsustainably: average %d (need %d), weakest %d (need %d).","Hayatta kaldı ama sürdürülemez: ortalama %d (gereken %d), en zayıf %d (gereken %d)."
 THE VALLEY ENDURES,THE VALLEY ENDURES,VADİ AYAKTA
 UNSUSTAINABLE,UNSUSTAINABLE,SÜRDÜRÜLEMEZ
@@ -162,6 +165,7 @@ Henüz bir şey yok."
 ✕ Close,✕ Close,✕ Kapat
 CONSEQUENCES,CONSEQUENCES,SONUÇLAR
 Every consequence must go somewhere.,Every consequence must go somewhere.,Her sonuç bir yere gitmek zorunda.
+Drag a shape onto a glowing district to move it. Tap a shape for more options.,Drag a shape onto a glowing district to move it. Tap a shape for more options.,Taşımak için bir şekli parlayan bölgeye sürükleyin. Diğer seçenekler için şekle dokunun.
 Click an orb to route it. Click a district to inspect it or trigger a controlled crisis.,Click an orb to route it. Click a district to inspect it or trigger a controlled crisis.,Yönlendirmek için bir küreye tıklayın. İncelemek ya da kontrollü kriz başlatmak için bir bölgeye tıklayın.
 Last season report,Last season report,Geçen sezonun raporu
 Tap an orb to route it. Tap a district to inspect it.,Tap an orb to route it. Tap a district to inspect it.,Yönlendirmek için bir küreye dokunun. İncelemek için bir bölgeye dokunun.
@@ -190,16 +194,33 @@ Resolve the season (Space),Resolve the season (Space),Sezonu sonuçlandır (Boş
 THIS SEASON,THIS SEASON,BU SEZON
 FORECAST — NEXT SEASON,FORECAST — NEXT SEASON,TAHMİN — GELECEK SEZON
 WORLD MEMORY,WORLD MEMORY,DÜNYA HAFIZASI
+%s · LEVEL %d,%s · LEVEL %d,%s · SEVİYE %d
+Survive %d seasons.,Survive %d seasons.,%d sezon dayanın.
+"Keep every district above %d health. If one collapses, you lose.","Keep every district above %d health. If one collapses, you lose.",Her bölgenin sağlığını %d'in üstünde tutun. Biri çökerse kaybedersiniz.
+★★  average health %d+     ★★★  %d+,★★  average health %d+     ★★★  %d+,★★  ortalama sağlık %d+     ★★★  %d+
+%d moves per season.,%d moves per season.,Sezon başına %d hamle.
+Play ▶,Play ▶,Oyna ▶
+Valley saved!,Valley saved!,Vadi kurtuldu!
+Valley lost,Valley lost,Vadi kaybedildi
+Next star: average health %d+ (you had %d).,Next star: average health %d+ (you had %d).,Sonraki yıldız: ortalama sağlık %d+ (sizinki %d).
+"Tip: move the biggest troubles away from weak districts, or tap Hint.","Tip: move the biggest troubles away from weak districts, or tap Hint.",İpucu: En büyük dertleri zayıf bölgelerden uzaklaştırın ya da İpucu'na dokunun.
+New best!,New best!,Yeni rekor!
+Next level ▶,Next level ▶,Sonraki seviye ▶
+Retry,Retry,Tekrar dene
+Map,Map,Harita
+◀ Menu,◀ Menu,◀ Menü
+VALLEYS,VALLEYS,VADİLER
 "Rotate your device to landscape
 to play CONSEQUARRY.","Rotate your device to landscape
 to play CONSEQUARRY.","CONSEQUARRY oynamak için
 cihazınızı yatay çevirin."
-Tutorial (2 min),Tutorial (2 min),Eğitim (2 dk)
-Replay tutorial,Replay tutorial,Eğitimi tekrar oyna
+Play ▶  (★ %d),Play ▶  (★ %d),Oyna ▶  (★ %d)
 Daily valley · %s · %s,Daily valley · %s · %s,Günün vadisi · %s · %s
 Today's best score: %d,Today's best score: %d,Bugünün en iyi puanı: %d
 P0 prototype %s · offline · no account,P0 prototype %s · offline · no account,P0 prototip %s · çevrimdışı · hesap yok
 Continue,Continue,Devam et
+CLASSIC MODE (12 SEASONS),CLASSIC MODE (12 SEASONS),KLASİK MOD (12 SEZON)
+Classic tutorial,Classic tutorial,Klasik eğitim
 Play seed,Play seed,Tohumu oyna
 Quit,Quit,Çıkış
 Invalid seed code.,Invalid seed code.,Geçersiz tohum kodu.
@@ -214,10 +235,10 @@ Close,Close,Kapat
 Screen shake,Screen shake,Ekran sarsıntısı
 Always show causal links,Always show causal links,Nedensel bağları her zaman göster
 Fullscreen,Fullscreen,Tam ekran
+Start playing ▶,Start playing ▶,Oynamaya başla ▶
+Next ▶,Next ▶,İleri ▶
 TUTORIAL,TUTORIAL,EĞİTİM
 Skip,Skip,Geç
-Next ▶,Next ▶,İleri ▶
-Start playing ▶,Start playing ▶,Oynamaya başla ▶
 "[b]Welcome![/b] Troubles keep hitting this town: accidents, heat, pollution, unrest.
 You can't stop them. [b]You choose where they land.[/b]","[b]Welcome![/b] Troubles keep hitting this town: accidents, heat, pollution, unrest.
 You can't stop them. [b]You choose where they land.[/b]","[b]Hoş geldiniz![/b] Bu kasabaya sürekli dertler geliyor: kazalar, sıcak, kirlilik, huzursuzluk.
@@ -270,6 +291,32 @@ Not sure what to do? Tap [b]Hint[/b].","[b]Oyunun hepsi bu.[/b] Her sezon büyü
 
 [b]Kazanmak:[/b] 12 sezon boyunca her bölgenin sağlığı 25'in üstünde kalsın.
 Ne yapacağınızdan emin değil misiniz? [b]İpucu[/b]'na dokunun."
+"Each floating shape is a trouble falling on the district below it. Heat hurts Industry but barely touches Energy.
+
+[color=#ffb347]Drag the orange shape onto Energy.[/color]","Each floating shape is a trouble falling on the district below it. Heat hurts Industry but barely touches Energy.
+
+[color=#ffb347]Drag the orange shape onto Energy.[/color]","Havada duran her şekil, altındaki bölgeye düşecek bir dert. Isı Sanayi'yi yakar ama Enerji'ye neredeyse hiç dokunmaz.
+
+[color=#ffb347]Turuncu şekli Enerji'nin üstüne sürükleyin.[/color]"
+"Nice move! You have 2 moves each season.
+
+[color=#ffb347]Tap END to see where everything lands.[/color]","Nice move! You have 2 moves each season.
+
+[color=#ffb347]Tap END to see where everything lands.[/color]","Güzel hamle! Her sezon 2 hamleniz var.
+
+[color=#ffb347]Her şeyin nereye düştüğünü görmek için BİTİR'e dokunun.[/color]"
+"Survive every season and keep each district above the line. New moves unlock as you play.
+Stuck? Tap [b]Hint[/b].","Survive every season and keep each district above the line. New moves unlock as you play.
+Stuck? Tap [b]Hint[/b].","Her sezonu atlatın ve her bölgeyi çizginin üstünde tutun. Oynadıkça yeni hamleler açılır.
+Takıldınız mı? [b]İpucu[/b]'na dokunun."
+"New move: [b]Transform[/b]. Heat sitting on Energy can become a green bonus.
+
+[color=#ffb347]Tap the orange shape on Energy, then Transform.[/color]","New move: [b]Transform[/b]. Heat sitting on Energy can become a green bonus.
+
+[color=#ffb347]Tap the orange shape on Energy, then Transform.[/color]","Yeni hamle: [b]Dönüştür[/b]. Enerji'nin üstündeki ısı yeşil bir bonusa dönüşebilir.
+
+[color=#ffb347]Enerji'deki turuncu şekle, sonra Dönüştür'e dokunun.[/color]"
+The bonus heals Energy. A little purple smoke goes to Environment: every fix has a cost.,The bonus heals Energy. A little purple smoke goes to Environment: every fix has a cost.,Bonus Enerji'yi iyileştirir. Biraz mor duman Çevre'ye gider: her çözümün bir bedeli var.
 Pressure,Pressure,baskı
 Music,Music,Müzik
 Sound effects,Sound effects,Ses efektleri
@@ -335,3 +382,65 @@ Split,Split,Böl
 Delay,Delay,Ertele
 Transform,Transform,Dönüştür
 Controlled Crisis,Controlled Crisis,Kontrollü Kriz
+First Spill,First Spill,İlk Sızıntı
+"Drag a trouble onto another district. Heat hurts factories, but barely touches power plants.","Drag a trouble onto another district. Heat hurts factories, but barely touches power plants.",Bir derdi başka bir bölgeye sürükleyin. Isı fabrikalara zarar verir ama santrallere neredeyse dokunmaz.
+River Valley,River Valley,Nehir Vadisi
+Hot Wires,Hot Wires,Sıcak Kablolar
+Every district is weak to something. Tap a district to see what hurts it.,Every district is weak to something. Tap a district to see what hurts it.,Her bölgenin bir zayıf noktası var. Neyin zarar verdiğini görmek için bir bölgeye dokunun.
+Never Clean,Never Clean,Asla Temiz Değil
+"From now on, moving a trouble leaves a small piece behind.","From now on, moving a trouble leaves a small piece behind.",Bundan sonra bir derdi taşımak geride küçük bir parça bırakır.
+Turbines,Turbines,Türbinler
+Tap heat sitting on Energy to turn it into a green bonus. The smoke goes to Environment.,Tap heat sitting on Energy to turn it into a green bonus. The smoke goes to Environment.,Enerji'deki ısıya dokunup yeşil bonusa çevirin. Duman Çevre'ye gider.
+Green Ledger,Green Ledger,Yeşil Defter
+Bonuses heal. Use them to keep weak districts alive.,Bonuses heal. Use them to keep weak districts alive.,Bonuslar iyileştirir. Zayıf bölgeleri hayatta tutmak için kullanın.
+New Arrivals,New Arrivals,Yeni Gelenler
+"People arrive. If Population collapses, you lose.","People arrive. If Population collapses, you lose.",İnsanlar geliyor. Nüfus çökerse kaybedersiniz.
+Overtime,Overtime,Fazla Mesai
+Unrest at Industry can be turned into work.,Unrest at Industry can be turned into work.,Sanayi'deki huzursuzluk işe dönüştürülebilir.
+Fields,Fields,Tarlalar
+Farms join the valley. Heat and pollution ruin crops.,Farms join the valley. Heat and pollution ruin crops.,Çiftlikler vadiye katılıyor. Sıcak ve kirlilik ekinleri mahveder.
+Full Valley,Full Valley,Tam Vadi
+All six districts. Keep every one standing.,All six districts. Keep every one standing.,Altı bölgenin hepsi. Her birini ayakta tutun.
+River Test,River Test,Nehir Sınavı
+A longer season run. Plan ahead with the forecast.,A longer season run. Plan ahead with the forecast.,Daha uzun bir dönem. Tahmine bakarak ileriyi planlayın.
+Dry Wind,Dry Wind,Kuru Rüzgâr
+Split a big trouble so two districts share it.,Split a big trouble so two districts share it.,"Büyük bir derdi bölün, iki bölge paylaşsın."
+Dry Hills,Dry Hills,Kurak Tepeler
+Ember Ridge,Ember Ridge,Kor Sırtı
+Wildfires burn forests and fields. Spread the heat.,Wildfires burn forests and fields. Spread the heat.,Orman yangınları ormanları ve tarlaları yakar. Isıyı dağıtın.
+Thirst,Thirst,Susuzluk
+Weak districts attract more trouble. Heal them early.,Weak districts attract more trouble. Heal them early.,Zayıf bölgeler daha çok dert çeker. Erkenden iyileştirin.
+Later,Later,Sonra
+"Delay pushes a trouble to next season, but it grows a little.","Delay pushes a trouble to next season, but it grows a little.",Ertele bir derdi gelecek sezona iter ama biraz büyür.
+Dust Season,Dust Season,Toz Mevsimi
+Use every tool. The forecast shows what comes next.,Use every tool. The forecast shows what comes next.,Her aracı kullanın. Tahmin sırada ne olduğunu gösterir.
+Cracked Earth,Cracked Earth,Çatlak Toprak
+Districts that took many hits grow tougher.,Districts that took many hits grow tougher.,Çok darbe alan bölgeler güçlenir.
+Heat Dome,Heat Dome,Sıcak Kubbe
+A long hot run. Keep Agriculture alive.,A long hot run. Keep Agriculture alive.,Uzun ve sıcak bir dönem. Tarım'ı hayatta tutun.
+Last Well,Last Well,Son Kuyu
+Every district you lean on gets a little weaker at absorbing.,Every district you lean on gets a little weaker at absorbing.,Yüklendiğiniz her bölgenin dayanma gücü biraz azalır.
+Firebreak,Firebreak,Yangın Şeridi
+Think two seasons ahead.,Think two seasons ahead.,İki sezon ileriyi düşünün.
+Dry Hills Test,Dry Hills Test,Kurak Tepeler Sınavı
+The hardest dry season.,The hardest dry season.,En zor kurak mevsim.
+Smokestacks,Smokestacks,Bacalar
+"Tap a district to start a controlled crisis: a big bonus now, a cost later.","Tap a district to start a controlled crisis: a big bonus now, a cost later.","Kontrollü kriz başlatmak için bir bölgeye dokunun: şimdi büyük bonus, sonra bedel."
+Night Shift,Night Shift,Gece Vardiyası
+Strikes and accidents everywhere. Turn unrest into work.,Strikes and accidents everywhere. Turn unrest into work.,Her yerde grev ve kaza. Huzursuzluğu işe çevirin.
+Poison River,Poison River,Zehirli Nehir
+Spills hit the Environment. Fields can absorb pollution.,Spills hit the Environment. Fields can absorb pollution.,Sızıntılar Çevre'yi vurur. Tarlalar kirliliği emebilir.
+Boom,Boom,Patlama
+Each crisis costs more than the last.,Each crisis costs more than the last.,Her kriz bir öncekinden pahalıya mal olur.
+Gridlock,Gridlock,Kilitlenme
+Watch the instability bar. At 100 the town falls apart.,Watch the instability bar. At 100 the town falls apart.,İstikrarsızlık çubuğunu izleyin. 100'de kasaba dağılır.
+Overpressure,Overpressure,Aşırı Basınç
+"A long, busy run.","A long, busy run.",Uzun ve yoğun bir dönem.
+Company Town,Company Town,Şirket Kasabası
+Keep the people on your side.,Keep the people on your side.,Halkı yanınızda tutun.
+Meltdown Eve,Meltdown Eve,Erime Arifesi
+Everything at once.,Everything at once.,Her şey aynı anda.
+Iron Winter,Iron Winter,Demir Kış
+Almost there.,Almost there.,Az kaldı.
+Boomtown Test,Boomtown Test,Patlayan Şehir Sınavı
+The final valley.,The final valley.,Son vadi.

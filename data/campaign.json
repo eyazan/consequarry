@@ -1,0 +1,1855 @@
+{
+ "version": 1,
+ "levels": [
+  {
+   "id": "lvl_01",
+   "number": 1,
+   "name": "First Spill",
+   "region": "River Valley",
+   "description": "Drag a trouble onto another district. Heat hurts factories, but barely touches power plants.",
+   "weak": "",
+   "turns": 4,
+   "actions_per_turn": 2,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike"
+   ],
+   "allowed": [
+    "redirect"
+   ],
+   "rules": {
+    "redirect_leak_percent": 0
+   },
+   "magnitude_percent": 180,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 1,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 70,
+    "industry": 68,
+    "infrastructure": 66
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 25
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 49,
+    "three_avg": 52
+   },
+   "scripted_events": {
+    "1": [
+     "industrial_accident"
+    ],
+    "2": [
+     "blackout"
+    ]
+   }
+  },
+  {
+   "id": "lvl_02",
+   "number": 2,
+   "name": "Hot Wires",
+   "region": "River Valley",
+   "description": "Every district is weak to something. Tap a district to see what hurts it.",
+   "weak": "energy",
+   "turns": 4,
+   "actions_per_turn": 2,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike"
+   ],
+   "allowed": [
+    "redirect"
+   ],
+   "rules": {
+    "redirect_leak_percent": 0
+   },
+   "magnitude_percent": 176,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 1,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 58,
+    "industry": 68,
+    "infrastructure": 66
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 25
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 45,
+    "three_avg": 49
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_03",
+   "number": 3,
+   "name": "Never Clean",
+   "region": "River Valley",
+   "description": "From now on, moving a trouble leaves a small piece behind.",
+   "weak": "infrastructure",
+   "turns": 4,
+   "actions_per_turn": 2,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike"
+   ],
+   "allowed": [
+    "redirect"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 141,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 1,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 69,
+    "industry": 67,
+    "infrastructure": 53
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 26
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 51
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_04",
+   "number": 4,
+   "name": "Turbines",
+   "region": "River Valley",
+   "description": "Tap heat sitting on Energy to turn it into a green bonus. The smoke goes to Environment.",
+   "weak": "environment",
+   "turns": 5,
+   "actions_per_turn": 2,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "environment"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike",
+    "toxic_spill"
+   ],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 140,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 1,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 69,
+    "industry": 67,
+    "infrastructure": 65,
+    "environment": 51
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 26
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 60,
+    "three_avg": 63
+   },
+   "scripted_events": {
+    "1": [
+     "grid_surge"
+    ]
+   }
+  },
+  {
+   "id": "lvl_05",
+   "number": 5,
+   "name": "Green Ledger",
+   "region": "River Valley",
+   "description": "Bonuses heal. Use them to keep weak districts alive.",
+   "weak": "industry",
+   "turns": 5,
+   "actions_per_turn": 2,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "environment"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike",
+    "toxic_spill"
+   ],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 144,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 1,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 69,
+    "industry": 55,
+    "infrastructure": 65,
+    "environment": 63
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 26
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 56,
+    "three_avg": 59
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_06",
+   "number": 6,
+   "name": "New Arrivals",
+   "region": "River Valley",
+   "description": "People arrive. If Population collapses, you lose.",
+   "weak": "industry",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "environment",
+    "population"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike",
+    "toxic_spill",
+    "migration_wave"
+   ],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 194,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 1,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 69,
+    "industry": 55,
+    "infrastructure": 65,
+    "population": 71,
+    "environment": 63
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 26
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 62,
+    "three_avg": 65
+   },
+   "scripted_events": {
+    "1": [
+     "migration_wave"
+    ]
+   }
+  },
+  {
+   "id": "lvl_07",
+   "number": 7,
+   "name": "Overtime",
+   "region": "River Valley",
+   "description": "Unrest at Industry can be turned into work.",
+   "weak": "environment",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "environment",
+    "population"
+   ],
+   "events": [
+    "industrial_accident",
+    "blackout",
+    "grid_surge",
+    "labor_strike",
+    "toxic_spill",
+    "migration_wave"
+   ],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 102,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 68,
+    "industry": 66,
+    "infrastructure": 64,
+    "population": 70,
+    "environment": 50
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 27
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 59,
+    "three_avg": 62
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_08",
+   "number": 8,
+   "name": "Fields",
+   "region": "River Valley",
+   "description": "Farms join the valley. Heat and pollution ruin crops.",
+   "weak": "population",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 104,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 68,
+    "industry": 66,
+    "infrastructure": 64,
+    "population": 58,
+    "agriculture": 66,
+    "environment": 62
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 27
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 56,
+    "three_avg": 59
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_09",
+   "number": 9,
+   "name": "Full Valley",
+   "region": "River Valley",
+   "description": "All six districts. Keep every one standing.",
+   "weak": "environment",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 90,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 68,
+    "industry": 66,
+    "infrastructure": 64,
+    "population": 70,
+    "agriculture": 66,
+    "environment": 50
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 27
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 57,
+    "three_avg": 60
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_10",
+   "number": 10,
+   "name": "River Test",
+   "region": "River Valley",
+   "description": "A longer season run. Plan ahead with the forecast.",
+   "weak": "industry",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 87,
+   "magnitude_turn_scale": 4,
+   "event_weights": {},
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 68,
+    "industry": 54,
+    "infrastructure": 64,
+    "population": 70,
+    "agriculture": 66,
+    "environment": 62
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 27
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 57,
+    "three_avg": 60
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_11",
+   "number": 11,
+   "name": "Dry Wind",
+   "region": "Dry Hills",
+   "description": "Split a big trouble so two districts share it.",
+   "weak": "population",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 92,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 67,
+    "industry": 65,
+    "infrastructure": 63,
+    "population": 57,
+    "agriculture": 65,
+    "environment": 61
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 28
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 55,
+    "three_avg": 58
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_12",
+   "number": 12,
+   "name": "Ember Ridge",
+   "region": "Dry Hills",
+   "description": "Wildfires burn forests and fields. Spread the heat.",
+   "weak": "environment",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 78,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 67,
+    "industry": 65,
+    "infrastructure": 63,
+    "population": 69,
+    "agriculture": 65,
+    "environment": 49
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 28
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 56,
+    "three_avg": 59
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_13",
+   "number": 13,
+   "name": "Thirst",
+   "region": "Dry Hills",
+   "description": "Weak districts attract more trouble. Heal them early.",
+   "weak": "industry",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 93,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 67,
+    "industry": 53,
+    "infrastructure": 63,
+    "population": 69,
+    "agriculture": 65,
+    "environment": 61
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 28
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 55,
+    "three_avg": 58
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_14",
+   "number": 14,
+   "name": "Later",
+   "region": "Dry Hills",
+   "description": "Delay pushes a trouble to next season, but it grows a little.",
+   "weak": "population",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 84,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 66,
+    "industry": 64,
+    "infrastructure": 62,
+    "population": 56,
+    "agriculture": 64,
+    "environment": 60
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 29
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 55,
+    "three_avg": 58
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_15",
+   "number": 15,
+   "name": "Dust Season",
+   "region": "Dry Hills",
+   "description": "Use every tool. The forecast shows what comes next.",
+   "weak": "environment",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 69,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 66,
+    "industry": 64,
+    "infrastructure": 62,
+    "population": 68,
+    "agriculture": 64,
+    "environment": 48
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 29
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 55,
+    "three_avg": 58
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_16",
+   "number": 16,
+   "name": "Cracked Earth",
+   "region": "Dry Hills",
+   "description": "Districts that took many hits grow tougher.",
+   "weak": "industry",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 93,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 66,
+    "industry": 52,
+    "infrastructure": 62,
+    "population": 68,
+    "agriculture": 64,
+    "environment": 60
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 29
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 53,
+    "three_avg": 57
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_17",
+   "number": 17,
+   "name": "Heat Dome",
+   "region": "Dry Hills",
+   "description": "A long hot run. Keep Agriculture alive.",
+   "weak": "population",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 74,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 66,
+    "industry": 64,
+    "infrastructure": 62,
+    "population": 56,
+    "agriculture": 64,
+    "environment": 60
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 29
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 56,
+    "three_avg": 59
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_18",
+   "number": 18,
+   "name": "Last Well",
+   "region": "Dry Hills",
+   "description": "Every district you lean on gets a little weaker at absorbing.",
+   "weak": "environment",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 84,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 65,
+    "industry": 63,
+    "infrastructure": 61,
+    "population": 67,
+    "agriculture": 63,
+    "environment": 47
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 30
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 52,
+    "three_avg": 55
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_19",
+   "number": 19,
+   "name": "Firebreak",
+   "region": "Dry Hills",
+   "description": "Think two seasons ahead.",
+   "weak": "industry",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 83,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 65,
+    "industry": 51,
+    "infrastructure": 61,
+    "population": 67,
+    "agriculture": 63,
+    "environment": 59
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 30
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 51,
+    "three_avg": 55
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_20",
+   "number": 20,
+   "name": "Dry Hills Test",
+   "region": "Dry Hills",
+   "description": "The hardest dry season.",
+   "weak": "population",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 72,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "heatwave": 230,
+    "wildfire": 210,
+    "crop_blight": 150,
+    "flood": 30
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 65,
+    "industry": 63,
+    "infrastructure": 61,
+    "population": 55,
+    "agriculture": 63,
+    "environment": 59
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 30
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 54,
+    "three_avg": 57
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_21",
+   "number": 21,
+   "name": "Smokestacks",
+   "region": "Boomtown",
+   "description": "Tap a district to start a controlled crisis: a big bonus now, a cost later.",
+   "weak": "environment",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 102,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 64,
+    "industry": 62,
+    "infrastructure": 60,
+    "population": 66,
+    "agriculture": 62,
+    "environment": 46
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 31
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 52
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_22",
+   "number": 22,
+   "name": "Night Shift",
+   "region": "Boomtown",
+   "description": "Strikes and accidents everywhere. Turn unrest into work.",
+   "weak": "industry",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 111,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 64,
+    "industry": 50,
+    "infrastructure": 60,
+    "population": 66,
+    "agriculture": 62,
+    "environment": 58
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 31
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 51
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_23",
+   "number": 23,
+   "name": "Poison River",
+   "region": "Boomtown",
+   "description": "Spills hit the Environment. Fields can absorb pollution.",
+   "weak": "population",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 108,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 64,
+    "industry": 62,
+    "infrastructure": 60,
+    "population": 54,
+    "agriculture": 62,
+    "environment": 58
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 31
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 52
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_24",
+   "number": 24,
+   "name": "Boom",
+   "region": "Boomtown",
+   "description": "Each crisis costs more than the last.",
+   "weak": "environment",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 90,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 64,
+    "industry": 62,
+    "infrastructure": 60,
+    "population": 66,
+    "agriculture": 62,
+    "environment": 46
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 31
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 47,
+    "three_avg": 52
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_25",
+   "number": 25,
+   "name": "Gridlock",
+   "region": "Boomtown",
+   "description": "Watch the instability bar. At 100 the town falls apart.",
+   "weak": "industry",
+   "turns": 5,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 104,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 63,
+    "industry": 49,
+    "infrastructure": 59,
+    "population": 65,
+    "agriculture": 61,
+    "environment": 57
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 32
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 47,
+    "three_avg": 51
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_26",
+   "number": 26,
+   "name": "Overpressure",
+   "region": "Boomtown",
+   "description": "A long, busy run.",
+   "weak": "population",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 89,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 63,
+    "industry": 61,
+    "infrastructure": 59,
+    "population": 53,
+    "agriculture": 61,
+    "environment": 57
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 32
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 52
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_27",
+   "number": 27,
+   "name": "Company Town",
+   "region": "Boomtown",
+   "description": "Keep the people on your side.",
+   "weak": "environment",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 87,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 63,
+    "industry": 61,
+    "infrastructure": 59,
+    "population": 65,
+    "agriculture": 61,
+    "environment": 45
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 32
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 46,
+    "three_avg": 51
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_28",
+   "number": 28,
+   "name": "Meltdown Eve",
+   "region": "Boomtown",
+   "description": "Everything at once.",
+   "weak": "industry",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 93,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 63,
+    "industry": 49,
+    "infrastructure": 59,
+    "population": 65,
+    "agriculture": 61,
+    "environment": 57
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 32
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 47,
+    "three_avg": 50
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_29",
+   "number": 29,
+   "name": "Iron Winter",
+   "region": "Boomtown",
+   "description": "Almost there.",
+   "weak": "population",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 84,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 62,
+    "industry": 60,
+    "infrastructure": 58,
+    "population": 52,
+    "agriculture": 60,
+    "environment": 56
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 33
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 52
+   },
+   "scripted_events": {}
+  },
+  {
+   "id": "lvl_30",
+   "number": 30,
+   "name": "Boomtown Test",
+   "region": "Boomtown",
+   "description": "The final valley.",
+   "weak": "environment",
+   "turns": 6,
+   "actions_per_turn": 3,
+   "systems": [
+    "energy",
+    "industry",
+    "infrastructure",
+    "population",
+    "agriculture",
+    "environment"
+   ],
+   "events": [],
+   "allowed": [
+    "redirect",
+    "transform",
+    "split",
+    "delay",
+    "crisis"
+   ],
+   "rules": {
+    "redirect_leak_percent": 20
+   },
+   "magnitude_percent": 74,
+   "magnitude_turn_scale": 4,
+   "event_weights": {
+    "industrial_accident": 220,
+    "toxic_spill": 200,
+    "labor_strike": 180,
+    "migration_wave": 160
+   },
+   "events_per_turn": 2,
+   "extra_event_instability": 55,
+   "extra_event_from_turn": 99,
+   "start_health": {
+    "energy": 62,
+    "industry": 60,
+    "infrastructure": 58,
+    "population": 64,
+    "agriculture": 60,
+    "environment": 44
+   },
+   "win": {
+    "avg_health": 0,
+    "min_health": 33
+   },
+   "loss": {
+    "max_collapsed": 1,
+    "critical": [
+     "population"
+    ],
+    "max_instability": 100
+   },
+   "stars": {
+    "two_avg": 48,
+    "three_avg": 51
+   },
+   "scripted_events": {}
+  }
+ ]
+}

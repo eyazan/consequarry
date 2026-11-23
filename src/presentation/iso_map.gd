@@ -14,9 +14,14 @@ var pulse_edges: Dictionary = {}  # "from>to" -> remaining seconds
 var _t := 0.0
 
 
-func build() -> void:
-	edges = ContentDB.data()["causal_edges"]
+func build(active: Array = []) -> void:
+	edges = []
+	for e in ContentDB.data()["causal_edges"]:
+		if active.is_empty() or (active.has(e["from"]) and active.has(e["to"])):
+			edges.append(e)
 	for sd in ContentDB.data()["systems"]:
+		if not active.is_empty() and not active.has(sd["id"]):
+			continue
 		var d := DistrictView.new()
 		d.system_id = String(sd["id"])
 		d.position = grid_to_screen(sd["grid"])

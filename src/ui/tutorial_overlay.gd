@@ -16,6 +16,22 @@ const STEPS := [
 	{"text": "[b]That's the whole game.[/b] Each season, tap the big dangerous shapes and send them where they hurt less. You have 3 moves per season.\n\n[b]Win:[/b] survive 12 seasons with every district above 25 health.\nNot sure what to do? Tap [b]Hint[/b].", "wait": "next", "target": {"kind": "hint"}},
 ]
 
+# Short guided sets for campaign levels that introduce a new move.
+const LEVEL_SETS := {
+	"lvl_01": [
+		{"text": "[b]Welcome![/b] Troubles keep hitting this town: accidents, heat, pollution, unrest.\nYou can't stop them. [b]You choose where they land.[/b]", "wait": "next", "target": {}},
+		{"text": "Each floating shape is a trouble falling on the district below it. Heat hurts Industry but barely touches Energy.\n\n[color=#ffb347]Drag the orange shape onto Energy.[/color]", "wait": "redirect_energy", "target": {"kind": "drag", "orb": {"type": "heat", "dest": "industry"}, "to": "energy"}},
+		{"text": "Nice move! You have 2 moves each season.\n\n[color=#ffb347]Tap END to see where everything lands.[/color]", "wait": "end_turn", "target": {"kind": "end"}},
+		{"text": "Survive every season and keep each district above the line. New moves unlock as you play.\nStuck? Tap [b]Hint[/b].", "wait": "next", "target": {"kind": "hint"}},
+	],
+	"lvl_04": [
+		{"text": "New move: [b]Transform[/b]. Heat sitting on Energy can become a green bonus.\n\n[color=#ffb347]Tap the orange shape on Energy, then Transform.[/color]", "wait": "transform", "target": {"kind": "action", "id": "transform", "orb": {"type": "heat", "dest": "energy"}}},
+		{"text": "The bonus heals Energy. A little purple smoke goes to Environment: every fix has a cost.", "wait": "next", "target": {}},
+	],
+}
+
+var steps: Array = STEPS
+var set_id := "classic"
 var step := 0
 var panel: PanelContainer
 var text: RichTextLabel
@@ -54,23 +70,24 @@ func _ready() -> void:
 
 
 func _show() -> void:
-	var s: Dictionary = STEPS[step]
-	text.text = "[color=#ffb347]%d/%d[/color]  %s" % [step + 1, STEPS.size(), Loc.t(String(s["text"]))]
+	var s: Dictionary = steps[step]
+	text.text = "[color=#ffb347]%d/%d[/color]  %s" % [step + 1, steps.size(), Loc.t(String(s["text"]))]
 	next_btn.visible = s["wait"] == "next"
-	next_btn.text = "Start playing ▶" if step == STEPS.size() - 1 else "Next ▶"
+	next_btn.text = Loc.t("Start playing ▶") if step == steps.size() - 1 else Loc.t("Next ▶")
 
 
 func _advance() -> void:
 	step += 1
-	if step >= STEPS.size():
+	if step >= steps.size():
 		_finish()
 	else:
 		_show()
 
 
 func _finish() -> void:
-	GameSettings.tutorial_done = true
-	GameSettings.save_settings()
+	if set_id == "classic" or set_id == "lvl_01":
+		GameSettings.tutorial_done = true
+		GameSettings.save_settings()
 	finished.emit()
 	queue_free()
 
@@ -78,8 +95,8 @@ func _finish() -> void:
 ## Called by GameView on player actions. If the player performs a later step
 ## early, the tutorial fast-forwards instead of getting stuck.
 func notify(event: String, data: Dictionary = {}) -> void:
-	for j in range(step, STEPS.size()):
-		if _matches(String(STEPS[j]["wait"]), event, data):
+	for j in range(step, steps.size()):
+		if _matches(String(steps[j]["wait"]), event, data):
 			step = j
 			_advance()
 			return
@@ -96,9 +113,19 @@ func _matches(wait: String, event: String, data: Dictionary) -> bool:
 
 
 func current_wait() -> String:
-	return STEPS[step]["wait"]
+	return steps[step]["wait"]
 
 
 ## What the on-screen pointer should show for the current step.
 func target() -> Dictionary:
-	return STEPS[step].get("target", {})
+	return steps[step].get("target", {})
+
+
+## Chooses the step set before the overlay enters the tree.
+func use_set(id: String) -> void:
+	set_id = id
+	steps = LEVEL_SETS.get(id, STEPS)
+
+
+static func has_set(id: String) -> bool:
+	return id == "tutorial" or LEVEL_SETS.has(id)

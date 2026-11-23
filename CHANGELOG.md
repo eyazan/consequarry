@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 — 2026-11-23 (campaign + drag & drop)
+- New main mode **Valleys**: 30 short levels (4–6 seasons, 2–5 minutes) in three regions (River Valley, Dry Hills, Boomtown), 1–3 stars, unlock-as-you-go map, local progress, new seed per attempt.
+- Levels start with 3 districts and grow to 6; moves unlock gradually (move → transform → split → delay → controlled crisis); early levels have no rerouting leak.
+- **Drag & drop**: hold a trouble and drop it on a glowing district (live damage preview on every valid target). Tap still opens details.
+- Guided first level with an animated drag gesture; level-4 transform lesson; level goal card and star result screen; Hint shows the drag gesture in levels.
+- Engine: scenarios can use a subset of districts, an event pool, unlocked moves, rule overrides (`rules`), and a magnitude multiplier.
+- Difficulty calibrated with bots by binary search per level: novice (random) win rate falls from ~78% (level 1) to ~5% (level 30); good-bot win rate from 100% to ~80–96% (`reports/campaign_calibration.md`).
+- Classic 12-season mode, daily valley and scenarios remain under "Classic mode".
+
 ## 0.1.3 — 2026-11-23 (onboarding)
 - Owner playtest: game was not understood without the tutorial. Response:
   - First launch starts the tutorial directly; rewritten 7-step tutorial in plain words ("troubles", "tap the orange shape").

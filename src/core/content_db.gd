@@ -69,8 +69,21 @@ static func crisis_def(id: String) -> Dictionary:
 	return {}
 
 
+static var _campaign: Dictionary = {}
+
+
+static func campaign() -> Dictionary:
+	if _campaign.is_empty():
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign.json"))
+		_campaign = parsed if parsed is Dictionary else {"levels": []}
+	return _campaign
+
+
 static func scenario_def(id: String) -> Dictionary:
 	for s in data()["scenarios"]:
+		if s["id"] == id:
+			return s
+	for s in campaign().get("levels", []):
 		if s["id"] == id:
 			return s
 	return {}

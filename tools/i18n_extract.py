@@ -63,6 +63,11 @@ def collect():
                 add(item[fld])
     for iv in data["interventions"].values():
         add(iv["name"])
+    camp_path = os.path.join(ROOT, "data", "campaign.json")
+    if os.path.exists(camp_path):
+        for lv in json.load(open(camp_path, encoding="utf-8"))["levels"]:
+            for fld in ("name", "description", "region"):
+                add(lv[fld])
     return keys
 
 

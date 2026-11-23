@@ -1,0 +1,182 @@
+{
+ "lvl_01": {
+  "magnitude_percent": 180,
+  "min_health": 25,
+  "three": 52,
+  "two": 49
+ },
+ "lvl_02": {
+  "magnitude_percent": 176,
+  "min_health": 25,
+  "three": 49,
+  "two": 45
+ },
+ "lvl_03": {
+  "magnitude_percent": 141,
+  "min_health": 26,
+  "three": 51,
+  "two": 48
+ },
+ "lvl_04": {
+  "magnitude_percent": 140,
+  "min_health": 26,
+  "three": 63,
+  "two": 60
+ },
+ "lvl_05": {
+  "magnitude_percent": 144,
+  "min_health": 26,
+  "three": 59,
+  "two": 56
+ },
+ "lvl_06": {
+  "magnitude_percent": 194,
+  "min_health": 26,
+  "three": 65,
+  "two": 62
+ },
+ "lvl_07": {
+  "magnitude_percent": 102,
+  "min_health": 27,
+  "three": 62,
+  "two": 59
+ },
+ "lvl_08": {
+  "magnitude_percent": 104,
+  "min_health": 27,
+  "three": 59,
+  "two": 56
+ },
+ "lvl_09": {
+  "magnitude_percent": 90,
+  "min_health": 27,
+  "three": 60,
+  "two": 57
+ },
+ "lvl_10": {
+  "magnitude_percent": 87,
+  "min_health": 27,
+  "three": 60,
+  "two": 57
+ },
+ "lvl_11": {
+  "magnitude_percent": 92,
+  "min_health": 28,
+  "three": 58,
+  "two": 55
+ },
+ "lvl_12": {
+  "magnitude_percent": 78,
+  "min_health": 28,
+  "three": 59,
+  "two": 56
+ },
+ "lvl_13": {
+  "magnitude_percent": 93,
+  "min_health": 28,
+  "three": 58,
+  "two": 55
+ },
+ "lvl_14": {
+  "magnitude_percent": 84,
+  "min_health": 29,
+  "three": 58,
+  "two": 55
+ },
+ "lvl_15": {
+  "magnitude_percent": 69,
+  "min_health": 29,
+  "three": 58,
+  "two": 55
+ },
+ "lvl_16": {
+  "magnitude_percent": 93,
+  "min_health": 29,
+  "three": 57,
+  "two": 53
+ },
+ "lvl_17": {
+  "magnitude_percent": 74,
+  "min_health": 29,
+  "three": 59,
+  "two": 56
+ },
+ "lvl_18": {
+  "magnitude_percent": 84,
+  "min_health": 30,
+  "three": 55,
+  "two": 52
+ },
+ "lvl_19": {
+  "magnitude_percent": 83,
+  "min_health": 30,
+  "three": 55,
+  "two": 51
+ },
+ "lvl_20": {
+  "magnitude_percent": 72,
+  "min_health": 30,
+  "three": 57,
+  "two": 54
+ },
+ "lvl_21": {
+  "magnitude_percent": 102,
+  "min_health": 31,
+  "three": 52,
+  "two": 48
+ },
+ "lvl_22": {
+  "magnitude_percent": 111,
+  "min_health": 31,
+  "three": 51,
+  "two": 48
+ },
+ "lvl_23": {
+  "magnitude_percent": 108,
+  "min_health": 31,
+  "three": 52,
+  "two": 48
+ },
+ "lvl_24": {
+  "magnitude_percent": 90,
+  "min_health": 31,
+  "three": 52,
+  "two": 47
+ },
+ "lvl_25": {
+  "magnitude_percent": 104,
+  "min_health": 32,
+  "three": 51,
+  "two": 47
+ },
+ "lvl_26": {
+  "magnitude_percent": 89,
+  "min_health": 32,
+  "three": 52,
+  "two": 48
+ },
+ "lvl_27": {
+  "magnitude_percent": 87,
+  "min_health": 32,
+  "three": 51,
+  "two": 46
+ },
+ "lvl_28": {
+  "magnitude_percent": 93,
+  "min_health": 32,
+  "three": 50,
+  "two": 47
+ },
+ "lvl_29": {
+  "magnitude_percent": 84,
+  "min_health": 33,
+  "three": 52,
+  "two": 48
+ },
+ "lvl_30": {
+  "magnitude_percent": 74,
+  "min_health": 33,
+  "three": 51,
+  "two": 48
+ }
+}

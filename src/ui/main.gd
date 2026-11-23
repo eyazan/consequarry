@@ -22,8 +22,10 @@ func _ready() -> void:
 	if args.has("--daily"):
 		_start_daily()
 	elif i < 0 and shot_requested(args) == false and not GameSettings.tutorial_done and not SaveSystem.has_run():
-		# First launch: teach by playing instead of showing a menu full of terms.
-		_start("tutorial", 20261122)
+		# First launch: teach by playing the first valley instead of a menu full of terms.
+		_play_level("lvl_01")
+	elif args.has("--map"):
+		_show_map()
 	elif i >= 0 and args.size() > i + 2:
 		_start(args[i + 1], int(args[i + 2]))
 	else:
@@ -127,6 +129,7 @@ func _show_menu() -> void:
 	menu.start_run.connect(_start)
 	menu.continue_run.connect(_continue)
 	menu.start_daily.connect(_start_daily)
+	menu.open_campaign.connect(_show_map)
 	menu.language_changed.connect(_show_menu)
 	menu.open_settings.connect(func():
 		var sp := SettingsPanel.new()
@@ -143,7 +146,29 @@ func _show_menu() -> void:
 func _start(scenario_id: String, run_seed: int) -> void:
 	SaveSystem.clear_run()
 	var w := SimulationEngine.new_run(scenario_id, run_seed)
-	_launch(w, scenario_id == "tutorial")
+	var guided := scenario_id == "tutorial" or (TutorialOverlay.LEVEL_SETS.has(scenario_id) and (Campaign.best(scenario_id) == 0 or args_has("--guided")))
+	_launch(w, guided)
+
+
+## Campaign level: each attempt gets a new deterministic seed.
+func _play_level(level_id: String) -> void:
+	if level_id == "":
+		_show_map()
+		return
+	var attempt := GameSettings.next_attempt(level_id)
+	_start(level_id, Campaign.level_seed(level_id, attempt))
+
+
+func _show_map() -> void:
+	var root := Node2D.new()
+	var layer := CanvasLayer.new()
+	root.add_child(layer)
+	var ls := LevelSelect.new()
+	ls.theme = ui_theme
+	layer.add_child(ls)
+	ls.level_chosen.connect(_play_level)
+	ls.back.connect(_show_menu)
+	_swap(root)
 
 
 func _start_daily() -> void:
@@ -174,8 +199,10 @@ func _launch(w: WorldState, tutorial: bool) -> void:
 	_swap(gv)
 	gv.start(w, tutorial)
 	SaveSystem.save_world(w)
-	gv.exit_to_menu.connect(_show_menu)
+	gv.exit_to_menu.connect(func(): _show_map() if Campaign.is_level(w.scenario_id) else _show_menu())
 	gv.restart.connect(_start)
+	gv.open_map.connect(_show_map)
+	gv.play_level.connect(_play_level)
 
 
 # ------------------------------------------------------------------ portrait guard
@@ -233,10 +260,17 @@ func _guided_walk(gv: GameView, path: String) -> void:
 		if gv.tutorial.next_btn.visible:
 			gv.tutorial.next_btn.pressed.emit()
 			continue
+		for ch in gv.ui_layer.get_children():
+			if ch is LevelIntro:
+				ch.start_pressed.emit()
+				ch.queue_free()
 		var r := gv._resolve(gv._guide_target())
 		if args_has("--verbose"):
 			print("step=%d wait=%s resolve=%s selected=%d mode=%s" % [gv.tutorial.step, gv.tutorial.current_wait(), str(r), gv.selected_id, gv.mode])
-		if r.has("map"):
+		if r.has("drag_from"):
+			var xf := gv.map.get_global_transform_with_canvas()
+			await _drag_gesture(xf * Vector2(r["drag_from"]), xf * Vector2(r["drag_to"]))
+		elif r.has("map"):
 			var screen: Vector2 = gv.map.get_global_transform_with_canvas() * Vector2(r["map"])
 			_click_at(screen)
 		elif r.has("ui"):
@@ -263,11 +297,18 @@ func _guided_walk(gv: GameView, path: String) -> void:
 			await get_tree().process_frame
 		if gv.world.is_over():
 			break
+		for ch in gv.ui_layer.get_children():
+			if ch is LevelIntro:
+				ch.start_pressed.emit()
+				ch.queue_free()
 		if gv.hint_it == null and not gv.hint_end:
 			gv._hint()
 			await get_tree().process_frame
 		var r := gv._resolve(gv._guide_target())
-		if r.has("map"):
+		if r.has("drag_from"):
+			var xf := gv.map.get_global_transform_with_canvas()
+			await _drag_gesture(xf * Vector2(r["drag_from"]), xf * Vector2(r["drag_to"]))
+		elif r.has("map"):
 			_click_at(gv.map.get_global_transform_with_canvas() * Vector2(r["map"]))
 		elif r.has("ui"):
 			var b := gv.hud._guide_button()
@@ -294,3 +335,27 @@ func _click_at(pos: Vector2) -> void:
 	mv.position = pos
 	mv.global_position = pos
 	Input.parse_input_event(mv)
+
+
+func _drag_gesture(a: Vector2, b: Vector2) -> void:
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.pressed = true
+	down.position = a
+	down.global_position = a
+	Input.parse_input_event(down)
+	await get_tree().process_frame
+	for k in range(1, 11):
+		var mv := InputEventMouseMotion.new()
+		mv.position = a.lerp(b, k / 10.0)
+		mv.global_position = mv.position
+		mv.button_mask = MOUSE_BUTTON_MASK_LEFT
+		Input.parse_input_event(mv)
+		await get_tree().process_frame
+	var up := InputEventMouseButton.new()
+	up.button_index = MOUSE_BUTTON_LEFT
+	up.pressed = false
+	up.position = b
+	up.global_position = b
+	Input.parse_input_event(up)
+	await get_tree().process_frame

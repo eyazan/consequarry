@@ -17,7 +17,7 @@ func _init() -> void:
 		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
 		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
 		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
-		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization", "test_music",
+		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization", "test_music", "test_campaign",
 	]
 	for t in tests:
 		current = t
@@ -385,3 +385,35 @@ func test_music() -> void:
 		peak = maxf(peak, absf(v))
 	check(peak > 0.2, "music is silent (peak %.3f)" % peak)
 	check(absf(Music.sample(n - 1) - Music.sample(0)) < 0.05, "loop seam would click")
+
+
+func test_campaign() -> void:
+	var levels := Campaign.levels()
+	check(levels.size() == 30, "expected 30 levels, got %d" % levels.size())
+	for lv in levels:
+		var id := String(lv["id"])
+		var w := SimulationEngine.new_run(id, 777)
+		check(w.systems.size() == lv["systems"].size(), "%s: wrong district count" % id)
+		for e in w.graph.edges:
+			check(w.systems.has(e["from"]) and w.systems.has(e["to"]), "%s: edge to missing district" % id)
+		for c in w.ledger.pending():
+			check(w.systems.has(c.destination), "%s: trouble aimed at missing district" % id)
+		_play_random(w, DetRng.new(5), true)
+		check(w.is_over(), "%s did not finish" % id)
+		var st := Campaign.stars(w)
+		check(st >= 0 and st <= 3, "%s stars out of range" % id)
+		check((st > 0) == (w.outcome == "victory"), "%s stars vs outcome" % id)
+		var w2 := SimulationEngine.new_run(id, 777)
+		_play_random(w2, DetRng.new(5))
+		check(w.state_hash() == w2.state_hash(), "%s not deterministic" % id)
+	# Moves unlock gradually.
+	var l1 := SimulationEngine.new_run("lvl_01", 1)
+	var heat := _first_pending(l1, "heat")
+	check(heat != null, "lvl_01 should open with a heat trouble")
+	if heat:
+		check(SimulationEngine.validate(l1, Intervention.split(heat.id, "energy")) == "Not unlocked yet.", "split must be locked on level 1")
+		check(SimulationEngine.validate(l1, Intervention.redirect(heat.id, "energy")) == "", "redirect allowed on level 1")
+		SimulationEngine.apply(l1, Intervention.redirect(heat.id, "energy"))
+		check(heat.children.is_empty() and heat.destination == "energy", "no leak on level 1")
+	check(Campaign.next_level_id("lvl_01") == "lvl_02", "next level")
+	check(Campaign.next_level_id("lvl_30") == "", "last level has no next")

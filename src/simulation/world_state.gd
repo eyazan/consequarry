@@ -124,7 +124,9 @@ static func from_dict(raw: Dictionary) -> WorldState:
 	for k in d["transform_used"]:
 		w.transform_used[String(k)] = int(d["transform_used"][k])
 	for id in ContentDB.system_ids():
-		w.systems[id] = CivilizationSystem.from_dict(d["systems"][id])
+		if d["systems"].has(id):
+			w.systems[id] = CivilizationSystem.from_dict(d["systems"][id])
+	w.graph = CausalGraph.new(w.systems.keys())
 	w.ledger = ConsequenceLedger.from_dict(d["ledger"])
 	w.memory = WorldMemory.from_dict(d["memory"])
 	w.rng.state = int(d["rng_state"])
