@@ -252,7 +252,7 @@ func _draw_highlight() -> void:
 
 func _draw_label() -> void:
 	var font := ThemeDB.fallback_font
-	var name_s := String(ContentDB.system_def(system_id)["name"]).to_upper()
+	var name_s := Loc.upper(Loc.sys(system_id))
 	var y := H / 2 + T + 18
 	var col := Palette.system_color(system_id)
 	draw_string(font, Vector2(-80, y), name_s, HORIZONTAL_ALIGNMENT_CENTER, 160, 15 if GameSettings.compact else 13, col.lightened(0.25))
@@ -275,7 +275,7 @@ func _draw_label() -> void:
 	if resilience > 0:
 		draw_string(font, Vector2(-bw / 2 - 34, by + 8), "◆%d" % resilience, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("9fd3ff"))
 	if collapsed:
-		draw_string(font, Vector2(-80, -20), "COLLAPSED", HORIZONTAL_ALIGNMENT_CENTER, 160, 16, Palette.BAD)
+		draw_string(font, Vector2(-80, -20), Loc.t("COLLAPSED"), HORIZONTAL_ALIGNMENT_CENTER, 160, 16, Palette.BAD)
 	if preview_text != "":
 		var pw := 120.0
 		draw_rect(Rect2(-pw / 2, -H / 2 - 64, pw, 22), Color(0, 0, 0, 0.75))

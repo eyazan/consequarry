@@ -17,7 +17,7 @@ func _init() -> void:
 		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
 		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
 		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
-		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score",
+		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization",
 	]
 	for t in tests:
 		current = t
@@ -349,3 +349,27 @@ func test_daily_and_score() -> void:
 	var v := w.clone()
 	v.outcome = "victory"
 	check(v.score() > w.score() or w.outcome == "victory", "victory must dominate score")
+
+
+func test_localization() -> void:
+	var before := TranslationServer.get_locale()
+	TranslationServer.set_locale("tr")
+	check(Loc.t("Energy") == "Enerji", "Turkish translation not loaded (got %s)" % Loc.t("Energy"))
+	check(Loc.sys("population") == "Nüfus", "system name not translated")
+	check(Loc.upper("Enerji") == "ENERJİ", "Turkish dotted capital I")
+	# Engine messages translate with their arguments, including content names.
+	var w := SimulationEngine.new_run("tutorial", 1)
+	var heat := _first_pending(w, "heat", "industry")
+	var m := SimulationEngine.validate_msg(w, Intervention.redirect(heat.id, "agriculture"))
+	check(not m.is_empty(), "expected a validation message")
+	check(Loc.m(m).contains("Sanayi"), "validation args not translated: %s" % Loc.m(m))
+	check(Loc.source("event:flood|routed") == "Sel (yönlendirilmiş)", "routed source label: %s" % Loc.source("event:flood|routed"))
+	# Every chronicle note and outcome of a full run renders without format errors.
+	var r := SimulationEngine.new_run("p0_valley", 77)
+	_play_random(r, DetRng.new(5))
+	for e in r.memory.chronicle:
+		check(Loc.note(e) != "", "empty translated note")
+	check(Loc.outcome(r) != "", "empty translated outcome")
+	TranslationServer.set_locale("en")
+	check(Loc.t("Energy") == "Energy", "English fallback")
+	TranslationServer.set_locale(before)

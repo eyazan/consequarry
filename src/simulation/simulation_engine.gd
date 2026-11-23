@@ -55,7 +55,7 @@ static func begin_turn(w: WorldState) -> void:
 			w.ledger.create(String(spec["type"]), "event:" + event_id, m, String(spec["to"]), w.turn, w.turn)
 		var seen := w.memory.add(w.memory.events_seen, event_id)
 		if seen == 2:
-			w.memory.note(w.turn, String(ed["focus"]), "%s again: the valley has learned. Future %s hit softer." % [ed["name"], ed["name"]])
+			w.memory.note_msg(w.turn, String(ed["focus"]), "%s again: the valley has learned. Future %s hit softer.", [ed["name"], ed["name"]])
 	w.forecast = EventDirector.roll_events(w, w.turn + 1) if w.turn < w.max_turns else []
 
 
@@ -68,80 +68,85 @@ static func cost_of(w: WorldState, i: Intervention) -> int:
 	return int(ContentDB.intervention_def(i.kind).get("cost", 1))
 
 
-## Returns "" if valid, otherwise a player-facing reason.
+## Returns "" if valid, otherwise the English reason (see validate_msg).
 static func validate(w: WorldState, i: Intervention) -> String:
+	return Msg.en(validate_msg(w, i))
+
+
+## Returns {} if valid, otherwise a translatable Msg explaining why not.
+static func validate_msg(w: WorldState, i: Intervention) -> Dictionary:
 	if w.is_over():
-		return "The run is over."
+		return Msg.make("The run is over.")
 	var cost := cost_of(w, i)
 	if cost > w.action_points:
-		return "Not enough actions (%d needed)." % cost
+		return Msg.make("Not enough actions (%d needed).", [cost])
 	if i.kind == Intervention.CRISIS:
 		return _validate_crisis(w, i)
 	var c := w.ledger.get_c(i.consequence_id)
 	if c == null or not c.is_pending():
-		return "That consequence no longer exists."
+		return Msg.make("That consequence no longer exists.")
 	if c.land_turn != w.turn:
-		return "Only consequences arriving this season can be handled."
+		return Msg.make("Only consequences arriving this season can be handled.")
 	match i.kind:
 		Intervention.REDIRECT:
 			if c.redirects >= int(ContentDB.intervention_def("redirect")["max_per_consequence"]):
-				return "Already redirected twice; it resists further routing."
+				return Msg.make("Already redirected twice; it resists further routing.")
 			return _validate_target(w, c, i.target)
 		Intervention.SPLIT:
 			if c.current_magnitude < int(ContentDB.intervention_def("split")["min_magnitude"]):
-				return "Too small to split."
+				return Msg.make("Too small to split.")
 			return _validate_target(w, c, i.target)
 		Intervention.DELAY:
 			if c.delays >= int(ContentDB.intervention_def("delay")["max_per_consequence"]):
-				return "Cannot be postponed again."
+				return Msg.make("Cannot be postponed again.")
 			if c.land_turn + 1 > w.max_turns:
-				return "Nothing can be postponed past the final season."
-			return ""
+				return Msg.make("Nothing can be postponed past the final season.")
+			return {}
 		Intervention.TRANSFORM:
 			var rule := ContentDB.transformation_def(i.rule_id)
 			if rule.is_empty():
-				return "Unknown transformation."
+				return Msg.make("Unknown transformation.")
 			if rule["input"] != c.type:
-				return "%s only converts %s." % [rule["name"], rule["input"]]
+				return Msg.make("%s only converts %s.", [rule["name"], rule["input"]])
 			if rule["at"] != c.destination:
-				return "Must first reach %s." % ContentDB.system_def(rule["at"])["name"]
+				return Msg.make("Must first reach %s.", [ContentDB.system_def(rule["at"])["name"]])
 			var site := w.system(rule["at"])
 			if site.collapsed or site.health < int(rule["min_health"]):
-				return "%s is too weak to run %s (needs %d)." % [ContentDB.system_def(rule["at"])["name"], rule["name"], int(rule["min_health"])]
+				return Msg.make("%s is too weak to run %s (needs %d).", [ContentDB.system_def(rule["at"])["name"], rule["name"], int(rule["min_health"])])
 			var used := int(w.transform_used.get(i.rule_id, 0))
 			if used + c.current_magnitude > int(rule["capacity_per_turn"]):
-				return "Over capacity this season (%d/%d). Split it first." % [used, int(rule["capacity_per_turn"])]
-			return ""
-	return "Unknown action."
+				return Msg.make("Over capacity this season (%d/%d). Split it first.", [used, int(rule["capacity_per_turn"])])
+			return {}
+	return Msg.make("Unknown action.")
 
 
-static func _validate_target(w: WorldState, c: Consequence, target: String) -> String:
+static func _validate_target(w: WorldState, c: Consequence, target: String) -> Dictionary:
 	if not w.systems.has(target):
-		return "Unknown system."
+		return Msg.make("Unknown system.")
 	if target == c.destination:
-		return "Already headed there."
+		return Msg.make("Already headed there.")
 	if not w.graph.are_adjacent(c.destination, target):
-		return "Not causally connected to %s." % ContentDB.system_def(c.destination)["name"]
+		return Msg.make("Not causally connected to %s.", [ContentDB.system_def(c.destination)["name"]])
 	if w.system(target).collapsed:
-		return "A collapsed system cannot receive anything."
-	return ""
+		return Msg.make("A collapsed system cannot receive anything.")
+	return {}
 
 
-static func _validate_crisis(w: WorldState, i: Intervention) -> String:
+static func _validate_crisis(w: WorldState, i: Intervention) -> Dictionary:
 	var cd := ContentDB.crisis_for_system(i.system)
 	if cd.is_empty():
-		return "No controlled crisis available there."
+		return Msg.make("No controlled crisis available there.")
 	var s := w.system(i.system)
 	if s.collapsed:
-		return "Collapsed."
+		return Msg.make("Collapsed.")
 	if s.crisis_cooldown > 0:
-		return "Cooling down (%d seasons)." % s.crisis_cooldown
+		return Msg.make("Cooling down (%d seasons).", [s.crisis_cooldown])
 	var max_delay := int(cd["gain"]["delay"])
 	for h in cd["harm"]:
 		max_delay = maxi(max_delay, int(h["delay"]))
 	if w.turn + max_delay > w.max_turns:
-		return "Too late in the run: its fallout would outlive the record."
-	return ""
+		return Msg.make("Too late in the run: its fallout would outlive the record.")
+	return {}
 
 
 static func apply(w: WorldState, i: Intervention) -> String:
@@ -188,7 +193,7 @@ static func _do_redirect(w: WorldState, i: Intervention) -> Consequence:
 		moved = c
 	var n := w.memory.add(w.memory.redirects_in, i.target)
 	if n % _r("redirects_per_capacity_loss") == 0:
-		w.memory.note(w.turn, i.target, "%s grows dependent on absorbing others' problems: capacity -1." % ContentDB.system_def(i.target)["name"])
+		w.memory.note_msg(w.turn, i.target, "%s grows dependent on absorbing others' problems: capacity -1.", [ContentDB.system_def(i.target)["name"]])
 	return moved
 
 
@@ -231,7 +236,7 @@ static func _do_transform(w: WorldState, i: Intervention) -> void:
 	w.memory.add(w.memory.transforms, i.rule_id)
 	var after := w.memory.adaptation(i.rule_id)
 	if after > before:
-		w.memory.note(w.turn, String(rule["at"]), "%s refined: efficiency now %d%%." % [rule["name"], int(rule["efficiency"]) + after])
+		w.memory.note_msg(w.turn, String(rule["at"]), "%s refined: efficiency now %d%%.", [rule["name"], int(rule["efficiency"]) + after])
 
 
 static func _do_crisis(w: WorldState, i: Intervention) -> void:
@@ -248,7 +253,7 @@ static func _do_crisis(w: WorldState, i: Intervention) -> void:
 	w.system(i.system).crisis_cooldown = int(ContentDB.intervention_def("crisis")["cooldown"])
 	w.memory.add(w.memory.crises, i.system)
 	if prior >= 1:
-		w.memory.note(w.turn, i.system, "%s resists repeated %s: yield %d%%." % [ContentDB.system_def(i.system)["name"], cd["name"], w.memory.crisis_yield_percent(i.system)])
+		w.memory.note_msg(w.turn, i.system, "%s resists repeated %s: yield %d%%.", [ContentDB.system_def(i.system)["name"], cd["name"], w.memory.crisis_yield_percent(i.system)])
 
 
 ## Every currently valid intervention (used by bots and tests).
@@ -303,8 +308,9 @@ static func preview_landing(w: WorldState, type: String, magnitude: int, dest: S
 
 
 ## Follows routing (split/redirect/leak) back to the consequence's true origin,
-## so post-mortems blame the event, not the routing step.
-static func origin_label(w: WorldState, c: Consequence) -> String:
+## so post-mortems blame the event, not the routing step. Returns a source key
+## ("event:flood" or "event:flood|routed") that the UI turns into text.
+static func origin_key(w: WorldState, c: Consequence) -> String:
 	var cur := c
 	var routed := false
 	var guard := 0
@@ -312,26 +318,38 @@ static func origin_label(w: WorldState, c: Consequence) -> String:
 		routed = true
 		cur = w.ledger.get_c(cur.parent_id)
 		guard += 1
-	return source_label(cur.source) + (" (routed)" if routed else "")
+	return cur.source + ("|routed" if routed else "")
 
 
-## Human-readable origin of a consequence source string.
-static func source_label(source: String) -> String:
-	var parts := source.split(":")
+## Translatable description of a source key (see origin_key).
+static func source_msg(source: String) -> Dictionary:
+	var routed := source.ends_with("|routed")
+	var src := source.trim_suffix("|routed")
+	var parts := src.split(":")
 	var kind := parts[0]
 	var rest := parts[1] if parts.size() > 1 else ""
+	var m: Dictionary
 	match kind:
-		"event": return ContentDB.event_def(rest).get("name", rest)
-		"crisis": return ContentDB.crisis_def(rest).get("name", rest) + " (your crisis)"
-		"transform": return ContentDB.transformation_def(rest).get("name", rest)
-		"residue": return ContentDB.transformation_def(rest).get("name", rest) + " residue"
-		"spill": return "Overflow from " + ContentDB.system_def(rest).get("name", rest)
-		"cascade": return "Failure of " + ContentDB.system_def(rest).get("name", rest)
-		"delay": return "Deferred strain"
-		"redirect": return "Rerouted"
-		"leak": return "Rerouting leak"
-		"split": return "Split share"
-	return source
+		"event": m = Msg.make("%s", [ContentDB.event_def(rest).get("name", rest)])
+		"crisis": m = Msg.make("%s (your crisis)", [ContentDB.crisis_def(rest).get("name", rest)])
+		"transform": m = Msg.make("%s", [ContentDB.transformation_def(rest).get("name", rest)])
+		"residue": m = Msg.make("%s residue", [ContentDB.transformation_def(rest).get("name", rest)])
+		"spill": m = Msg.make("Overflow from %s", [ContentDB.system_def(rest).get("name", rest)])
+		"cascade": m = Msg.make("Failure of %s", [ContentDB.system_def(rest).get("name", rest)])
+		"delay": m = Msg.make("Deferred strain")
+		"redirect": m = Msg.make("Rerouted")
+		"leak": m = Msg.make("Rerouting leak")
+		"split": m = Msg.make("Split share")
+		_: m = Msg.make("%s", [src])
+	if routed:
+		m = Msg.make("%s (routed)", [Msg.en(m)])
+		m["inner"] = source_msg(src)
+	return m
+
+
+## English description of a source key.
+static func source_label(source: String) -> String:
+	return Msg.en(source_msg(source))
 
 
 # ---------------------------------------------------------------- resolution
@@ -398,14 +416,14 @@ static func _land_consequences(w: WorldState, report: Dictionary) -> void:
 			landing["delta"] = s.health - before
 			if before - s.health > 0:
 				var bucket: Dictionary = w.damage_by_source.get(s.id, {})
-				var label := origin_label(w, c)
+				var label := origin_key(w, c)
 				bucket[label] = int(bucket.get(label, 0)) + (before - s.health)
 				w.damage_by_source[s.id] = bucket
 			landing["absorbed"] = absorbed
 			var r_before := w.memory.resilience(s.id)
 			w.memory.add(w.memory.harm_absorbed, s.id, landed)
 			if w.memory.resilience(s.id) / 5 > r_before / 5:
-				w.memory.note(w.turn, s.id, "%s hardens from repeated hits: resilience %d%%." % [ContentDB.system_def(s.id)["name"], w.memory.resilience(s.id)])
+				w.memory.note_msg(w.turn, s.id, "%s hardens from repeated hits: resilience %d%%.", [ContentDB.system_def(s.id)["name"], w.memory.resilience(s.id)])
 			w.ledger.close_landed(c, landed, w.turn)
 			if spill > 0:
 				var child := w.ledger.create(c.type, "spill:" + s.id, spill, dependent, w.turn, w.turn + 1, c)
@@ -445,7 +463,7 @@ static func _scars_and_cascades(w: WorldState, report: Dictionary) -> void:
 			s.scarred = true
 			s.max_health -= _r("scar_amount")
 			w.memory.add(w.memory.scars, s.id)
-			w.memory.note(w.turn, s.id, "%s is scarred: it will never fully recover (max %d)." % [ContentDB.system_def(s.id)["name"], s.max_health])
+			w.memory.note_msg(w.turn, s.id, "%s is scarred: it will never fully recover (max %d).", [ContentDB.system_def(s.id)["name"], s.max_health])
 			report["scars"].append(s.id)
 		var target := w.graph.strongest_dependent(s.id)
 		if target == "" or w.system(target).collapsed:
@@ -453,7 +471,7 @@ static func _scars_and_cascades(w: WorldState, report: Dictionary) -> void:
 		var mag := 0
 		if s.collapsed and s.id in report["collapses"]:
 			mag = 10
-			w.memory.note(w.turn, s.id, "%s COLLAPSED. Its dependents will feel it." % ContentDB.system_def(s.id)["name"])
+			w.memory.note_msg(w.turn, s.id, "%s COLLAPSED. Its dependents will feel it.", [ContentDB.system_def(s.id)["name"]])
 		elif not s.collapsed and s.health < _r("cascade_threshold"):
 			mag = 4 + (_r("cascade_threshold") - s.health) / 3
 		if mag > 0:
@@ -475,21 +493,26 @@ static func _evaluate(w: WorldState, _report: Dictionary) -> void:
 	for crit in loss["critical"]:
 		if w.system(crit).collapsed:
 			w.outcome = "defeat"
-			w.outcome_reason = "%s collapsed. Without people, there is no civilization." % ContentDB.system_def(crit)["name"]
+			_set_reason(w, "%s collapsed. Without people, there is no civilization.", [ContentDB.system_def(crit)["name"]])
 			return
 	if w.collapsed_count() >= int(loss["max_collapsed"]):
 		w.outcome = "defeat"
-		w.outcome_reason = "%d systems collapsed. The valley can no longer hold together." % w.collapsed_count()
+		_set_reason(w, "%d systems collapsed. The valley can no longer hold together.", [w.collapsed_count()])
 		return
 	if w.instability >= int(loss["max_instability"]):
 		w.outcome = "defeat"
-		w.outcome_reason = "Instability reached 100. Order dissolved."
+		_set_reason(w, "Instability reached 100. Order dissolved.", [])
 		return
 	if w.turn >= w.max_turns:
 		var win: Dictionary = sc["win"]
 		if w.average_health() >= int(win["avg_health"]) and w.min_health() >= int(win["min_health"]):
 			w.outcome = "victory"
-			w.outcome_reason = "The valley endures: average health %d, weakest system %d." % [w.average_health(), w.min_health()]
+			_set_reason(w, "The valley endures: average health %d, weakest system %d.", [w.average_health(), w.min_health()])
 		else:
 			w.outcome = "defeat"
-			w.outcome_reason = "Survived, but unsustainably: average %d (need %d), weakest %d (need %d)." % [w.average_health(), int(win["avg_health"]), w.min_health(), int(win["min_health"])]
+			_set_reason(w, "Survived, but unsustainably: average %d (need %d), weakest %d (need %d).", [w.average_health(), int(win["avg_health"]), w.min_health(), int(win["min_health"])])
+
+
+static func _set_reason(w: WorldState, key: String, args: Array) -> void:
+	w.outcome_msg = Msg.make(key, args)
+	w.outcome_reason = Msg.en(w.outcome_msg)

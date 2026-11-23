@@ -60,13 +60,13 @@ func _ready() -> void:
 	# Fit to screen height; scroll on small (phone) screens.
 	vb.resized.connect(func(): scroll.custom_minimum_size = Vector2(700, minf(vb.size.y, size.y - 40.0)))
 	var win := world.outcome == "victory"
-	var title := "THE VALLEY ENDURES" if win else ("UNSUSTAINABLE" if world.outcome_reason.begins_with("Survived") else "COLLAPSE")
+	var title := Loc.t("THE VALLEY ENDURES") if win else (Loc.t("UNSUSTAINABLE") if world.outcome_reason.begins_with("Survived") else Loc.t("COLLAPSE"))
 	vb.add_child(UIKit.label(title, 34, Palette.GOOD if win else Palette.BAD))
-	vb.add_child(UIKit.label(world.outcome_reason, 16, Palette.TEXT, true))
-	var score_txt := "Score %d" % world.score()
+	vb.add_child(UIKit.label(Loc.outcome(world), 16, Palette.TEXT, true))
+	var score_txt := Loc.t("Score %d") % world.score()
 	if world.daily_date != "":
 		var is_best := GameSettings.record_daily(world.daily_date, world.score())
-		score_txt += "  ·  Daily valley %s  ·  %s" % [world.daily_date, "New best today!" if is_best else "Best today: %d" % GameSettings.daily_best(world.daily_date)]
+		score_txt += Loc.t("  ·  Daily valley %s  ·  %s") % [world.daily_date, Loc.t("New best today!") if is_best else Loc.t("Best today: %d") % GameSettings.daily_best(world.daily_date)]
 	vb.add_child(UIKit.label(score_txt, 18, Palette.ACCENT))
 	var chart := HealthChart.new()
 	chart.history = world.history
@@ -74,13 +74,13 @@ func _ready() -> void:
 	vb.add_child(chart)
 	var legend := HBoxContainer.new()
 	for sid in ContentDB.system_ids():
-		legend.add_child(UIKit.label("■ " + String(ContentDB.system_def(sid)["name"]) + "  ", 12, Palette.system_color(sid)))
+		legend.add_child(UIKit.label("■ %s  " % Loc.sys(sid), 12, Palette.system_color(sid)))
 	vb.add_child(legend)
 	vb.add_child(UIKit.rich(_post_mortem(), 13))
 	var kinds := {"redirect": 0, "split": 0, "delay": 0, "transform": 0, "crisis": 0}
 	for a in world.actions_log:
 		kinds[a["kind"]] = int(kinds[a["kind"]]) + 1
-	vb.add_child(UIKit.label("Seasons survived %d · Consequences tracked %d · Redirects %d · Splits %d · Delays %d · Transforms %d · Crises %d" % [
+	vb.add_child(UIKit.label(Loc.t("Seasons survived %d · Consequences tracked %d · Redirects %d · Splits %d · Delays %d · Transforms %d · Crises %d") % [
 		world.history.size(), world.ledger.items.size(), kinds["redirect"], kinds["split"], kinds["delay"], kinds["transform"], kinds["crisis"]], 12, Palette.TEXT_DIM, true))
 	var seed_row := HBoxContainer.new()
 	seed_row.add_child(UIKit.label("Seed  ", 14, Palette.TEXT_DIM))
@@ -116,17 +116,17 @@ func _post_mortem() -> String:
 	for k in sources:
 		arr.append([k, int(sources[k])])
 	arr.sort_custom(func(a, b): return a[1] > b[1])
-	var s := "[b]What hurt %s most:[/b] " % ContentDB.system_def(worst)["name"]
+	var s := Loc.t("[b]What hurt %s most:[/b] ") % Loc.sys(worst)
 	if arr.is_empty():
-		s += "causal drag from its neighbours."
+		s += Loc.t("causal drag from its neighbours.")
 	else:
 		var parts: Array = []
 		for k in mini(3, arr.size()):
-			parts.append("%s (−%d)" % [arr[k][0], arr[k][1]])
+			parts.append("%s (−%d)" % [Loc.source(String(arr[k][0])), arr[k][1]])
 		s += ", ".join(parts)
 	var mem := world.memory.chronicle
 	if not mem.is_empty():
-		s += "\n[b]The valley remembers:[/b] " + String(mem[mem.size() - 1]["text"])
+		s += "\n[b]" + Loc.t("The valley remembers:") + "[/b] " + Loc.note(mem[mem.size() - 1])
 	return s
 
 

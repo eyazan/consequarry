@@ -248,16 +248,16 @@ func toast(text: String, color: Color = Palette.ACCENT, dur: float = 3.0) -> voi
 
 func refresh(w: WorldState, can_undo: bool, busy: bool) -> void:
 	var pips := "●".repeat(w.action_points) + "○".repeat(maxi(0, w.actions_per_turn - w.action_points))
-	top_season.text = ("%d/%d" if compact else "Season %d / %d") % [w.turn, w.max_turns]
-	top_ap.text = pips if compact else "Actions " + pips
+	top_season.text = (Loc.t("%d/%d") if compact else Loc.t("Season %d / %d")) % [w.turn, w.max_turns]
+	top_ap.text = pips if compact else Loc.t("Actions") + " " + pips
 	var st := w.stability_index()
-	top_stability.text = ("Stab %d" if compact else "Stability %d") % st
+	top_stability.text = (Loc.t("Stab %d") if compact else Loc.t("Stability %d")) % st
 	top_stability.add_theme_color_override("font_color", Palette.GOOD if st >= 55 else (Palette.ACCENT if st >= 35 else Palette.BAD))
 	top_instab.value = w.instability
-	top_instab_label.text = ("Inst %d" if compact else "Instability %d") % w.instability
-	top_reserve.text = ("Res %d" if compact else "Reserve %d") % w.reserve
+	top_instab_label.text = (Loc.t("Inst %d") if compact else Loc.t("Instability %d")) % w.instability
+	top_reserve.text = (Loc.t("Res %d") if compact else Loc.t("Reserve %d")) % w.reserve
 	top_seed.text = SeedCode.encode(w.run_seed)
-	scenario_label.text = ("DAILY %s · " % w.daily_date if w.daily_date != "" else "") + String(w.scenario().get("name", "")).to_upper()
+	scenario_label.text = (Loc.t("DAILY %s · ") % w.daily_date if w.daily_date != "" else "") + Loc.upper(Loc.scenario(w.scenario_id))
 	undo_btn.disabled = not can_undo or busy
 	end_btn.disabled = busy or w.is_over()
 	_fill_events(w)
@@ -267,13 +267,13 @@ func refresh(w: WorldState, can_undo: bool, busy: bool) -> void:
 func _event_row(parent: VBoxContainer, event_id: String, dim: bool) -> void:
 	var ed := ContentDB.event_def(event_id)
 	var hb := HBoxContainer.new()
-	var name_l := UIKit.label(String(ed["name"]), 14, Palette.TEXT_DIM if dim else Palette.ACCENT)
+	var name_l := UIKit.label(String(Loc.t(String(ed["name"]))), 14, Palette.TEXT_DIM if dim else Palette.ACCENT)
 	name_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hb.add_child(name_l)
 	for spec in ed["consequences"]:
 		hb.add_child(GlyphIcon.make(String(spec["type"]), 16))
-		hb.add_child(UIKit.label("→%s" % String(ContentDB.system_def(spec["to"])["name"]).substr(0, 4), 11, Palette.TEXT_DIM))
-	hb.tooltip_text = String(ed["text"])
+		hb.add_child(UIKit.label("→%s" % Loc.sys(spec["to"]).substr(0, 4), 11, Palette.TEXT_DIM))
+	hb.tooltip_text = String(Loc.t(String(ed["text"])))
 	hb.mouse_filter = Control.MOUSE_FILTER_PASS
 	parent.add_child(hb)
 
@@ -288,13 +288,13 @@ func _fill_events(w: WorldState) -> void:
 	for e in w.forecast:
 		_event_row(forecast_box, e, true)
 	if w.forecast.is_empty():
-		forecast_box.add_child(UIKit.label("Final season." if w.turn >= w.max_turns else "Unclear.", 13, Palette.TEXT_DIM))
+		forecast_box.add_child(UIKit.label(Loc.t("Final season.") if w.turn >= w.max_turns else Loc.t("Unclear."), 13, Palette.TEXT_DIM))
 	var future := 0
 	for c in w.ledger.pending():
 		if c.land_turn > w.turn:
 			future += 1
 	if future > 0:
-		forecast_box.add_child(UIKit.label("+ %d delayed/queued consequence(s)" % future, 12, Palette.TEXT_DIM))
+		forecast_box.add_child(UIKit.label(Loc.t("+ %d delayed/queued consequence(s)") % future, 12, Palette.TEXT_DIM))
 
 
 func _fill_memory(w: WorldState) -> void:
@@ -306,7 +306,7 @@ func _fill_memory(w: WorldState) -> void:
 	for k in range(maxi(0, ch.size() - 5), ch.size()):
 		var e: Dictionary = ch[k]
 		var col := Palette.system_color(String(e["system"]))
-		var r := UIKit.rich("[color=#%s]S%d[/color] %s" % [UIKit.hex(col), int(e["turn"]), e["text"]], 12)
+		var r := UIKit.rich("[color=#%s]S%d[/color] %s" % [UIKit.hex(col), int(e["turn"]), Loc.note(e)], 12)
 		r.custom_minimum_size = Vector2(226, 0)
 		memory_box.add_child(r)
 
@@ -331,7 +331,7 @@ func show_idle(w: WorldState, has_report: bool = false) -> void:
 	for t in ContentDB.data()["consequence_types"]:
 		var hb := HBoxContainer.new()
 		hb.add_child(GlyphIcon.make(String(t["id"]), 20))
-		hb.add_child(UIKit.label(String(t["name"]), 14))
+		hb.add_child(UIKit.label(String(Loc.t(String(t["name"]))), 14))
 		right_box.add_child(hb)
 	right_box.add_child(HSeparator.new())
 	var arriving := 0
@@ -340,7 +340,7 @@ func show_idle(w: WorldState, has_report: bool = false) -> void:
 		arriving += 1
 		if not ContentDB.is_positive(c.type):
 			harm += c.current_magnitude
-	right_box.add_child(UIKit.label("%d consequences arrive this season (%d harm)." % [arriving, harm], 13, Palette.TEXT_DIM, true))
+	right_box.add_child(UIKit.label(Loc.t("%d consequences arrive this season (%d harm).") % [arriving, harm], 13, Palette.TEXT_DIM, true))
 	if has_report:
 		right_box.add_child(UIKit.button("Last season report", func(): action_requested.emit("report", "")))
 	if compact:
@@ -351,11 +351,11 @@ func show_idle(w: WorldState, has_report: bool = false) -> void:
 
 func _predict_text(pv: Dictionary, sys_name: String) -> String:
 	var d := int(pv["delta"])
-	var s := "%s %+d health" % [sys_name, d]
+	var s := Loc.t("%s %+d health") % [sys_name, d]
 	if int(pv["absorbed"]) > 0:
-		s += " (cushioned %d)" % int(pv["absorbed"])
+		s += Loc.t(" (cushioned %d)") % int(pv["absorbed"])
 	if int(pv["spill"]) > 0:
-		s += ", %d overflows onward" % int(pv["spill"])
+		s += Loc.t(", %d overflows onward") % int(pv["spill"])
 	return s
 
 
@@ -366,20 +366,20 @@ func show_consequence(w: WorldState, c: Consequence, mode: String) -> void:
 	var td := ContentDB.type_def(c.type)
 	var hb := HBoxContainer.new()
 	hb.add_child(GlyphIcon.make(c.type, 30))
-	var title := UIKit.label("%s  %d" % [td["name"], c.current_magnitude], 22, Palette.type_color(c.type))
+	var title := UIKit.label("%s  %d" % [Loc.t(String(td["name"])), c.current_magnitude], 22, Palette.type_color(c.type))
 	hb.add_child(title)
 	right_box.add_child(hb)
-	var dest_name := String(ContentDB.system_def(c.destination)["name"])
-	right_box.add_child(UIKit.rich("From [b]%s[/b]\nHeading to [b][color=#%s]%s[/color][/b]%s" % [
-		SimulationEngine.source_label(c.source), UIKit.hex(Palette.system_color(c.destination)), dest_name,
-		"" if c.land_turn == w.turn else "  (arrives in %d)" % (c.land_turn - w.turn)], 14))
+	var dest_name := Loc.sys(c.destination)
+	right_box.add_child(UIKit.rich(Loc.t("From [b]%s[/b]\nHeading to [b][color=#%s]%s[/color][/b]%s") % [
+		Loc.source(c.source), UIKit.hex(Palette.system_color(c.destination)), dest_name,
+		"" if c.land_turn == w.turn else Loc.t("  (arrives in %d)") % (c.land_turn - w.turn)], 14))
 	var pv := SimulationEngine.preview_landing(w, c.type, c.current_magnitude, c.destination, c.id)
 	var pred := _predict_text(pv, dest_name)
-	right_box.add_child(UIKit.rich("If left alone: [color=#%s]%s[/color]" % [UIKit.hex(Palette.GOOD if int(pv["delta"]) >= 0 else Palette.BAD), pred], 14))
+	right_box.add_child(UIKit.rich(Loc.t("If left alone: [color=#%s]%s[/color]") % [UIKit.hex(Palette.GOOD if int(pv["delta"]) >= 0 else Palette.BAD), pred], 14))
 	if mode != "":
 		right_box.add_child(HSeparator.new())
-		var verb := "Redirect" if mode == "redirect" else "Split half"
-		right_box.add_child(UIKit.label("%s: click a glowing district." % verb, 16, Palette.ACCENT, true))
+		var verb := Loc.t("Redirect") if mode == "redirect" else Loc.t("Split half")
+		right_box.add_child(UIKit.label(Loc.t("%s: click a glowing district.") % verb, 16, Palette.ACCENT, true))
 		if mode == "redirect":
 			right_box.add_child(UIKit.label("20% always leaks and stays behind. Receiving systems grow dependent (capacity falls).", 12, Palette.TEXT_DIM, true))
 		right_box.add_child(UIKit.button("Cancel (Esc)", func(): cancel_pressed.emit()))
@@ -396,11 +396,11 @@ func show_consequence(w: WorldState, c: Consequence, mode: String) -> void:
 			var none := UIKit.button("4  Transform", func(): pass)
 			none.disabled = true
 			right_box.add_child(none)
-			right_box.add_child(UIKit.label("No known process converts %s." % td["name"], 11, Palette.TEXT_DIM, true))
+			right_box.add_child(UIKit.label(Loc.t("No known process converts %s.") % Loc.t(String(td["name"])), 11, Palette.TEXT_DIM, true))
 		else:
-			_action_button("transform:" + String(rule["id"]), "4  Transform: %s" % rule["name"],
-				"%s\n%s → %d%% Surplus at %s, rest becomes %s at %s." % [rule["text"], td["name"], int(rule["efficiency"]) + w.memory.adaptation(rule["id"]),
-				ContentDB.system_def(rule["output_to"])["name"], ContentDB.type_def(rule["residue"])["name"], ContentDB.system_def(rule["residue_to"])["name"]], w, c)
+			_action_button("transform:" + String(rule["id"]), Loc.t("4  Transform: %s") % Loc.t(String(rule["name"])),
+				Loc.t("%s\n%s → %d%% Surplus at %s, rest becomes %s at %s.") % [Loc.t(String(rule["text"])), Loc.t(String(td["name"])), int(rule["efficiency"]) + w.memory.adaptation(rule["id"]),
+				Loc.sys(rule["output_to"]), Loc.typ(rule["residue"]), Loc.sys(rule["residue_to"])], w, c)
 	if c.history.size() > 0:
 		right_box.add_child(HSeparator.new())
 		right_box.add_child(UIKit.label("LEDGER", 11, Palette.TEXT_DIM))
@@ -425,7 +425,7 @@ func _action_button(kind: String, text: String, tip: String, w: WorldState, c: C
 			reason = "No connected system can receive it."
 			for n in w.graph.neighbors(c.destination):
 				var cand := Intervention.redirect(c.id, n) if kind == "redirect" else Intervention.split(c.id, n)
-				var r := SimulationEngine.validate(w, cand)
+				var r := Loc.m(SimulationEngine.validate_msg(w, cand))
 				if r == "":
 					any_ok = true
 					break
@@ -433,9 +433,9 @@ func _action_button(kind: String, text: String, tip: String, w: WorldState, c: C
 			if any_ok:
 				reason = ""
 		"delay":
-			reason = SimulationEngine.validate(w, Intervention.delay(c.id))
+			reason = Loc.m(SimulationEngine.validate_msg(w, Intervention.delay(c.id)))
 		_:
-			reason = SimulationEngine.validate(w, Intervention.transform(c.id, kind.split(":")[1]))
+			reason = Loc.m(SimulationEngine.validate_msg(w, Intervention.transform(c.id, kind.split(":")[1])))
 	var b := UIKit.button(text, func(): action_requested.emit(kind, str(c.id)), tip)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.disabled = reason != ""
@@ -451,10 +451,10 @@ func show_district(w: WorldState, sid: String) -> void:
 	_close_row()
 	var s := w.system(sid)
 	var sd := ContentDB.system_def(sid)
-	right_box.add_child(UIKit.label(String(sd["name"]).to_upper(), 22, Palette.system_color(sid)))
-	var status := "COLLAPSED" if s.collapsed else ("Health %d / %d" % [s.health, s.max_health])
+	right_box.add_child(UIKit.label(Loc.upper(Loc.sys(sid)), 22, Palette.system_color(sid)))
+	var status := Loc.t("COLLAPSED") if s.collapsed else (Loc.t("Health %d / %d") % [s.health, s.max_health])
 	right_box.add_child(UIKit.label(status, 16, Palette.BAD if s.collapsed or s.health < 30 else Palette.TEXT))
-	right_box.add_child(UIKit.rich("Cushion [b]%d/%d[/b] this season · Resilience [b]%d%%[/b]%s" % [
+	right_box.add_child(UIKit.rich(Loc.t("Cushion [b]%d/%d[/b] this season · Resilience [b]%d%%[/b]%s") % [
 		s.remaining_capacity(w.memory), s.capacity(w.memory), w.memory.resilience(sid),
 		"\n[color=#c98a80]Scarred: max health reduced[/color]" if s.scarred else ""], 13))
 	right_box.add_child(UIKit.label("VULNERABILITY", 11, Palette.TEXT_DIM))
@@ -471,13 +471,13 @@ func show_district(w: WorldState, sid: String) -> void:
 	var links := ""
 	for e in w.graph.edges:
 		if e["from"] == sid:
-			links += "→ %s (%s %d)\n" % [ContentDB.system_def(e["to"])["name"], e["kind"], int(e["weight"])]
+			links += "→ %s (%s %d)\n" % [Loc.sys(e["to"]), Loc.t("Support" if e["kind"] == "support" else "Pressure"), int(e["weight"])]
 		elif e["to"] == sid:
-			links += "← %s (%s %d)\n" % [ContentDB.system_def(e["from"])["name"], e["kind"], int(e["weight"])]
+			links += "← %s (%s %d)\n" % [Loc.sys(e["from"]), Loc.t("Support" if e["kind"] == "support" else "Pressure"), int(e["weight"])]
 	right_box.add_child(UIKit.label(links.strip_edges(), 12, Palette.TEXT_DIM, true))
 	for r in ContentDB.data()["transformations"]:
 		if r["at"] == sid:
-			right_box.add_child(UIKit.rich("[color=#62e3a8]Process:[/color] [b]%s[/b] converts %s (needs health %d, %d per season)." % [r["name"], ContentDB.type_def(r["input"])["name"], int(r["min_health"]), int(r["capacity_per_turn"])], 12))
+			right_box.add_child(UIKit.rich(Loc.t("[color=#62e3a8]Process:[/color] [b]%s[/b] converts %s (needs health %d, %d per season).") % [Loc.t(String(r["name"])), Loc.typ(r["input"]), int(r["min_health"]), int(r["capacity_per_turn"])], 12))
 	var cd := ContentDB.crisis_for_system(sid)
 	if not cd.is_empty():
 		right_box.add_child(HSeparator.new())
@@ -485,15 +485,15 @@ func show_district(w: WorldState, sid: String) -> void:
 		var gain: Dictionary = cd["gain"]
 		var harm_txt := ""
 		for h in cd["harm"]:
-			harm_txt += "%s %d → %s%s; " % [ContentDB.type_def(h["type"])["name"], int(h["magnitude"]), ContentDB.system_def(h["to"])["name"], "" if int(h["delay"]) == 0 else " (in %d)" % int(h["delay"])]
+			harm_txt += "%s %d → %s%s; " % [Loc.typ(h["type"]), int(h["magnitude"]), Loc.sys(h["to"]), "" if int(h["delay"]) == 0 else Loc.t(" (in %d)") % int(h["delay"])]
 		var yield_pct := w.memory.crisis_yield_percent(sid)
 		right_box.add_child(UIKit.label("CONTROLLED CRISIS", 11, Palette.TEXT_DIM))
-		right_box.add_child(UIKit.rich("[b]%s[/b] — %s\nGain: [color=#62e3a8]Surplus %d → %s%s[/color]\nFallout: [color=#ff5c57]%s[/color]\nInstability +%d" % [
-			cd["name"], cd["text"], ContentDB.pct(int(gain["magnitude"]), yield_pct), ContentDB.system_def(gain["to"])["name"],
-			"" if int(gain["delay"]) == 0 else " (in %d)" % int(gain["delay"]), harm_txt.trim_suffix("; "),
+		right_box.add_child(UIKit.rich(Loc.t("[b]%s[/b] — %s\nGain: [color=#62e3a8]Surplus %d → %s%s[/color]\nFallout: [color=#ff5c57]%s[/color]\nInstability +%d") % [
+			Loc.t(String(cd["name"])), Loc.t(String(cd["text"])), ContentDB.pct(int(gain["magnitude"]), yield_pct), Loc.sys(gain["to"]),
+			"" if int(gain["delay"]) == 0 else Loc.t(" (in %d)") % int(gain["delay"]), harm_txt.trim_suffix("; "),
 			int(cd["instability"]) + 3 * int(w.memory.crises.get(sid, 0))], 12))
-		var reason := SimulationEngine.validate(w, Intervention.crisis(sid))
-		var b := UIKit.button("Trigger (%d actions)" % cost, func(): action_requested.emit("crisis", sid))
+		var reason := Loc.m(SimulationEngine.validate_msg(w, Intervention.crisis(sid)))
+		var b := UIKit.button(Loc.t("Trigger (%d actions)") % cost, func(): action_requested.emit("crisis", sid))
 		b.disabled = reason != ""
 		right_box.add_child(b)
 		if reason != "":
@@ -507,7 +507,7 @@ func show_report(w: WorldState, r: Dictionary) -> void:
 	right_scroll.scroll_vertical = 0
 	UIKit.clear(right_box)
 	_close_row()
-	right_box.add_child(UIKit.label("SEASON %d REPORT" % int(r["turn"]), 18, Palette.ACCENT))
+	right_box.add_child(UIKit.label(Loc.t("SEASON %d REPORT") % int(r["turn"]), 18, Palette.ACCENT))
 	var harm := 0
 	var heal := 0
 	var rows: Array = r["landings"].duplicate()
@@ -517,7 +517,7 @@ func show_report(w: WorldState, r: Dictionary) -> void:
 			harm -= d
 		else:
 			heal += d
-	right_box.add_child(UIKit.rich("Health lost [color=#%s]%d[/color] · gained [color=#%s]%d[/color]" % [UIKit.hex(Palette.BAD), harm, UIKit.hex(Palette.GOOD), heal], 13))
+	right_box.add_child(UIKit.rich(Loc.t("Health lost [color=#%s]%d[/color] · gained [color=#%s]%d[/color]") % [UIKit.hex(Palette.BAD), harm, UIKit.hex(Palette.GOOD), heal], 13))
 	rows.sort_custom(func(a, b): return absi(int(a["delta"])) > absi(int(b["delta"])))
 	right_box.add_child(UIKit.label("WHERE CONSEQUENCES LANDED", 11, Palette.TEXT_DIM))
 	for k in mini(10, rows.size()):
@@ -527,17 +527,17 @@ func show_report(w: WorldState, r: Dictionary) -> void:
 		var d := int(l["delta"])
 		var extra := ""
 		if int(l["absorbed"]) > 0 and d < 0:
-			extra = " (cushioned %d)" % int(l["absorbed"])
+			extra = Loc.t(" (cushioned %d)") % int(l["absorbed"])
 		if String(l["spill_to"]) != "":
-			extra += ", overflowed to %s" % ContentDB.system_def(l["spill_to"])["name"]
+			extra += Loc.t(", overflowed to %s") % Loc.sys(l["spill_to"])
 		var t := UIKit.rich("%s → [b]%s[/b] [color=#%s]%+d[/color][color=#9aa0ad]%s[/color]" % [
-			SimulationEngine.source_label(String(l["source"])), ContentDB.system_def(l["to"])["name"],
+			Loc.source(String(l["source"])), Loc.sys(l["to"]),
 			UIKit.hex(Palette.GOOD if d >= 0 else Palette.BAD), d, extra], 12)
 		t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		hb.add_child(t)
 		right_box.add_child(hb)
 	if rows.size() > 10:
-		right_box.add_child(UIKit.label("+ %d smaller landings" % (rows.size() - 10), 11, Palette.TEXT_DIM))
+		right_box.add_child(UIKit.label(Loc.t("+ %d smaller landings") % (rows.size() - 10), 11, Palette.TEXT_DIM))
 	var links := {}
 	for e in r["effects"]:
 		links[e["to"]] = int(links.get(e["to"], 0)) + int(e["delta"])
@@ -546,18 +546,18 @@ func show_report(w: WorldState, r: Dictionary) -> void:
 		var parts: Array = []
 		for sid in links:
 			var v: int = links[sid]
-			parts.append("%s [color=#%s]%+d[/color]" % [ContentDB.system_def(sid)["name"], UIKit.hex(Palette.GOOD if v >= 0 else Palette.BAD), v])
+			parts.append("%s [color=#%s]%+d[/color]" % [Loc.sys(sid), UIKit.hex(Palette.GOOD if v >= 0 else Palette.BAD), v])
 		right_box.add_child(UIKit.rich(" · ".join(parts), 12))
 	for c in r["cascades"]:
-		right_box.add_child(UIKit.rich("[color=#%s]Cascade:[/color] %s is failing, %d damage heads to %s next season." % [
-			UIKit.hex(Palette.BAD), ContentDB.system_def(c["from"])["name"], int(c["amount"]), ContentDB.system_def(c["to"])["name"]], 12))
+		right_box.add_child(UIKit.rich(Loc.t("[color=#%s]Cascade:[/color] %s is failing, %d damage heads to %s next season.") % [
+			UIKit.hex(Palette.BAD), Loc.sys(c["from"]), int(c["amount"]), Loc.sys(c["to"])], 12))
 	for sid in r["collapses"]:
-		right_box.add_child(UIKit.rich("[color=#%s][b]%s collapsed.[/b][/color]" % [UIKit.hex(Palette.BAD), ContentDB.system_def(sid)["name"]], 13))
+		right_box.add_child(UIKit.rich(Loc.t("[color=#%s][b]%s collapsed.[/b][/color]") % [UIKit.hex(Palette.BAD), Loc.sys(sid)], 13))
 	var ch := w.memory.chronicle
 	if ch.size() > int(r["memory_from"]):
 		right_box.add_child(UIKit.label("THE VALLEY REMEMBERS", 11, Palette.TEXT_DIM))
 		for k in range(int(r["memory_from"]), ch.size()):
-			var note := UIKit.label(String(ch[k]["text"]), 12, Color("9fd3ff"), true)
+			var note := UIKit.label(Loc.note(ch[k]), 12, Color("9fd3ff"), true)
 			note.custom_minimum_size = Vector2(280, 0)
 			right_box.add_child(note)
 	right_box.add_child(UIKit.label("Select an orb to plan this season.", 12, Palette.TEXT_DIM, true))

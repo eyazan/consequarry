@@ -170,7 +170,7 @@ func _apply_selection_visuals() -> void:
 			if ok:
 				var mag := c.current_magnitude - maxi(1, ContentDB.pct(c.current_magnitude, int(ContentDB.rules()["redirect_leak_percent"]))) if mode == "redirect" else c.current_magnitude / 2
 				var pv := SimulationEngine.preview_landing(world, c.type, mag, id)
-				d.preview_text = "%+d health" % int(pv["delta"])
+				d.preview_text = Loc.t("%+d health") % int(pv["delta"])
 				d.preview_color = Palette.GOOD if int(pv["delta"]) >= 0 else Palette.BAD
 	map.highlight_system = selected_district if selected_district != "" else (c.destination if c != null else hovered_district)
 
@@ -378,9 +378,10 @@ func _apply(it: Intervention) -> void:
 	var origin := Vector2.ZERO
 	if it.consequence_id >= 0 and orbs.has(it.consequence_id):
 		origin = orbs[it.consequence_id].position
+	var why := SimulationEngine.validate_msg(world, it)
 	var err := SimulationEngine.apply(world, it)
 	if err != "":
-		hud.toast(err, Palette.BAD)
+		hud.toast(Loc.m(why), Palette.BAD)
 		sfx.play("error")
 		mode = ""
 		_refresh_ui()
@@ -401,13 +402,13 @@ func _apply(it: Intervention) -> void:
 			selected_id = -1
 		Intervention.DELAY:
 			sfx.play("delay")
-			fx.text(origin, "Delayed +strain", Palette.ACCENT, 1.0, 15)
+			fx.text(origin, Loc.t("Delayed +strain"), Palette.ACCENT, 1.0, 15)
 			selected_id = -1
 		Intervention.TRANSFORM:
 			sfx.play("transform")
 			fx.sparks(origin, Palette.GOOD, 22, 0.8)
 			fx.ring(origin, Palette.GOOD, 0.6, 50)
-			fx.text(origin, ContentDB.transformation_def(it.rule_id)["name"], Palette.GOOD, 1.3, 16)
+			fx.text(origin, Loc.t(String(ContentDB.transformation_def(it.rule_id)["name"])), Palette.GOOD, 1.3, 16)
 			selected_id = -1
 			if tutorial:
 				tutorial.notify("transform")
@@ -415,7 +416,7 @@ func _apply(it: Intervention) -> void:
 			sfx.play("crisis")
 			var p := map.district_pos(it.system)
 			fx.ring(p, Palette.BAD, 0.8, 120)
-			fx.text(p + Vector2(0, -40), ContentDB.crisis_for_system(it.system)["name"], Palette.BAD, 1.5, 18)
+			fx.text(p + Vector2(0, -40), Loc.t(String(ContentDB.crisis_for_system(it.system)["name"])), Palette.BAD, 1.5, 18)
 			_shake(0.4)
 	_sync_districts(true)
 	_rebuild_orbs(false)
@@ -479,9 +480,9 @@ func end_turn() -> void:
 	if sc > 0.0 and not world.current_events.is_empty():
 		var names: Array = []
 		for e in world.current_events:
-			names.append(ContentDB.event_def(e)["name"])
+			names.append(Loc.event(e))
 		sfx.play("event")
-		fx.banner(Vector2(0, -250), "SEASON %d" % world.turn, " · ".join(names), Palette.ACCENT, 1.8 * sc)
+		fx.banner(Vector2(0, -250), Loc.t("SEASON %d") % world.turn, " · ".join(names), Palette.ACCENT, 1.8 * sc)
 	_rebuild_orbs(true)
 	_refresh_ui()
 	if tutorial:
@@ -513,14 +514,14 @@ func _animate_report(report: Dictionary, positions: Dictionary, shown: Dictionar
 		sfx.play("impact", 0.7)
 		_shake(0.3)
 	for sid in report["collapses"]:
-		fx.banner(Vector2(0, -250), "%s COLLAPSED" % String(ContentDB.system_def(sid)["name"]).to_upper(), "Its dependents will feel it.", Palette.BAD, 2.0 * sc)
+		fx.banner(Vector2(0, -250), Loc.t("%s COLLAPSED") % Loc.upper(Loc.sys(sid)), Loc.t("Its dependents will feel it."), Palette.BAD, 2.0 * sc)
 		_shake(0.6)
 	if not report["cascades"].is_empty() or not report["collapses"].is_empty():
 		await _wait(0.8 * sc)
 	var from_idx: int = report["memory_from"]
 	if world.memory.chronicle.size() > from_idx:
 		var note: Dictionary = world.memory.chronicle[from_idx]
-		hud.toast("World memory: " + String(note["text"]), Color("9fd3ff"), 4.0)
+		hud.toast(Loc.t("World memory: ") + Loc.note(note), Color("9fd3ff"), 4.0)
 	while fx.busy():
 		await _wait(0.05)
 
@@ -533,22 +534,22 @@ func _impact(l: Dictionary, shown: Dictionary) -> void:
 	var dv: DistrictView = map.districts[sid]
 	dv.display_health = clampf(shown[sid], 0.0, 100.0)
 	if d >= 0 and ContentDB.is_positive(l["type"]):
-		fx.text(pos + Vector2(0, -40), "+%d" % d, Palette.GOOD, 1.1, 22)
+		fx.text(pos + Vector2(0, -40), Loc.t("+%d") % d, Palette.GOOD, 1.1, 22)
 		fx.sparks(pos, Palette.GOOD, 10, 0.6)
 		sfx.play("heal")
 	else:
-		fx.text(pos + Vector2(0, -40), "%d" % d, Palette.BAD, 1.1, 22 + mini(10, -d))
+		fx.text(pos + Vector2(0, -40), Loc.t("%d") % d, Palette.BAD, 1.1, 22 + mini(10, -d))
 		fx.ring(pos, Palette.type_color(l["type"]), 0.5, 70)
 		dv.flash = minf(1.0, 0.3 + absf(d) / 12.0)
 		sfx.play("impact", 1.0 + randf() * 0.2)
 		if d <= -8:
 			_shake(0.25)
 	if int(l["absorbed"]) > 0 and not ContentDB.is_positive(l["type"]):
-		fx.text(pos + Vector2(60, -10), "cushioned %d" % int(l["absorbed"]), Color("9fd3ff"), 1.0, 12)
+		fx.text(pos + Vector2(60, -10), Loc.t("cushioned %d") % int(l["absorbed"]), Color("9fd3ff"), 1.0, 12)
 	if String(l["spill_to"]) != "":
 		var sc := GameSettings.anim_scale()
 		fx.flight(pos, map.district_pos(l["spill_to"]) + Vector2(60, 10), l["type"], 4, 0.5 * sc, -60.0)
-		fx.text(pos + Vector2(0, 10), "OVERFLOW →", Palette.ACCENT, 1.0, 13)
+		fx.text(pos + Vector2(0, 10), Loc.t("OVERFLOW →"), Palette.ACCENT, 1.0, 13)
 		map.pulse(sid, l["spill_to"], 0.8)
 
 

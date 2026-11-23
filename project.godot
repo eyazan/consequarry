@@ -44,6 +44,11 @@ cancel_selection={
 
 pointing/emulate_mouse_from_touch=true
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://localization/strings.en.translation", "res://localization/strings.tr.translation")
+locale/fallback="en"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

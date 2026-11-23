@@ -54,7 +54,7 @@ func _ready() -> void:
 
 func _show() -> void:
 	var s: Dictionary = STEPS[step]
-	text.text = "[color=#ffb347]%d/%d[/color]  %s" % [step + 1, STEPS.size(), s["text"]]
+	text.text = "[color=#ffb347]%d/%d[/color]  %s" % [step + 1, STEPS.size(), Loc.t(String(s["text"]))]
 	next_btn.visible = s["wait"] == "next"
 	next_btn.text = "Start playing ▶" if step == STEPS.size() - 1 else "Next ▶"
 

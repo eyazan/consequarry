@@ -63,7 +63,7 @@ static func rich(bbcode: String, size: int = 14) -> RichTextLabel:
 	r.bbcode_enabled = true
 	r.fit_content = true
 	r.scroll_active = false
-	r.text = bbcode
+	r.text = Loc.t(bbcode)
 	r.add_theme_font_size_override("normal_font_size", size)
 	r.add_theme_font_size_override("bold_font_size", size)
 	r.mouse_filter = Control.MOUSE_FILTER_PASS

@@ -11,6 +11,7 @@ func _ready() -> void:
 	GameSettings.load_settings()
 	GameSettings.apply()
 	GameSettings.apply_layout(get_window())
+	GameSettings.apply_language()
 	_build_rotate_overlay()
 	_install_symbol_fallback()
 	ui_theme = UIKit.make_theme()

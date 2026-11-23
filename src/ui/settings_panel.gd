@@ -51,6 +51,13 @@ func _ready() -> void:
 	fs.button_pressed = GameSettings.fullscreen
 	fs.toggled.connect(func(v): GameSettings.fullscreen = v; GameSettings.apply())
 	vb.add_child(fs)
+	vb.add_child(UIKit.label("Language (applies when you return to the menu)", 14))
+	var lg := OptionButton.new()
+	for n in GameSettings.LANGUAGE_NAMES:
+		lg.add_item(n)
+	lg.selected = maxi(0, GameSettings.LANGUAGES.find(GameSettings.language))
+	lg.item_selected.connect(func(i): GameSettings.language = GameSettings.LANGUAGES[i]; GameSettings.apply_language())
+	vb.add_child(lg)
 	vb.add_child(UIKit.label("Layout (applies on restart)", 14))
 	var lo := OptionButton.new()
 	for n in GameSettings.LAYOUT_NAMES:

@@ -1,0 +1,314 @@
+keys,en,tr
+Normal,Normal,Normal
+Fast,Fast,Hızlı
+Instant,Instant,Anında
+Auto,Auto,Otomatik
+Desktop,Desktop,Masaüstü
+Compact (touch),Compact (touch),Kompakt (dokunmatik)
+English,English,English
+COLLAPSED,COLLAPSED,ÇÖKTÜ
+%+d health,%+d health,%+d sağlık
+Delayed +strain,Delayed +strain,Ertelendi +yük
+SEASON %d,SEASON %d,SEZON %d
+%s COLLAPSED,%s COLLAPSED,%s ÇÖKTÜ
+Its dependents will feel it.,Its dependents will feel it.,Ona bağlı olanlar bunu hissedecek.
+World memory: ,World memory: ,Dünya hafızası: 
+cushioned %d,cushioned %d,%d tamponlandı
+OVERFLOW →,OVERFLOW →,TAŞMA →
+The run is over.,The run is over.,Oyun bitti.
+Not enough actions (%d needed).,Not enough actions (%d needed).,Yeterli hamle yok (%d gerekli).
+That consequence no longer exists.,That consequence no longer exists.,Bu sonuç artık yok.
+Only consequences arriving this season can be handled.,Only consequences arriving this season can be handled.,Yalnızca bu sezon gelen sonuçlara müdahale edilebilir.
+Already redirected twice; it resists further routing.,Already redirected twice; it resists further routing.,Zaten iki kez yönlendirildi; daha fazla yönlendirmeye direniyor.
+Too small to split.,Too small to split.,Bölünemeyecek kadar küçük.
+Cannot be postponed again.,Cannot be postponed again.,Tekrar ertelenemez.
+Nothing can be postponed past the final season.,Nothing can be postponed past the final season.,Hiçbir şey son sezonun ötesine ertelenemez.
+Unknown transformation.,Unknown transformation.,Bilinmeyen dönüşüm.
+%s only converts %s.,%s only converts %s.,%s yalnızca %s dönüştürür.
+Must first reach %s.,Must first reach %s.,Önce %s sistemine ulaşmalı.
+%s is too weak to run %s (needs %d).,%s is too weak to run %s (needs %d).,"%s, %s çalıştıramayacak kadar zayıf (%d gerekli)."
+Over capacity this season (%d/%d). Split it first.,Over capacity this season (%d/%d). Split it first.,Bu sezon kapasite dolu (%d/%d). Önce bölün.
+Unknown action.,Unknown action.,Bilinmeyen eylem.
+Unknown system.,Unknown system.,Bilinmeyen sistem.
+Already headed there.,Already headed there.,Zaten oraya gidiyor.
+Not causally connected to %s.,Not causally connected to %s.,%s ile nedensel bağlantısı yok.
+A collapsed system cannot receive anything.,A collapsed system cannot receive anything.,Çökmüş bir sistem hiçbir şey alamaz.
+No controlled crisis available there.,No controlled crisis available there.,Orada kontrollü kriz yapılamaz.
+Collapsed.,Collapsed.,Çöktü.
+Cooling down (%d seasons).,Cooling down (%d seasons).,Soğuma süresi (%d sezon).
+Too late in the run: its fallout would outlive the record.,Too late in the run: its fallout would outlive the record.,Çok geç: etkileri oyunun sonunu aşar.
+%s (your crisis),%s (your crisis),%s (sizin krizi­niz)
+%s residue,%s residue,%s artığı
+Overflow from %s,Overflow from %s,%s taşması
+Failure of %s,Failure of %s,%s çöküşü
+Deferred strain,Deferred strain,Ertelenmiş yük
+Rerouted,Rerouted,Yönlendirildi
+Rerouting leak,Rerouting leak,Yönlendirme sızıntısı
+Split share,Split share,Bölünmüş pay
+%s (routed),%s (routed),%s (yönlendirilmiş)
+%s again: the valley has learned. Future %s hit softer.,%s again: the valley has learned. Future %s hit softer.,Yine %s: vadi öğrendi. Bundan sonraki %s daha hafif vuracak.
+%s grows dependent on absorbing others' problems: capacity -1.,%s grows dependent on absorbing others' problems: capacity -1.,%s başkalarının sorunlarını üstlenmeye bağımlı hale geliyor: kapasite -1.
+%s refined: efficiency now %d%%.,%s refined: efficiency now %d%%.,%s gelişti: verim artık %%%d.
+%s resists repeated %s: yield %d%%.,%s resists repeated %s: yield %d%%.,%s tekrarlanan %s işlemine direniyor: getiri %%%d.
+%s hardens from repeated hits: resilience %d%%.,%s hardens from repeated hits: resilience %d%%.,%s tekrarlanan darbelerle sertleşiyor: dayanıklılık %%%d.
+%s is scarred: it will never fully recover (max %d).,%s is scarred: it will never fully recover (max %d).,%s yaralandı: asla tam iyileşemeyecek (en fazla %d).
+%s COLLAPSED. Its dependents will feel it.,%s COLLAPSED. Its dependents will feel it.,%s ÇÖKTÜ. Ona bağlı olanlar bunu hissedecek.
+"%s collapsed. Without people, there is no civilization.","%s collapsed. Without people, there is no civilization.",%s çöktü. İnsan olmadan medeniyet olmaz.
+%d systems collapsed. The valley can no longer hold together.,%d systems collapsed. The valley can no longer hold together.,%d sistem çöktü. Vadi artık bir arada duramıyor.
+Instability reached 100. Order dissolved.,Instability reached 100. Order dissolved.,İstikrarsızlık 100'e ulaştı. Düzen dağıldı.
+"The valley endures: average health %d, weakest system %d.","The valley endures: average health %d, weakest system %d.","Vadi ayakta: ortalama sağlık %d, en zayıf sistem %d."
+"Survived, but unsustainably: average %d (need %d), weakest %d (need %d).","Survived, but unsustainably: average %d (need %d), weakest %d (need %d).","Hayatta kaldı ama sürdürülemez: ortalama %d (gereken %d), en zayıf %d (gereken %d)."
+THE VALLEY ENDURES,THE VALLEY ENDURES,VADİ AYAKTA
+UNSUSTAINABLE,UNSUSTAINABLE,SÜRDÜRÜLEMEZ
+COLLAPSE,COLLAPSE,ÇÖKÜŞ
+Score %d,Score %d,Puan %d
+  ·  Daily valley %s  ·  %s,  ·  Daily valley %s  ·  %s,  ·  Günün vadisi %s  ·  %s
+New best today!,New best today!,Bugünün yeni rekoru!
+Best today: %d,Best today: %d,Bugünün en iyisi: %d
+Seasons survived %d · Consequences tracked %d · Redirects %d · Splits %d · Delays %d · Transforms %d · Crises %d,Seasons survived %d · Consequences tracked %d · Redirects %d · Splits %d · Delays %d · Transforms %d · Crises %d,Atlatılan sezon %d · İzlenen sonuç %d · Yönlendirme %d · Bölme %d · Erteleme %d · Dönüşüm %d · Kriz %d
+[b]What hurt %s most:[/b] ,[b]What hurt %s most:[/b] ,[b]%s sistemine en çok zarar veren:[/b] 
+causal drag from its neighbours.,causal drag from its neighbours.,komşularından gelen nedensel çekim.
+The valley remembers:,The valley remembers:,Vadi hatırlıyor:
+Seed  ,Seed  ,Tohum  
+Copy,Copy,Kopyala
+Retry this seed,Retry this seed,Bu tohumu tekrar dene
+New valley,New valley,Yeni vadi
+Main menu,Main menu,Ana menü
+Copy run report,Copy run report,Oyun raporunu kopyala
+Copied — paste it into the feedback form.,Copied — paste it into the feedback form.,Kopyalandı — geri bildirim formuna yapıştırın.
+Season %d / %d,Season %d / %d,Sezon %d / %d
+Actions,Actions,Hamle
+Stab %d,Stab %d,İst %d
+Stability %d,Stability %d,İstikrar %d
+Inst %d,Inst %d,İstsz %d
+Instability %d,Instability %d,İstikrarsızlık %d
+Res %d,Res %d,Rez %d
+Reserve %d,Reserve %d,Rezerv %d
+DAILY %s · ,DAILY %s · ,GÜNLÜK %s · 
+Final season.,Final season.,Son sezon.
+Unclear.,Unclear.,Belirsiz.
++ %d delayed/queued consequence(s),+ %d delayed/queued consequence(s),+ %d ertelenmiş/bekleyen sonuç
+%d consequences arrive this season (%d harm).,%d consequences arrive this season (%d harm).,Bu sezon %d sonuç geliyor (%d zarar).
+%s %+d health,%s %+d health,%s %+d sağlık
+ (cushioned %d), (cushioned %d), (%d tamponlandı)
+", %d overflows onward",", %d overflows onward",", %d ileri taşar"
+"From [b]%s[/b]
+Heading to [b][color=#%s]%s[/color][/b]%s","From [b]%s[/b]
+Heading to [b][color=#%s]%s[/color][/b]%s","Kaynak [b]%s[/b]
+Hedef [b][color=#%s]%s[/color][/b]%s"
+  (arrives in %d),  (arrives in %d),  (%d sezon sonra gelir)
+If left alone: [color=#%s]%s[/color],If left alone: [color=#%s]%s[/color],Dokunulmazsa: [color=#%s]%s[/color]
+Redirect,Redirect,Yönlendir
+Split half,Split half,Yarısını böl
+%s: click a glowing district.,%s: click a glowing district.,%s: parlayan bir bölge seçin.
+No known process converts %s.,No known process converts %s.,%s dönüştüren bilinen bir süreç yok.
+4  Transform: %s,4  Transform: %s,4  Dönüştür: %s
+"%s
+%s → %d%% Surplus at %s, rest becomes %s at %s.","%s
+%s → %d%% Surplus at %s, rest becomes %s at %s.","%s
+%s → %%%d Fazla (%s), kalanı %s olur (%s)."
+Health %d / %d,Health %d / %d,Sağlık %d / %d
+Cushion [b]%d/%d[/b] this season · Resilience [b]%d%%[/b]%s,Cushion [b]%d/%d[/b] this season · Resilience [b]%d%%[/b]%s,Tampon bu sezon [b]%d/%d[/b] · Dayanıklılık [b]%%%d[/b]%s
+Support,Support,destek
+"[color=#62e3a8]Process:[/color] [b]%s[/b] converts %s (needs health %d, %d per season).","[color=#62e3a8]Process:[/color] [b]%s[/b] converts %s (needs health %d, %d per season).","[color=#62e3a8]Süreç:[/color] [b]%s[/b], %s dönüştürür (sağlık %d gerekir, sezonda %d)."
+ (in %d), (in %d), (%d sezon sonra)
+"[b]%s[/b] — %s
+Gain: [color=#62e3a8]Surplus %d → %s%s[/color]
+Fallout: [color=#ff5c57]%s[/color]
+Instability +%d","[b]%s[/b] — %s
+Gain: [color=#62e3a8]Surplus %d → %s%s[/color]
+Fallout: [color=#ff5c57]%s[/color]
+Instability +%d","[b]%s[/b] — %s
+Kazanç: [color=#62e3a8]Fazla %d → %s%s[/color]
+Bedel: [color=#ff5c57]%s[/color]
+İstikrarsızlık +%d"
+Trigger (%d actions),Trigger (%d actions),Başlat (%d hamle)
+SEASON %d REPORT,SEASON %d REPORT,SEZON %d RAPORU
+Health lost [color=#%s]%d[/color] · gained [color=#%s]%d[/color],Health lost [color=#%s]%d[/color] · gained [color=#%s]%d[/color],Kaybedilen sağlık [color=#%s]%d[/color] · kazanılan [color=#%s]%d[/color]
+", overflowed to %s",", overflowed to %s",", %s sistemine taştı"
++ %d smaller landings,+ %d smaller landings,+ %d küçük iniş
+"[color=#%s]Cascade:[/color] %s is failing, %d damage heads to %s next season.","[color=#%s]Cascade:[/color] %s is failing, %d damage heads to %s next season.","[color=#%s]Zincirleme:[/color] %s çöküyor, gelecek sezon %d hasar %s sistemine gidecek."
+[color=#%s][b]%s collapsed.[/b][/color],[color=#%s][b]%s collapsed.[/b][/color],[color=#%s][b]%s çöktü.[/b][/color]
+1  Redirect,1  Redirect,1  Yönlendir
+2  Split,2  Split,2  Böl
+3  Delay,3  Delay,3  Ertele
+Send it to a causally connected system. 20% leaks.,Send it to a causally connected system. 20% leaks.,Nedensel bağlı bir sisteme gönderin. %20'si sızar.
+Send half to a connected system to use two cushions.,Send half to a connected system to use two cushions.,İki tamponu kullanmak için yarısını bağlı bir sisteme gönderin.
+Push it to next season. Adds +25% Deferred Strain.,Push it to next season. Adds +25% Deferred Strain.,Gelecek sezona itin. +%25 Ertelenmiş Yük ekler.
+CONSEQUARRY,CONSEQUARRY,CONSEQUARRY
+Season ▾,Season ▾,Sezon ▾
+Season 1/12,Season 1/12,Sezon 1/12
+Actions ●●●,Actions ●●●,Hamle ●●●
+Stability 70,Stability 70,İstikrar 70
+Instability,Instability,İstikrarsızlık
+Reserve 0,Reserve 0,Rezerv 0
+Undo (Z),Undo (Z),Geri al (Z)
+Settings,Settings,Ayarlar
+Menu,Menu,Menü
+Quiet season.,Quiet season.,Sakin sezon.
+"The valley remembers everything.
+Nothing yet.","The valley remembers everything.
+Nothing yet.","Vadi her şeyi hatırlar.
+Henüz bir şey yok."
+✕ Close,✕ Close,✕ Kapat
+CONSEQUENCES,CONSEQUENCES,SONUÇLAR
+Every consequence must go somewhere.,Every consequence must go somewhere.,Her sonuç bir yere gitmek zorunda.
+Click an orb to route it. Click a district to inspect it or trigger a controlled crisis.,Click an orb to route it. Click a district to inspect it or trigger a controlled crisis.,Yönlendirmek için bir küreye tıklayın. İncelemek ya da kontrollü kriz başlatmak için bir bölgeye tıklayın.
+Last season report,Last season report,Geçen sezonun raporu
+Tap an orb to route it. Tap a district to inspect it.,Tap an orb to route it. Tap a district to inspect it.,Yönlendirmek için bir küreye dokunun. İncelemek için bir bölgeye dokunun.
+Keys: Tab next orb · 1-4 actions · Space end season · Z undo · Esc cancel,Keys: Tab next orb · 1-4 actions · Space end season · Z undo · Esc cancel,Tuşlar: Tab sonraki küre · 1-4 eylemler · Boşluk sezonu bitir · Z geri al · Esc iptal
+20% always leaks and stays behind. Receiving systems grow dependent (capacity falls).,20% always leaks and stays behind. Receiving systems grow dependent (capacity falls).,%20'si her zaman sızıp geride kalır. Alan sistemler bağımlı hale gelir (kapasite düşer).
+Cancel (Esc),Cancel (Esc),İptal (Esc)
+Arrives in a later season. You can act on it then.,Arrives in a later season. You can act on it then.,Daha sonraki bir sezonda gelecek. O zaman müdahale edebilirsiniz.
+4  Transform,4  Transform,4  Dönüştür
+LEDGER,LEDGER,DEFTER
+VULNERABILITY,VULNERABILITY,HASSASİYET
+CAUSAL LINKS,CAUSAL LINKS,NEDENSEL BAĞLAR
+CONTROLLED CRISIS,CONTROLLED CRISIS,KONTROLLÜ KRİZ
+WHERE CONSEQUENCES LANDED,WHERE CONSEQUENCES LANDED,SONUÇLAR NEREYE DÜŞTÜ
+CAUSAL LINKS (DRAG FROM NEIGHBOURS),CAUSAL LINKS (DRAG FROM NEIGHBOURS),NEDENSEL BAĞLAR (KOMŞULARIN ETKİSİ)
+THE VALLEY REMEMBERS,THE VALLEY REMEMBERS,VADİ HATIRLIYOR
+Select an orb to plan this season.,Select an orb to plan this season.,Bu sezonu planlamak için bir küre seçin.
+Undo,Undo,Geri al
+Options,Options,Ayarlar
+END ▶,END ▶,BİTİR ▶
+END SEASON  ▶,END SEASON  ▶,SEZONU BİTİR  ▶
+Actions left this season. Surplus overflow above 15 reserve grants +1 next season.,Actions left this season. Surplus overflow above 15 reserve grants +1 next season.,Bu sezon kalan hamleler. Rezerv 15'i geçerse gelecek sezon +1 hamle.
+Average health minus instability and harm arriving this season.,Average health minus instability and harm arriving this season.,Ortalama sağlıktan istikrarsızlık ve bu sezon gelen zarar düşülür.
+"Raised by controlled crises, overflow and cascades. 100 = defeat. Above 45 an extra event strikes each season.","Raised by controlled crises, overflow and cascades. 100 = defeat. Above 45 an extra event strikes each season.","Kontrollü krizler, taşmalar ve zincirleme çöküşlerle artar. 100 = yenilgi. 45'in üstünde her sezon fazladan bir olay olur."
+Surplus that overflowed a full system. Every 15 grants one extra action next season.,Surplus that overflowed a full system. Every 15 grants one extra action next season.,Dolu bir sistemden taşan fazla. Her 15 puan gelecek sezon bir ekstra hamle verir.
+Share this seed: the same seed produces the same valley and events.,Share this seed: the same seed produces the same valley and events.,Bu tohumu paylaşın: aynı tohum aynı vadiyi ve olayları üretir.
+Resolve the season (Space),Resolve the season (Space),Sezonu sonuçlandır (Boşluk)
+THIS SEASON,THIS SEASON,BU SEZON
+FORECAST — NEXT SEASON,FORECAST — NEXT SEASON,TAHMİN — GELECEK SEZON
+WORLD MEMORY,WORLD MEMORY,DÜNYA HAFIZASI
+"Rotate your device to landscape
+to play CONSEQUARRY.","Rotate your device to landscape
+to play CONSEQUARRY.","CONSEQUARRY oynamak için
+cihazınızı yatay çevirin."
+Tutorial (2 min),Tutorial (2 min),Eğitim (2 dk)
+Replay tutorial,Replay tutorial,Eğitimi tekrar oyna
+Daily valley · %s · %s,Daily valley · %s · %s,Günün vadisi · %s · %s
+Today's best score: %d,Today's best score: %d,Bugünün en iyi puanı: %d
+P0 prototype %s · offline · no account,P0 prototype %s · offline · no account,P0 prototip %s · çevrimdışı · hesap yok
+Continue,Continue,Devam et
+Play seed,Play seed,Tohumu oyna
+Quit,Quit,Çıkış
+Invalid seed code.,Invalid seed code.,Geçersiz tohum kodu.
+Scenario,Scenario,Senaryo
+SETTINGS,SETTINGS,AYARLAR
+Master volume,Master volume,Ana ses
+Resolution animation speed,Resolution animation speed,Sonuçlanma animasyon hızı
+Language (applies when you return to the menu),Language (applies when you return to the menu),Dil (menüye dönünce uygulanır)
+Layout (applies on restart),Layout (applies on restart),Düzen (yeniden başlatınca uygulanır)
+Consequence types are always shape-coded for colour-blind play.,Consequence types are always shape-coded for colour-blind play.,Sonuç türleri renk körlüğü için her zaman şekille de ayırt edilir.
+Close,Close,Kapat
+Screen shake,Screen shake,Ekran sarsıntısı
+Always show causal links,Always show causal links,Nedensel bağları her zaman göster
+Fullscreen,Fullscreen,Tam ekran
+TUTORIAL,TUTORIAL,EĞİTİM
+Skip,Skip,Geç
+Next ▶,Next ▶,İleri ▶
+Start playing ▶,Start playing ▶,Oynamaya başla ▶
+"[b]You don't build this valley.[/b] Its people do.
+You decide where the [color=#ffb347]consequences[/color] of what they do end up.","[b]You don't build this valley.[/b] Its people do.
+You decide where the [color=#ffb347]consequences[/color] of what they do end up.","[b]Bu vadiyi siz inşa etmiyorsunuz.[/b] İnsanları ediyor.
+Siz onların yaptıklarının [color=#ffb347]sonuçlarının[/color] nereye gideceğine karar veriyorsunuz."
+"A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.
+
+[color=#ffb347]Select the orange Heat orb above Industry.[/color]","A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.
+
+[color=#ffb347]Select the orange Heat orb above Industry.[/color]","Bir rafineri hattı patladı. Parlayan küreler onun sonuçları. [b]Yok olamazlar[/b] — yalnızca taşınabilir, bölünebilir, ertelenebilir ya da dönüştürülebilirler.
+
+[color=#ffb347]Sanayi'nin üstündeki turuncu Isı küresini seçin.[/color]"
+"Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).
+
+[color=#ffb347]Press Redirect, then choose the glowing Energy district.[/color]","Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).
+
+[color=#ffb347]Press Redirect, then choose the glowing Energy district.[/color]","Isı Sanayi'ye zarar verir. [b]Enerji ısıdan pek etkilenmez[/b] (hassasiyetine bakın).
+
+[color=#ffb347]Yönlendir'e basın, sonra parlayan Enerji bölgesini seçin.[/color]"
+"Notice the small orb left at Industry: [b]20% always leaks[/b]. Rerouting is never clean.
+
+[color=#ffb347]Now select the Heat at Energy and press Transform: Thermal Capture.[/color]","Notice the small orb left at Industry: [b]20% always leaks[/b]. Rerouting is never clean.
+
+[color=#ffb347]Now select the Heat at Energy and press Transform: Thermal Capture.[/color]","Sanayi'de kalan küçük küreye dikkat: [b]%20'si her zaman sızar[/b]. Yönlendirme asla temiz olmaz.
+
+[color=#ffb347]Şimdi Enerji'deki Isı'yı seçin ve Dönüştür: Isı Yakalama'ya basın.[/color]"
+"Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.
+
+[color=#ffb347]Press END (Space) and watch where everything lands.[/color]","Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.
+
+[color=#ffb347]Press END (Space) and watch where everything lands.[/color]","Isı yeşil [b]Fazla[/b]'ya dönüştü (Enerji'yi iyileştirir) — ama egzoz [color=#9a7bd6]Kirliliği[/color] artık Çevre'ye gidiyor. Her kazancın bir artığı vardır.
+
+[color=#ffb347]BİTİR'e (Boşluk) basın ve her şeyin nereye düştüğünü izleyin.[/color]"
+"Pipes are [b]causal links[/b]: healthy systems support neighbours, failing ones drag them down next season (numbers on the pipes). The left panel forecasts next season's event.","Pipes are [b]causal links[/b]: healthy systems support neighbours, failing ones drag them down next season (numbers on the pipes). The left panel forecasts next season's event.","Borular [b]nedensel bağlardır[/b]: sağlıklı sistemler komşularını destekler, çökenler bir sonraki sezon onları aşağı çeker (borulardaki sayılar). Sol panel gelecek sezonun olayını tahmin eder."
+"[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.
+[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.
+Select a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.","[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.
+[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.
+Select a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.","[b]Kazanmak:[/b] 12 sezon sonunda ortalama sağlık ≥ 55 ve her sistem ≥ 25.
+[b]Kaybetmek:[/b] Nüfus çöker, iki sistem çöker ya da istikrarsızlık 100'e ulaşır.
+Zayıf noktalarını ve [b]Kontrollü Kriz[/b]'ini görmek için bir bölge seçin — güçlüdür ama vadi unutmaz."
+Pressure,Pressure,baskı
+Energy,Energy,Enerji
+Industry,Industry,Sanayi
+Infrastructure,Infrastructure,Altyapı
+Population,Population,Nüfus
+Agriculture,Agriculture,Tarım
+Environment,Environment,Çevre
+Damage,Damage,Hasar
+Heat,Heat,Isı
+Pollution,Pollution,Kirlilik
+Unrest,Unrest,Huzursuzluk
+Surplus,Surplus,Fazla
+Industrial Accident,Industrial Accident,Endüstriyel Kaza
+A refinery line ruptures.,A refinery line ruptures.,Bir rafineri hattı patlıyor.
+Heatwave,Heatwave,Sıcak Hava Dalgası
+Weeks of record temperatures.,Weeks of record temperatures.,Haftalarca rekor sıcaklıklar.
+Blackout,Blackout,Elektrik Kesintisi
+The grid trips across three districts.,The grid trips across three districts.,Şebeke üç bölgede çöküyor.
+Crop Blight,Crop Blight,Ürün Hastalığı
+A fungus spreads through the grain belt.,A fungus spreads through the grain belt.,Bir mantar tahıl kuşağına yayılıyor.
+Toxic Spill,Toxic Spill,Zehirli Sızıntı
+A holding pond overflows into the river.,A holding pond overflows into the river.,Bir atık havuzu nehre taşıyor.
+Labor Strike,Labor Strike,İşçi Grevi
+Factory crews walk out.,Factory crews walk out.,Fabrika işçileri iş bırakıyor.
+Flood,Flood,Sel
+The river breaches the levees.,The river breaches the levees.,Nehir setleri aşıyor.
+Migration Wave,Migration Wave,Göç Dalgası
+Thousands arrive seeking work.,Thousands arrive seeking work.,Binlerce kişi iş aramaya geliyor.
+Wildfire,Wildfire,Orman Yangını
+Dry forest ignites on the ridge.,Dry forest ignites on the ridge.,Sırttaki kuru orman tutuşuyor.
+Grid Surge,Grid Surge,Şebeke Dalgalanması
+Turbines overspin during a storm.,Turbines overspin during a storm.,Fırtınada türbinler aşırı dönüyor.
+Thermal Capture,Thermal Capture,Isı Yakalama
+Excess heat drives turbines. Exhaust still has to go somewhere.,Excess heat drives turbines. Exhaust still has to go somewhere.,Fazla ısı türbinleri çevirir. Egzoz yine de bir yere gitmeli.
+Soil Cycling,Soil Cycling,Toprak Döngüsü
+Organic waste becomes fertiliser. The soil pays for it.,Organic waste becomes fertiliser. The soil pays for it.,Organik atık gübreye dönüşür. Bedelini toprak öder.
+Labor Mobilization,Labor Mobilization,İşgücü Seferberliği
+Restless workers are put on overtime. Smokestacks run hot.,Restless workers are put on overtime. Smokestacks run hot.,Huzursuz işçiler fazla mesaiye sokulur. Bacalar kızışır.
+Controlled Overload,Controlled Overload,Kontrollü Aşırı Yükleme
+Run the reactors past rated output.,Run the reactors past rated output.,Reaktörleri anma gücünün üstünde çalıştırın.
+Industrial Shutdown,Industrial Shutdown,Sanayi Duruşu
+Halt the factories for a full cycle.,Halt the factories for a full cycle.,Fabrikaları bir tam dönem durdurun.
+Controlled Burn,Controlled Burn,Kontrollü Yakma
+Burn the undergrowth before nature does.,Burn the undergrowth before nature does.,Doğa yakmadan çalılıkları siz yakın.
+Fallow Rotation,Fallow Rotation,Nadas Rotasyonu
+Leave half the fields empty this season.,Leave half the fields empty this season.,Bu sezon tarlaların yarısını boş bırakın.
+Demolish & Rebuild,Demolish & Rebuild,Yık ve Yeniden Yap
+Tear down failing blocks to rebuild them right.,Tear down failing blocks to rebuild them right.,Çürük blokları doğru yeniden yapmak için yıkın.
+Curfew,Curfew,Sokağa Çıkma Yasağı
+Clear the streets. Productivity rises; patience falls.,Clear the streets. Productivity rises; patience falls.,"Sokakları boşaltın. Verim artar, sabır azalır."
+The Valley Accord,The Valley Accord,Vadi Uzlaşısı
+A young river-valley civilization. Keep it sustainable for twelve seasons.,A young river-valley civilization. Keep it sustainable for twelve seasons.,Genç bir nehir vadisi medeniyeti. On iki sezon boyunca sürdürülebilir tutun.
+First Season (Tutorial),First Season (Tutorial),İlk Sezon (Eğitim)
+Learn to route consequences.,Learn to route consequences.,Sonuçları yönlendirmeyi öğrenin.
+Dry Season,Dry Season,Kurak Mevsim
+The rains have failed. Heat and fire press on fields and forests.,The rains have failed. Heat and fire press on fields and forests.,Yağmurlar gelmedi. Sıcak ve ateş tarlalara ve ormanlara baskı yapıyor.
+Boomtown,Boomtown,Patlayan Şehir
+"Factories are booming. So are accidents, strikes and the river's poison.","Factories are booming. So are accidents, strikes and the river's poison.","Fabrikalar patlama yaşıyor. Kazalar, grevler ve nehrin zehri de öyle."
+Split,Split,Böl
+Delay,Delay,Ertele
+Transform,Transform,Dönüştür
+Controlled Crisis,Controlled Crisis,Kontrollü Kriz

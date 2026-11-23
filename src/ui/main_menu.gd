@@ -32,7 +32,7 @@ func _ready() -> void:
 	if SaveSystem.has_run():
 		first = UIKit.button("Continue", func(): continue_run.emit())
 		vb.add_child(first)
-	var tut := UIKit.button("Tutorial (2 min)" if not GameSettings.tutorial_done else "Replay tutorial", func(): start_run.emit("tutorial", 20261122))
+	var tut := UIKit.button(Loc.t("Tutorial (2 min)") if not GameSettings.tutorial_done else Loc.t("Replay tutorial"), func(): start_run.emit("tutorial", 20261122))
 	var newb := UIKit.button("New valley", func(): start_run.emit(_scenario(), SeedCode.random_seed()))
 	if GameSettings.tutorial_done:
 		vb.add_child(newb)
@@ -44,15 +44,15 @@ func _ready() -> void:
 		first = vb.get_child(3) as Button
 	var d := SeedCode.today()
 	var best := GameSettings.daily_best(d["date"])
-	var daily_btn := UIKit.button("Daily valley · %s · %s" % [d["date"], ContentDB.scenario_def(d["scenario"])["name"]], func(): start_daily.emit(),
+	var daily_btn := UIKit.button(Loc.t("Daily valley · %s · %s") % [d["date"], Loc.scenario(d["scenario"])], func(): start_daily.emit(),
 		"Everyone gets the same valley today. Best score is kept on this device.")
 	vb.add_child(daily_btn)
 	if best >= 0:
-		vb.add_child(UIKit.label("Today's best score: %d" % best, 12, Palette.GOOD))
+		vb.add_child(UIKit.label(Loc.t("Today's best score: %d") % best, 12, Palette.GOOD))
 	scenario_pick = OptionButton.new()
 	for sc in ContentDB.data()["scenarios"]:
 		if sc["id"] != "tutorial":
-			scenario_pick.add_item(String(sc["name"]))
+			scenario_pick.add_item(String(Loc.t(String(sc["name"]))))
 			scenario_pick.set_item_metadata(scenario_pick.item_count - 1, String(sc["id"]))
 	scenario_pick.tooltip_text = "Scenario"
 	scenario_desc = UIKit.label("", 12, Palette.TEXT_DIM, true)
@@ -73,7 +73,7 @@ func _ready() -> void:
 	vb.add_child(UIKit.button("Settings", func(): open_settings.emit()))
 	if not OS.has_feature("web"):
 		vb.add_child(UIKit.button("Quit", func(): get_tree().quit()))
-	vb.add_child(UIKit.label("P0 prototype %s · offline · no account" % ProjectSettings.get_setting("application/config/version"), 11, Palette.TEXT_DIM))
+	vb.add_child(UIKit.label(Loc.t("P0 prototype %s · offline · no account") % ProjectSettings.get_setting("application/config/version"), 11, Palette.TEXT_DIM))
 	first.call_deferred("grab_focus")
 
 

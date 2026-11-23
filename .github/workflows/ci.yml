@@ -19,6 +19,10 @@ jobs:
           unzip -q godot.zip
           sudo mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
           godot --version
+      - name: Translation table up to date and complete
+        run: |
+          python3 tools/i18n_extract.py --check
+          git diff --exit-code localization/strings.csv
       - name: Import project
         run: godot --headless --import || true
       - name: Unit and integration tests

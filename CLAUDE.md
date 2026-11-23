@@ -13,6 +13,10 @@ Turn-based systemic roguelite: the player routes, splits, delays, transforms con
 - Play: `godot` (editor) or `godot --path . ` ; direct run: `godot -- --autostart p0_valley <seed>`
 - Screenshot (Xvfb): `xvfb-run -a godot --rendering-driver opengl3 -- --autostart tutorial 20261122 --shot out.png 30 --demo`
 
+## Localization
+- Player-facing UI text goes through `Loc.t(...)` (or `Loc.m(msg)` for engine messages); the simulation only creates `Msg.make(key, args)`.
+- After adding strings: `python3 tools/i18n_extract.py --check`, add missing entries to `localization/tr.json`, re-run, commit `localization/strings.csv`.
+
 ## Rules
 - Simulation (`src/simulation`, `src/consequences`, ...) must stay integer-only, node-free, deterministic.
 - Never break ledger invariants; run tests after any rule change.

@@ -47,6 +47,11 @@ func note(turn: int, system_id: String, text: String) -> void:
 	chronicle.append({"turn": turn, "system": system_id, "text": text})
 
 
+## Records a translatable note: English text plus key/args for the UI.
+func note_msg(turn: int, system_id: String, key: String, args: Array) -> void:
+	chronicle.append({"turn": turn, "system": system_id, "text": key % args, "k": key, "a": args})
+
+
 func add(dict: Dictionary, key: String, amount: int = 1) -> int:
 	dict[key] = int(dict.get(key, 0)) + amount
 	return int(dict[key])

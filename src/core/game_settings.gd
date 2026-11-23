@@ -15,6 +15,9 @@ static var tutorial_done: bool = false
 static var layout_mode: int = 0  # 0 auto, 1 desktop, 2 compact (phones/tablets)
 const LAYOUT_NAMES := ["Auto", "Desktop", "Compact (touch)"]
 static var compact: bool = false
+static var language: String = "auto"  # "auto", "en", "tr"
+const LANGUAGES := ["auto", "en", "tr"]
+const LANGUAGE_NAMES := ["Auto", "English", "Türkçe"]
 static var _loaded := false
 
 
@@ -32,6 +35,7 @@ static func load_settings() -> void:
 	always_show_links = bool(cf.get_value("gameplay", "always_show_links", always_show_links))
 	tutorial_done = bool(cf.get_value("progress", "tutorial_done", tutorial_done))
 	layout_mode = clampi(int(cf.get_value("video", "layout_mode", layout_mode)), 0, 2)
+	language = String(cf.get_value("general", "language", language))
 
 
 static func save_settings() -> void:
@@ -43,6 +47,7 @@ static func save_settings() -> void:
 	cf.set_value("gameplay", "always_show_links", always_show_links)
 	cf.set_value("progress", "tutorial_done", tutorial_done)
 	cf.set_value("video", "layout_mode", layout_mode)
+	cf.set_value("general", "language", language)
 	cf.save(PATH)
 
 
@@ -100,3 +105,14 @@ static func record_daily(date: String, score: int) -> bool:
 		cf.save(DAILY_PATH)
 		return true
 	return false
+
+
+## Applies the language: "auto" follows the device (Turkish devices get Turkish).
+static func apply_language() -> void:
+	var arg := OS.get_cmdline_user_args().find("--lang")
+	var lang := language
+	if arg >= 0 and OS.get_cmdline_user_args().size() > arg + 1:
+		lang = OS.get_cmdline_user_args()[arg + 1]
+	if lang == "auto":
+		lang = "tr" if OS.get_locale_language() == "tr" else "en"
+	TranslationServer.set_locale(lang)

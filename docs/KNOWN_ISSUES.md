@@ -6,7 +6,7 @@
 | K-2 | Medium | Exports now built for Web/Windows/macOS/Linux/iOS-project; only Web (Chromium) and Linux were run. Windows/macOS/real iPhone Safari unverified. | Owner tests on iPhone Safari; Windows/Mac testers in playtest. |
 | K-3 | Medium | Balance tuned only with bots. Heuristic "conservative/recovery" bots win ~80%; human difficulty unknown. | Human playtest (≥30 testers) before tuning further. |
 | K-4 | Medium | Expert lookahead bot is myopic (abuses Delay); not a reliable skill ceiling. | Two-ply or MCTS bot in P0.5 if needed. |
-| K-5 | Medium | UI strings are hard-coded English (content strings are in data). | Move to translation CSV in P1. |
+| K-5 | Resolved | UI and content strings localized (English, Turkish). New strings must be added to `localization/tr.json`; CI enforces it. | — |
 | K-6 | Minor | Controller: no on-screen gamepad cursor for map orbs (touch and mouse work; Tab/Enter on keyboard). | P1 controller UX pass (Steam Deck). |
 | K-7 | Minor | UI default font licence should be confirmed against Godot's COPYRIGHT.txt before release. | Pre-release checklist. |
 | K-8 | Minor | Audio is placeholder synthesis; no music. | P1. |

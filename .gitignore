@@ -3,3 +3,4 @@ export/
 builds/
 /reports/tmp/
 .DS_Store
+localization/*.translation

@@ -27,6 +27,7 @@ var history: Array = []               # per-turn {turn, health:{}, instability, 
 var damage_by_source: Dictionary = {} # system -> {source label -> health lost}
 var outcome: String = ""              # "", "victory", "defeat"
 var outcome_reason: String = ""
+var outcome_msg: Dictionary = {}      # translatable form of outcome_reason
 var daily_date: String = ""          # "YYYY-MM-DD" when this is the daily valley
 var last_focus_id: int = -1           # transient UI hint (not saved)
 
@@ -88,7 +89,7 @@ func to_dict() -> Dictionary:
 		"ledger": ledger.to_dict(), "memory": memory.to_dict(), "rng_state": rng.state,
 		"forecast": forecast.duplicate(), "current_events": current_events.duplicate(),
 		"queued_effects": queued_effects.duplicate(true), "actions_log": actions_log.duplicate(true),
-		"history": history.duplicate(true), "damage_by_source": damage_by_source.duplicate(true), "outcome": outcome, "outcome_reason": outcome_reason, "daily_date": daily_date,
+		"history": history.duplicate(true), "damage_by_source": damage_by_source.duplicate(true), "outcome": outcome, "outcome_reason": outcome_reason, "daily_date": daily_date, "outcome_msg": outcome_msg.duplicate(true),
 	}
 
 
@@ -138,6 +139,7 @@ static func from_dict(raw: Dictionary) -> WorldState:
 	w.outcome = String(d["outcome"])
 	w.outcome_reason = String(d["outcome_reason"])
 	w.daily_date = String(d.get("daily_date", ""))
+	w.outcome_msg = d.get("outcome_msg", {}).duplicate(true)
 	return w
 
 
