@@ -21,3 +21,17 @@
 6. [ ] Translation table (K-5)
 7. [ ] Second scenario to test replay variety
 8. [ ] Better expert bot (K-4)
+
+## Done (0.1.2, 2026-11-23)
+- [x] Season report panel
+- [x] Scenarios: Dry Season, Boomtown (balanced with bots)
+- [x] Daily valley + run score + local best
+- [x] Localization pipeline + Turkish
+- [x] Procedural music with tension filter
+
+## Next
+- [ ] Owner playtest feedback → fixes
+- [ ] Refresh iPhone build (needs the Mac attached)
+- [ ] Public web build on GitHub Pages (needs `consequarry-play` repo)
+- [ ] Gamepad orb cursor (Steam Deck)
+- [ ] Steam page + Steamworks (paid, needs approval)

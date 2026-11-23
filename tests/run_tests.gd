@@ -17,7 +17,7 @@ func _init() -> void:
 		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
 		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
 		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
-		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization",
+		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization", "test_music",
 	]
 	for t in tests:
 		current = t
@@ -373,3 +373,15 @@ func test_localization() -> void:
 	TranslationServer.set_locale("en")
 	check(Loc.t("Energy") == "Energy", "English fallback")
 	TranslationServer.set_locale(before)
+
+
+func test_music() -> void:
+	var n := Music.total_samples()
+	check(n > 22050 * 8 and n < 22050 * 30, "music loop length %d" % n)
+	var peak := 0.0
+	for i in range(0, n, 97):
+		var v := Music.sample(i)
+		check(not is_nan(v) and absf(v) <= 1.0, "sample out of range at %d" % i)
+		peak = maxf(peak, absf(v))
+	check(peak > 0.2, "music is silent (peak %.3f)" % peak)
+	check(absf(Music.sample(n - 1) - Music.sample(0)) < 0.05, "loop seam would click")

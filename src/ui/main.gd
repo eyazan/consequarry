@@ -9,6 +9,7 @@ var ui_theme: Theme
 
 func _ready() -> void:
 	GameSettings.load_settings()
+	add_child(Music.new())
 	GameSettings.apply()
 	GameSettings.apply_layout(get_window())
 	GameSettings.apply_language()

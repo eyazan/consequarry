@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.2 — 2026-11-23
+- Procedural ambient soundtrack (no assets): pad, bass and arpeggio loop synthesised in small chunks across frames; Music bus low-pass follows stability (tension); separate Music and Sound effects volume sliders.
 - Localization pipeline: engine messages are language-neutral (`Msg` key + args), UI goes through `Loc`; `tools/i18n_extract.py` builds `localization/strings.csv` from code and content, merges `localization/tr.json`, and checks placeholder order. Full Turkish translation (259 strings); Settings → Language (Auto/English/Türkçe); Turkish-aware upper case. CI fails on missing or mismatched translations.
 - Two new scenarios: **Dry Season** (heat/fire-heavy, weakened fields and forests) and **Boomtown** (booming industry, frequent accidents, strikes and spills). Scenario picker in the main menu.
 - Daily valley: same seed and scenario for everyone per UTC date (offline), run score, local best score per day.

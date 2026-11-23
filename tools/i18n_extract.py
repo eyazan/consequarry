@@ -20,7 +20,7 @@ PATTERNS = [
 
 
 FORCE = {" (in %d)"}  # short strings the word heuristic would skip
-EXTRA = ["Pressure"]  # keys chosen at runtime that the patterns cannot see
+EXTRA = ["Pressure", "Music", "Sound effects"]  # keys chosen at runtime that the patterns cannot see
 
 
 def unescape(s):

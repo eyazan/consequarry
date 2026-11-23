@@ -7,6 +7,8 @@ const SPEEDS := [1.0, 1.8, 0.0]  # normal, fast, instant (0 = skip animations)
 const SPEED_NAMES := ["Normal", "Fast", "Instant"]
 
 static var master_volume: float = 0.7
+static var music_volume: float = 0.6
+static var sfx_volume: float = 0.8
 static var anim_speed_index: int = 0
 static var screen_shake: bool = true
 static var fullscreen: bool = false
@@ -29,6 +31,8 @@ static func load_settings() -> void:
 	if cf.load(PATH) != OK:
 		return
 	master_volume = float(cf.get_value("audio", "master_volume", master_volume))
+	music_volume = float(cf.get_value("audio", "music_volume", music_volume))
+	sfx_volume = float(cf.get_value("audio", "sfx_volume", sfx_volume))
 	anim_speed_index = clampi(int(cf.get_value("gameplay", "anim_speed", anim_speed_index)), 0, 2)
 	screen_shake = bool(cf.get_value("accessibility", "screen_shake", screen_shake))
 	fullscreen = bool(cf.get_value("video", "fullscreen", fullscreen))
@@ -41,6 +45,8 @@ static func load_settings() -> void:
 static func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("audio", "master_volume", master_volume)
+	cf.set_value("audio", "music_volume", music_volume)
+	cf.set_value("audio", "sfx_volume", sfx_volume)
 	cf.set_value("gameplay", "anim_speed", anim_speed_index)
 	cf.set_value("accessibility", "screen_shake", screen_shake)
 	cf.set_value("video", "fullscreen", fullscreen)
@@ -55,6 +61,11 @@ static func apply() -> void:
 	var bus := AudioServer.get_bus_index("Master")
 	AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(master_volume, 0.0001)))
 	AudioServer.set_bus_mute(bus, master_volume <= 0.001)
+	Music.ensure_buses()
+	for pair in [["Music", music_volume], ["SFX", sfx_volume]]:
+		var bi := AudioServer.get_bus_index(pair[0])
+		AudioServer.set_bus_volume_db(bi, linear_to_db(maxf(float(pair[1]), 0.0001)))
+		AudioServer.set_bus_mute(bi, float(pair[1]) <= 0.001)
 	if DisplayServer.get_name() != "headless" and not OS.has_feature("web") and not OS.has_feature("mobile"):
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED)
 

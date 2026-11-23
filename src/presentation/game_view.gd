@@ -177,6 +177,8 @@ func _apply_selection_visuals() -> void:
 
 func _refresh_ui() -> void:
 	hud.refresh(world, not undo_stack.is_empty(), busy)
+	if Music.instance:
+		Music.instance.set_tension(1.0 - world.stability_index() / 100.0)
 	var c := world.ledger.get_c(selected_id) if selected_id >= 0 else null
 	if c != null and c.is_pending():
 		hud.show_consequence(world, c, mode)

@@ -29,6 +29,21 @@ func _ready() -> void:
 	vol.value = GameSettings.master_volume
 	vol.value_changed.connect(func(v): GameSettings.master_volume = v; GameSettings.apply())
 	vb.add_child(vol)
+	for row in [["Music", "music"], ["Sound effects", "sfx"]]:
+		vb.add_child(UIKit.label(row[0], 14))
+		var sl := HSlider.new()
+		sl.min_value = 0
+		sl.max_value = 1
+		sl.step = 0.05
+		sl.value = GameSettings.music_volume if row[1] == "music" else GameSettings.sfx_volume
+		var which: String = row[1]
+		sl.value_changed.connect(func(v):
+			if which == "music":
+				GameSettings.music_volume = v
+			else:
+				GameSettings.sfx_volume = v
+			GameSettings.apply())
+		vb.add_child(sl)
 	vb.add_child(UIKit.label("Resolution animation speed", 14))
 	var sp := OptionButton.new()
 	for n in GameSettings.SPEED_NAMES:
