@@ -9,6 +9,7 @@ signal settings_pressed
 signal menu_pressed
 signal action_requested(kind: String, arg: String)
 signal cancel_pressed
+signal hint_pressed
 
 var top_season: Label
 var top_ap: Label
@@ -32,6 +33,11 @@ var right_scroll: ScrollContainer
 var title_label: Label
 var season_btn: Button
 var compact := false
+var hint_btn: Button
+var action_buttons: Dictionary = {}   # "redirect"/"split"/"delay"/"transform"/"crisis" -> Button
+var guide_id := ""
+var _guide_t := 0.0
+var guide_arrow: GuideArrow
 var top_hbox: HBoxContainer
 var settings_btn: Button
 var _right_active := false
@@ -50,7 +56,6 @@ func _ready() -> void:
 
 func _apply_compact() -> void:
 	title_label.visible = not compact
-	top_seed.visible = not compact
 	season_btn.visible = compact
 	left_panel.visible = not compact
 	top_instab.custom_minimum_size = Vector2(50 if compact else 110, 14)
@@ -136,7 +141,10 @@ func _build_top() -> void:
 	top_seed.tooltip_text = "Share this seed: the same seed produces the same valley and events."
 	top_seed.mouse_filter = Control.MOUSE_FILTER_PASS
 	hb.add_child(top_seed)
-	undo_btn = UIKit.button("Undo (Z)", func(): undo_pressed.emit(), "Undo your last action this season")
+	hint_btn = UIKit.button("Hint", func(): hint_pressed.emit(), "Show a sensible move for this season")
+	hint_btn.add_theme_color_override("font_color", Palette.ACCENT)
+	hb.add_child(hint_btn)
+	undo_btn = UIKit.button("Undo", func(): undo_pressed.emit(), "Undo your last action this season (Z)")
 	hb.add_child(undo_btn)
 	settings_btn = UIKit.button("Settings", func(): settings_pressed.emit())
 	hb.add_child(settings_btn)
@@ -161,7 +169,8 @@ func _build_left() -> void:
 	vb.custom_minimum_size = Vector2(226, 0)
 	vb.add_theme_constant_override("separation", 6)
 	p.add_child(vb)
-	scenario_label = UIKit.label("", 13, Palette.ACCENT)
+	scenario_label = UIKit.label("", 12, Palette.ACCENT, true)
+	scenario_label.custom_minimum_size = Vector2(226, 0)
 	vb.add_child(scenario_label)
 	events_box = _section(vb, "THIS SEASON")
 	vb.add_child(HSeparator.new())
@@ -223,7 +232,44 @@ func _build_bottom() -> void:
 	add_child(toast_label)
 
 
+func set_guide(id: String) -> void:
+	guide_id = id
+
+
+func _guide_button() -> Button:
+	match guide_id:
+		"end": return end_btn
+		"hint": return hint_btn
+		"":
+			return null
+	var b: Button = action_buttons.get(guide_id, null)
+	return b if is_instance_valid(b) and b.is_visible_in_tree() else null
+
+
+func _update_guide(delta: float) -> void:
+	_guide_t += delta
+	var pulse := 0.5 + 0.5 * sin(_guide_t * 6.0)
+	for b in [end_btn, hint_btn] + action_buttons.values():
+		if is_instance_valid(b):
+			b.modulate = Color.WHITE
+	var target := _guide_button()
+	if target:
+		target.modulate = Color.WHITE.lerp(Color(1.5, 1.25, 0.6), pulse)
+	if guide_arrow == null:
+		guide_arrow = GuideArrow.new()
+		add_child(guide_arrow)
+	guide_arrow.visible = target != null
+	if target:
+		var r := target.get_global_rect()
+		# Point from below for the top-bar Hint button, from the left otherwise.
+		if r.position.y < 80:
+			guide_arrow.setup(Vector2(r.get_center().x, r.end.y + 4), Vector2.UP, _guide_t)
+		else:
+			guide_arrow.setup(Vector2(r.position.x - 4, r.get_center().y), Vector2.RIGHT, _guide_t)
+
+
 func _process(delta: float) -> void:
+	_update_guide(delta)
 	# Right panel grows with content but never past the screen; it scrolls instead.
 	var max_h := size.y - right_panel.offset_top - (10.0 if compact else 90.0) - 24.0
 	if compact:
@@ -256,8 +302,9 @@ func refresh(w: WorldState, can_undo: bool, busy: bool) -> void:
 	top_instab.value = w.instability
 	top_instab_label.text = (Loc.t("Inst %d") if compact else Loc.t("Instability %d")) % w.instability
 	top_reserve.text = (Loc.t("Res %d") if compact else Loc.t("Reserve %d")) % w.reserve
-	top_seed.text = SeedCode.encode(w.run_seed)
-	scenario_label.text = (Loc.t("DAILY %s · ") % w.daily_date if w.daily_date != "" else "") + Loc.upper(Loc.scenario(w.scenario_id))
+	top_seed.text = ""
+	top_seed.visible = false
+	scenario_label.text = (Loc.t("DAILY %s · ") % w.daily_date if w.daily_date != "" else "") + Loc.upper(Loc.scenario(w.scenario_id)) + "  ·  " + SeedCode.encode(w.run_seed)
 	undo_btn.disabled = not can_undo or busy
 	end_btn.disabled = busy or w.is_over()
 	_fill_events(w)
@@ -322,6 +369,7 @@ func _close_row() -> void:
 
 func show_idle(w: WorldState, has_report: bool = false) -> void:
 	_right_active = false
+	action_buttons.clear()
 	right_scroll.scroll_vertical = 0
 	UIKit.clear(right_box)
 	right_box.add_child(UIKit.label("CONSEQUENCES", 13, Palette.TEXT_DIM))
@@ -361,6 +409,7 @@ func _predict_text(pv: Dictionary, sys_name: String) -> String:
 
 func show_consequence(w: WorldState, c: Consequence, mode: String) -> void:
 	_right_active = true
+	action_buttons.clear()
 	UIKit.clear(right_box)
 	_close_row()
 	var td := ContentDB.type_def(c.type)
@@ -437,6 +486,7 @@ func _action_button(kind: String, text: String, tip: String, w: WorldState, c: C
 		_:
 			reason = Loc.m(SimulationEngine.validate_msg(w, Intervention.transform(c.id, kind.split(":")[1])))
 	var b := UIKit.button(text, func(): action_requested.emit(kind, str(c.id)), tip)
+	action_buttons[kind.split(":")[0]] = b
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.disabled = reason != ""
 	right_box.add_child(b)
@@ -446,6 +496,7 @@ func _action_button(kind: String, text: String, tip: String, w: WorldState, c: C
 
 func show_district(w: WorldState, sid: String) -> void:
 	_right_active = true
+	action_buttons.clear()
 	right_scroll.scroll_vertical = 0
 	UIKit.clear(right_box)
 	_close_row()
@@ -494,6 +545,7 @@ func show_district(w: WorldState, sid: String) -> void:
 			int(cd["instability"]) + 3 * int(w.memory.crises.get(sid, 0))], 12))
 		var reason := Loc.m(SimulationEngine.validate_msg(w, Intervention.crisis(sid)))
 		var b := UIKit.button(Loc.t("Trigger (%d actions)") % cost, func(): action_requested.emit("crisis", sid))
+		action_buttons["crisis"] = b
 		b.disabled = reason != ""
 		right_box.add_child(b)
 		if reason != "":

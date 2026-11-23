@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.3 — 2026-11-23 (onboarding)
+- Owner playtest: game was not understood without the tutorial. Response:
+  - First launch starts the tutorial directly; rewritten 7-step tutorial in plain words ("troubles", "tap the orange shape").
+  - On-screen guidance: bouncing arrow on the map and a pulsing, arrow-marked button for every step; falls back to the step the player still has to do.
+  - Hint button: suggests and points at a sensible move (strongest simple heuristic); reminder toast in the first three runs.
+  - Tutorial run made easier (win avg ≥50 / min ≥20, fewer and smaller events).
+  - EN | TR toggle on the main menu (English stays the default outside Turkish devices).
+- Fix: map taps now use the event position instead of the last cursor position (stale positions could select the wrong orb on touch screens).
+- QA: `--guided` mode plays like a newcomer with real clicks: follows the arrow through the tutorial (5 taps), then follows Hint for the rest of the run.
+
 ## 0.1.2 — 2026-11-23
 - Procedural ambient soundtrack (no assets): pad, bass and arpeggio loop synthesised in small chunks across frames; Music bus low-pass follows stability (tension); separate Music and Sound effects volume sliders.
 - Localization pipeline: engine messages are language-neutral (`Msg` key + args), UI goes through `Loc`; `tools/i18n_extract.py` builds `localization/strings.csv` from code and content, merges `localization/tr.json`, and checks placeholder order. Full Turkish translation (259 strings); Settings → Language (Auto/English/Türkçe); Turkish-aware upper case. CI fails on missing or mismatched translations.

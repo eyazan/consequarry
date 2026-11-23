@@ -24,6 +24,9 @@ var busy := false
 var undo_stack: Array = []
 var last_report: Dictionary = {}
 var report_open := false
+var guide: GuidePointer
+var hint_it: Intervention = null
+var hint_end := false
 var _shake_t := 0.0
 var _target_cursor := 0
 
@@ -37,6 +40,9 @@ func start(w: WorldState, with_tutorial: bool) -> void:
 	map.add_child(orb_layer)
 	fx = FxLayer.new()
 	map.add_child(fx)
+	guide = GuidePointer.new()
+	guide.visible = false
+	map.add_child(guide)
 	sfx = Sfx.new()
 	add_child(sfx)
 	ui_layer = CanvasLayer.new()
@@ -48,6 +54,7 @@ func start(w: WorldState, with_tutorial: bool) -> void:
 	hud.undo_pressed.connect(undo)
 	hud.action_requested.connect(_on_action)
 	hud.cancel_pressed.connect(_cancel)
+	hud.hint_pressed.connect(_hint)
 	hud.settings_pressed.connect(_open_settings)
 	hud.menu_pressed.connect(func(): SaveSystem.save_world(world); exit_to_menu.emit())
 	if with_tutorial:
@@ -60,6 +67,8 @@ func start(w: WorldState, with_tutorial: bool) -> void:
 	_refresh_ui()
 	if world.is_over():
 		_show_game_over()
+	elif not with_tutorial and GameSettings.runs_started <= 3 and world.turn == 1:
+		hud.toast(Loc.t("New here? Tap Hint any time for a suggested move."), Palette.ACCENT, 7.0)
 
 
 func _process(delta: float) -> void:
@@ -76,6 +85,7 @@ func _process(delta: float) -> void:
 	# Smoothly re-centre when side panels open/close (compact layout).
 	map.scale = map.scale.lerp(target_scale, minf(1.0, delta * 10.0)) if map.scale != Vector2.ONE else target_scale
 	map.position = map.position.lerp(target_pos, minf(1.0, delta * 10.0)) if map.position != Vector2.ZERO else target_pos
+	_update_guide()
 	if _shake_t > 0.0:
 		_shake_t -= delta
 		map.position += Vector2(randf_range(-1, 1), randf_range(-1, 1)) * 6.0 * _shake_t
@@ -193,12 +203,14 @@ func _refresh_ui() -> void:
 
 # ------------------------------------------------------------------ input
 
-func _map_mouse() -> Vector2:
-	return map.to_local(get_global_mouse_position())
+## Map-local position of a pointer event (uses the event's own position, so
+## taps are correct even when the cursor position is stale, e.g. touch screens).
+func _map_point(screen_pos: Vector2) -> Vector2:
+	return map.to_local(get_canvas_transform().affine_inverse() * screen_pos)
 
 
-func _pick() -> Dictionary:
-	var m := _map_mouse()
+func _pick(screen_pos: Vector2) -> Dictionary:
+	var m := _map_point(screen_pos)
 	var best := -1
 	var best_d := 1e9
 	for id in orbs:
@@ -224,7 +236,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if world == null or busy or world.is_over():
 		return
 	if event is InputEventMouseMotion:
-		var p := _pick()
+		var p := _pick(event.position)
 		var ho: int = p.get("orb", -1)
 		var hd: String = p.get("district", "")
 		if ho != hovered_orb or hd != hovered_district:
@@ -232,7 +244,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			hovered_district = hd
 			_apply_selection_visuals()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_click(_pick())
+		_click(_pick(event.position))
 	elif event.is_action_pressed("cancel_selection") or event.is_action_pressed("ui_cancel"):
 		_cancel()
 	elif event.is_action_pressed("end_turn"):
@@ -280,6 +292,8 @@ func _select_orb(id: int) -> void:
 
 
 func _cancel() -> void:
+	hint_it = null
+	hint_end = false
 	if mode != "":
 		mode = ""
 	elif selected_id < 0 and selected_district == "":
@@ -351,6 +365,8 @@ func _on_action(kind: String, arg: String) -> void:
 		_refresh_ui()
 		return
 	if kind == "redirect" or kind == "split":
+		if tutorial:
+			tutorial.notify("mode", {"mode": kind})
 		mode = kind
 		_target_cursor = 0
 		var t := _valid_targets()
@@ -390,6 +406,8 @@ func _apply(it: Intervention) -> void:
 		return
 	undo_stack.append(snapshot)
 	mode = ""
+	hint_it = null
+	hint_end = false
 	var sc := GameSettings.anim_scale()
 	match it.kind:
 		Intervention.REDIRECT:
@@ -398,6 +416,8 @@ func _apply(it: Intervention) -> void:
 			selected_id = world.last_focus_id
 			if tutorial:
 				tutorial.notify("redirect", {"target": it.target})
+				var moved := world.ledger.get_c(selected_id)
+				tutorial.notify("select", {"type": moved.type, "dest": moved.destination})
 		Intervention.SPLIT:
 			sfx.play("split")
 			fx.sparks(origin, Palette.type_color(world.ledger.get_c(it.consequence_id).type), 10, 0.5)
@@ -466,6 +486,8 @@ func end_turn() -> void:
 		shown[id] = map.districts[id].display_health
 	var report := SimulationEngine.end_turn(world)
 	undo_stack.clear()
+	hint_it = null
+	hint_end = false
 	last_report = report
 	report_open = true
 	var sc := GameSettings.anim_scale()
@@ -575,3 +597,115 @@ func _show_game_over() -> void:
 	if tutorial:
 		tutorial.queue_free()
 		tutorial = null
+
+
+# ------------------------------------------------------------------ guidance (tutorial pointer + hints)
+
+func _orb_matching(spec: Dictionary) -> int:
+	if spec.has("orb_id"):
+		return int(spec["orb_id"]) if orbs.has(int(spec["orb_id"])) else -1
+	for c in world.ledger.pending_landing_on(world.turn):
+		if c.type == spec.get("type", "") and c.destination == spec.get("dest", "") and orbs.has(c.id):
+			return c.id
+	return -1
+
+
+func _selected_matches(spec: Dictionary) -> bool:
+	if spec.is_empty():
+		return selected_id >= 0
+	var id := _orb_matching(spec)
+	return id >= 0 and id == selected_id
+
+
+## Turns a guidance target into either a map position or a HUD button id,
+## falling back through the steps the player still has to take.
+func _resolve(t: Dictionary) -> Dictionary:
+	match String(t.get("kind", "")):
+		"orb":
+			var id := _orb_matching(t)
+			if id >= 0 and id != selected_id:
+				return {"map": orbs[id].position + orbs[id].bob()}
+			return {}
+		"action":
+			var spec: Dictionary = t.get("orb", {})
+			if not spec.is_empty() and not _selected_matches(spec):
+				var r := spec.duplicate()
+				r["kind"] = "orb"
+				return _resolve(r)
+			return {"ui": String(t["id"])}
+		"district":
+			if mode == "" and t.has("via"):
+				return _resolve({"kind": "action", "id": t["via"], "orb": t.get("orb", {})})
+			return {"map": map.district_pos(String(t["id"])) + Vector2(0, -10)}
+		"crisis":
+			if selected_district != String(t["id"]):
+				return {"map": map.district_pos(String(t["id"])) + Vector2(0, -10)}
+			return {"ui": "crisis"}
+		"end":
+			return {"ui": "end"}
+		"hint":
+			return {"ui": "hint"}
+	return {}
+
+
+func _guide_target() -> Dictionary:
+	if tutorial:
+		return tutorial.target()
+	if hint_end:
+		return {"kind": "end"}
+	if hint_it == null:
+		return {}
+	match hint_it.kind:
+		Intervention.CRISIS:
+			return {"kind": "crisis", "id": hint_it.system}
+		Intervention.REDIRECT, Intervention.SPLIT:
+			return {"kind": "district", "id": hint_it.target, "via": hint_it.kind, "orb": {"orb_id": hint_it.consequence_id}}
+	return {"kind": "action", "id": hint_it.kind, "orb": {"orb_id": hint_it.consequence_id}}
+
+
+func _update_guide() -> void:
+	if busy or world.is_over():
+		guide.point_at(null)
+		hud.set_guide("")
+		return
+	var r := _resolve(_guide_target())
+	guide.point_at(r.get("map", null))
+	hud.set_guide(String(r.get("ui", "")))
+
+
+func _describe(it: Intervention) -> String:
+	if it.kind == Intervention.CRISIS:
+		return Loc.t("start the controlled crisis at %s") % Loc.sys(it.system)
+	var c := world.ledger.get_c(it.consequence_id)
+	var what := "%s %d" % [Loc.typ(c.type), c.current_magnitude]
+	match it.kind:
+		Intervention.REDIRECT: return Loc.t("move %s from %s to %s") % [what, Loc.sys(c.destination), Loc.sys(it.target)]
+		Intervention.SPLIT: return Loc.t("split %s between %s and %s") % [what, Loc.sys(c.destination), Loc.sys(it.target)]
+		Intervention.DELAY: return Loc.t("delay %s at %s to next season") % [what, Loc.sys(c.destination)]
+		Intervention.TRANSFORM: return Loc.t("turn %s at %s into a bonus") % [what, Loc.sys(c.destination)]
+	return ""
+
+
+func _hint() -> void:
+	if busy or world.is_over():
+		return
+	var actions := SimulationEngine.available_actions(world)
+	var pick := BotStrategies.best_move(world, actions)
+	if pick == null:
+		hint_it = null
+		hint_end = true
+		hud.toast(Loc.t("No urgent move. Tap END to finish the season."), Palette.GOOD, 5.0)
+		sfx.play("select")
+		return
+	hint_it = pick
+	hint_end = false
+	mode = ""
+	report_open = false
+	if pick.consequence_id >= 0:
+		selected_id = pick.consequence_id
+		selected_district = ""
+	else:
+		selected_id = -1
+	hud.toast(Loc.t("Hint: %s") % _describe(pick), Palette.ACCENT, 6.0)
+	sfx.play("select", 1.2)
+	_refresh_ui()

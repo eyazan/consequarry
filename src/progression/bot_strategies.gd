@@ -27,6 +27,11 @@ static func play_turn(w: WorldState, strategy: String, rng: DetRng) -> void:
 		assert(err == "", "bot chose invalid action: " + err)
 
 
+## The move suggested by the in-game Hint button (strongest simple heuristic).
+static func best_move(w: WorldState, actions: Array[Intervention]) -> Intervention:
+	return _best_by_score(w, actions, "recovery_focused")
+
+
 static func _best_by_score(w: WorldState, actions: Array[Intervention], strategy: String) -> Intervention:
 	var best: Intervention = null
 	var best_score := 0

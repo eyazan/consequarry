@@ -1,0 +1,280 @@
+{
+  "generated_at": "2026-11-23T16:32:27",
+  "engine": "4.7.2-stable (official)",
+  "seed_base": 30000,
+  "scenario": "tutorial",
+  "total_runs": 1604,
+  "elapsed_s": 54.0,
+  "peak_static_memory_mb": 25.1,
+  "invariant_failure_runs": 0,
+  "invariant_failure_samples": [],
+  "determinism_recheck_failures": 0,
+  "seeds_lost_by_all_strategies_in_expert_sample": 0,
+  "expert_sample_size": 4,
+  "expert_wins_where_passive_lost": 3,
+  "dominant_strategy_flags": [
+    "conservative",
+    "balanced",
+    "crisis_focused",
+    "recovery_focused"
+  ],
+  "strategies": {
+    "passive": {
+      "runs": 200,
+      "win_rate": 0.28,
+      "avg_final_avg_health": 44.7,
+      "avg_final_min_health": 20.3,
+      "avg_turns": 12.0,
+      "avg_final_instability": 3.8,
+      "avg_consequences_per_run": 32.1,
+      "avg_memory_entries": 9.4,
+      "outcome_reasons": {
+        "victory": 56,
+        "unsustainable": 138,
+        "multi_collapse": 1,
+        "population_collapse": 5
+      },
+      "actions_per_run": {
+        "redirect": 0.0,
+        "split": 0.0,
+        "delay": 0.0,
+        "transform": 0.0,
+        "crisis": 0.0
+      },
+      "collapses_by_system": {
+        "infrastructure": 6,
+        "industry": 1,
+        "agriculture": 11,
+        "population": 5,
+        "environment": 1
+      },
+      "turns_survived_histogram": {
+        "12": 199,
+        "11": 1
+      },
+      "avg_ms_per_run": 8.2
+    },
+    "random": {
+      "runs": 200,
+      "win_rate": 0.52,
+      "avg_final_avg_health": 50.5,
+      "avg_final_min_health": 28.0,
+      "avg_turns": 12.0,
+      "avg_final_instability": 5.4,
+      "avg_consequences_per_run": 72.0,
+      "avg_memory_entries": 14.3,
+      "outcome_reasons": {
+        "victory": 104,
+        "unsustainable": 88,
+        "population_collapse": 6,
+        "multi_collapse": 2
+      },
+      "actions_per_run": {
+        "redirect": 9.86,
+        "split": 7.2,
+        "delay": 2.54,
+        "transform": 0.56,
+        "crisis": 1.71
+      },
+      "collapses_by_system": {
+        "population": 6,
+        "agriculture": 11,
+        "environment": 1,
+        "energy": 1,
+        "infrastructure": 1
+      },
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 23.38
+    },
+    "conservative": {
+      "runs": 200,
+      "win_rate": 1.0,
+      "avg_final_avg_health": 73.0,
+      "avg_final_min_health": 43.4,
+      "avg_turns": 12.0,
+      "avg_final_instability": 0.3,
+      "avg_consequences_per_run": 95.8,
+      "avg_memory_entries": 23.7,
+      "outcome_reasons": {
+        "victory": 200
+      },
+      "actions_per_run": {
+        "redirect": 24.06,
+        "split": 4.97,
+        "delay": 0.01,
+        "transform": 5.4,
+        "crisis": 0.0
+      },
+      "collapses_by_system": {},
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 28.77
+    },
+    "aggressive": {
+      "runs": 200,
+      "win_rate": 0.725,
+      "avg_final_avg_health": 68.7,
+      "avg_final_min_health": 27.4,
+      "avg_turns": 12.0,
+      "avg_final_instability": 4.9,
+      "avg_consequences_per_run": 86.8,
+      "avg_memory_entries": 24.3,
+      "outcome_reasons": {
+        "victory": 145,
+        "unsustainable": 54,
+        "multi_collapse": 1
+      },
+      "actions_per_run": {
+        "redirect": 17.19,
+        "split": 0.03,
+        "delay": 0.0,
+        "transform": 9.06,
+        "crisis": 2.32
+      },
+      "collapses_by_system": {
+        "environment": 7,
+        "agriculture": 3
+      },
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 30.35
+    },
+    "greedy": {
+      "runs": 200,
+      "win_rate": 0.545,
+      "avg_final_avg_health": 68.0,
+      "avg_final_min_health": 21.5,
+      "avg_turns": 12.0,
+      "avg_final_instability": 4.2,
+      "avg_consequences_per_run": 94.0,
+      "avg_memory_entries": 26.0,
+      "outcome_reasons": {
+        "unsustainable": 90,
+        "victory": 109,
+        "multi_collapse": 1
+      },
+      "actions_per_run": {
+        "redirect": 21.15,
+        "split": 0.0,
+        "delay": 0.0,
+        "transform": 10.16,
+        "crisis": 1.97
+      },
+      "collapses_by_system": {
+        "environment": 3,
+        "agriculture": 3
+      },
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 33.85
+    },
+    "balanced": {
+      "runs": 200,
+      "win_rate": 0.93,
+      "avg_final_avg_health": 73.4,
+      "avg_final_min_health": 32.3,
+      "avg_turns": 12.0,
+      "avg_final_instability": 0.4,
+      "avg_consequences_per_run": 92.6,
+      "avg_memory_entries": 26.7,
+      "outcome_reasons": {
+        "victory": 186,
+        "unsustainable": 14
+      },
+      "actions_per_run": {
+        "redirect": 25.63,
+        "split": 0.0,
+        "delay": 0.0,
+        "transform": 9.14,
+        "crisis": 0.0
+      },
+      "collapses_by_system": {},
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 33.15
+    },
+    "crisis_focused": {
+      "runs": 200,
+      "win_rate": 1.0,
+      "avg_final_avg_health": 74.5,
+      "avg_final_min_health": 46.9,
+      "avg_turns": 12.0,
+      "avg_final_instability": 0.4,
+      "avg_consequences_per_run": 84.3,
+      "avg_memory_entries": 23.5,
+      "outcome_reasons": {
+        "victory": 200
+      },
+      "actions_per_run": {
+        "redirect": 18.59,
+        "split": 0.0,
+        "delay": 0.0,
+        "transform": 7.11,
+        "crisis": 2.04
+      },
+      "collapses_by_system": {},
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 28.77
+    },
+    "recovery_focused": {
+      "runs": 200,
+      "win_rate": 0.995,
+      "avg_final_avg_health": 72.5,
+      "avg_final_min_health": 41.8,
+      "avg_turns": 12.0,
+      "avg_final_instability": 0.4,
+      "avg_consequences_per_run": 90.6,
+      "avg_memory_entries": 25.2,
+      "outcome_reasons": {
+        "victory": 199,
+        "unsustainable": 1
+      },
+      "actions_per_run": {
+        "redirect": 27.69,
+        "split": 0.0,
+        "delay": 0.02,
+        "transform": 5.32,
+        "crisis": 0.0
+      },
+      "collapses_by_system": {},
+      "turns_survived_histogram": {
+        "12": 200
+      },
+      "avg_ms_per_run": 29.98
+    },
+    "expert": {
+      "runs": 4,
+      "win_rate": 1.0,
+      "avg_final_avg_health": 66.3,
+      "avg_final_min_health": 44.3,
+      "avg_turns": 12.0,
+      "avg_final_instability": 0.8,
+      "avg_consequences_per_run": 86.0,
+      "avg_memory_entries": 21.8,
+      "outcome_reasons": {
+        "victory": 4
+      },
+      "actions_per_run": {
+        "redirect": 14.0,
+        "split": 0.75,
+        "delay": 9.0,
+        "transform": 7.0,
+        "crisis": 2.0
+      },
+      "collapses_by_system": {},
+      "turns_survived_histogram": {
+        "12": 4
+      },
+      "avg_ms_per_run": 2035.45
+    }
+  },
+  "disclaimer": "Automated bot results. Not evidence of human engagement or fun."
+}

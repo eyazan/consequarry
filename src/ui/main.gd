@@ -21,6 +21,9 @@ func _ready() -> void:
 	var i := args.find("--autostart")
 	if args.has("--daily"):
 		_start_daily()
+	elif i < 0 and shot_requested(args) == false and not GameSettings.tutorial_done and not SaveSystem.has_run():
+		# First launch: teach by playing instead of showing a menu full of terms.
+		_start("tutorial", 20261122)
 	elif i >= 0 and args.size() > i + 2:
 		_start(args[i + 1], int(args[i + 2]))
 	else:
@@ -32,6 +35,7 @@ func _ready() -> void:
 
 ## Automated capture used for documentation and visual QA (not a gameplay feature).
 func _capture(path: String, frames: int, demo: bool) -> void:
+	var _p := path
 	for _f in 20:
 		await get_tree().process_frame
 	if demo and current is GameView:
@@ -64,6 +68,9 @@ func _capture(path: String, frames: int, demo: bool) -> void:
 			if c.type == OS.get_cmdline_user_args()[so + 1]:
 				gv4._select_orb(c.id)
 				break
+	if args_has("--guided") and current is GameView:
+		await _guided_walk(current, path)
+		return
 	if args_has("--autoplay") and current is GameView:
 		# UI integration smoke test: a bot plays a full run through GameView.
 		var gv2: GameView = current
@@ -120,6 +127,7 @@ func _show_menu() -> void:
 	menu.start_run.connect(_start)
 	menu.continue_run.connect(_continue)
 	menu.start_daily.connect(_start_daily)
+	menu.language_changed.connect(_show_menu)
 	menu.open_settings.connect(func():
 		var sp := SettingsPanel.new()
 		sp.theme = ui_theme
@@ -154,7 +162,14 @@ func _continue() -> void:
 	_launch(w, false)
 
 
+func shot_requested(args: PackedStringArray) -> bool:
+	return args.has("--shot")
+
+
 func _launch(w: WorldState, tutorial: bool) -> void:
+	if not tutorial:
+		GameSettings.runs_started += 1
+		GameSettings.save_settings()
 	var gv := GameView.new()
 	_swap(gv)
 	gv.start(w, tutorial)
@@ -199,3 +214,83 @@ func _install_symbol_fallback() -> void:
 		var fb := base.fallbacks.duplicate()
 		fb.append(dv)
 		base.fallbacks = fb
+
+
+## QA: plays like a newcomer who only follows the on-screen arrow (tutorial),
+## then only follows Hint. Clicks are real input events at screen positions.
+func _guided_walk(gv: GameView, path: String) -> void:
+	GameSettings.anim_speed_index = 2
+	var clicks := 0
+	var shots := 0
+	var guard := 0
+	while gv.tutorial != null and guard < 40:
+		guard += 1
+		await get_tree().create_timer(0.25).timeout
+		while gv.busy:
+			await get_tree().process_frame
+		if gv.tutorial == null:
+			break
+		if gv.tutorial.next_btn.visible:
+			gv.tutorial.next_btn.pressed.emit()
+			continue
+		var r := gv._resolve(gv._guide_target())
+		if args_has("--verbose"):
+			print("step=%d wait=%s resolve=%s selected=%d mode=%s" % [gv.tutorial.step, gv.tutorial.current_wait(), str(r), gv.selected_id, gv.mode])
+		if r.has("map"):
+			var screen: Vector2 = gv.map.get_global_transform_with_canvas() * Vector2(r["map"])
+			_click_at(screen)
+		elif r.has("ui"):
+			var b := gv.hud._guide_button()
+			if b == null:
+				print("guided: no button for ", r["ui"])
+				break
+			_click_at(b.get_global_rect().get_center())
+		else:
+			print("guided: nothing to point at in step ", gv.tutorial.step)
+			break
+		clicks += 1
+		if shots < 3:
+			await get_tree().process_frame
+			await get_tree().process_frame
+			get_viewport().get_texture().get_image().save_png(path.replace(".png", "_step%d.png" % shots))
+			shots += 1
+	print("guided tutorial finished=%s clicks=%d" % [str(gv.tutorial == null), clicks])
+	# Hint-only play for the rest of the run.
+	guard = 0
+	while not gv.world.is_over() and guard < 200:
+		guard += 1
+		while gv.busy:
+			await get_tree().process_frame
+		if gv.world.is_over():
+			break
+		if gv.hint_it == null and not gv.hint_end:
+			gv._hint()
+			await get_tree().process_frame
+		var r := gv._resolve(gv._guide_target())
+		if r.has("map"):
+			_click_at(gv.map.get_global_transform_with_canvas() * Vector2(r["map"]))
+		elif r.has("ui"):
+			var b := gv.hud._guide_button()
+			if b == null:
+				print("guided: hint button missing for ", r["ui"])
+				break
+			_click_at(b.get_global_rect().get_center())
+		await get_tree().process_frame
+		await get_tree().process_frame
+	print("guided run outcome=%s (%s) ledger_errors=%d" % [gv.world.outcome, gv.world.outcome_reason, gv.world.ledger.verify().size()])
+	get_viewport().get_texture().get_image().save_png(path)
+	get_tree().quit()
+
+
+func _click_at(pos: Vector2) -> void:
+	for pressed in [true, false]:
+		var ev := InputEventMouseButton.new()
+		ev.button_index = MOUSE_BUTTON_LEFT
+		ev.pressed = pressed
+		ev.position = pos
+		ev.global_position = pos
+		Input.parse_input_event(ev)
+	var mv := InputEventMouseMotion.new()
+	mv.position = pos
+	mv.global_position = pos
+	Input.parse_input_event(mv)

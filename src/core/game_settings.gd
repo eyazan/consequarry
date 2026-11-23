@@ -14,6 +14,7 @@ static var screen_shake: bool = true
 static var fullscreen: bool = false
 static var always_show_links: bool = true
 static var tutorial_done: bool = false
+static var runs_started: int = 0
 static var layout_mode: int = 0  # 0 auto, 1 desktop, 2 compact (phones/tablets)
 const LAYOUT_NAMES := ["Auto", "Desktop", "Compact (touch)"]
 static var compact: bool = false
@@ -38,6 +39,7 @@ static func load_settings() -> void:
 	fullscreen = bool(cf.get_value("video", "fullscreen", fullscreen))
 	always_show_links = bool(cf.get_value("gameplay", "always_show_links", always_show_links))
 	tutorial_done = bool(cf.get_value("progress", "tutorial_done", tutorial_done))
+	runs_started = int(cf.get_value("progress", "runs_started", runs_started))
 	layout_mode = clampi(int(cf.get_value("video", "layout_mode", layout_mode)), 0, 2)
 	language = String(cf.get_value("general", "language", language))
 
@@ -52,6 +54,7 @@ static func save_settings() -> void:
 	cf.set_value("video", "fullscreen", fullscreen)
 	cf.set_value("gameplay", "always_show_links", always_show_links)
 	cf.set_value("progress", "tutorial_done", tutorial_done)
+	cf.set_value("progress", "runs_started", runs_started)
 	cf.set_value("video", "layout_mode", layout_mode)
 	cf.set_value("general", "language", language)
 	cf.save(PATH)

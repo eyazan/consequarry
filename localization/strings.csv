@@ -7,6 +7,7 @@ Desktop,Desktop,Masaüstü
 Compact (touch),Compact (touch),Kompakt (dokunmatik)
 English,English,English
 COLLAPSED,COLLAPSED,ÇÖKTÜ
+New here? Tap Hint any time for a suggested move.,New here? Tap Hint any time for a suggested move.,Yeni misiniz? Önerilen bir hamle için istediğiniz zaman İpucu'ya dokunun.
 %+d health,%+d health,%+d sağlık
 Delayed +strain,Delayed +strain,Ertelendi +yük
 SEASON %d,SEASON %d,SEZON %d
@@ -15,6 +16,13 @@ Its dependents will feel it.,Its dependents will feel it.,Ona bağlı olanlar bu
 World memory: ,World memory: ,Dünya hafızası: 
 cushioned %d,cushioned %d,%d tamponlandı
 OVERFLOW →,OVERFLOW →,TAŞMA →
+start the controlled crisis at %s,start the controlled crisis at %s,%s bölgesinde kontrollü krizi başlat
+move %s from %s to %s,move %s from %s to %s,%s: %s → %s taşı
+split %s between %s and %s,split %s between %s and %s,%s: %s ve %s arasında böl
+delay %s at %s to next season,delay %s at %s to next season,%s (%s): gelecek sezona ertele
+turn %s at %s into a bonus,turn %s at %s into a bonus,%s (%s): bonusa dönüştür
+No urgent move. Tap END to finish the season.,No urgent move. Tap END to finish the season.,Acil bir hamle yok. Sezonu bitirmek için BİTİR'e dokunun.
+Hint: %s,Hint: %s,İpucu: %s
 The run is over.,The run is over.,Oyun bitti.
 Not enough actions (%d needed).,Not enough actions (%d needed).,Yeterli hamle yok (%d gerekli).
 That consequence no longer exists.,That consequence no longer exists.,Bu sonuç artık yok.
@@ -142,7 +150,8 @@ Actions ●●●,Actions ●●●,Hamle ●●●
 Stability 70,Stability 70,İstikrar 70
 Instability,Instability,İstikrarsızlık
 Reserve 0,Reserve 0,Rezerv 0
-Undo (Z),Undo (Z),Geri al (Z)
+Hint,Hint,İpucu
+Undo,Undo,Geri al
 Settings,Settings,Ayarlar
 Menu,Menu,Menü
 Quiet season.,Quiet season.,Sakin sezon.
@@ -169,7 +178,6 @@ WHERE CONSEQUENCES LANDED,WHERE CONSEQUENCES LANDED,SONUÇLAR NEREYE DÜŞTÜ
 CAUSAL LINKS (DRAG FROM NEIGHBOURS),CAUSAL LINKS (DRAG FROM NEIGHBOURS),NEDENSEL BAĞLAR (KOMŞULARIN ETKİSİ)
 THE VALLEY REMEMBERS,THE VALLEY REMEMBERS,VADİ HATIRLIYOR
 Select an orb to plan this season.,Select an orb to plan this season.,Bu sezonu planlamak için bir küre seçin.
-Undo,Undo,Geri al
 Options,Options,Ayarlar
 END ▶,END ▶,BİTİR ▶
 END SEASON  ▶,END SEASON  ▶,SEZONU BİTİR  ▶
@@ -210,49 +218,62 @@ TUTORIAL,TUTORIAL,EĞİTİM
 Skip,Skip,Geç
 Next ▶,Next ▶,İleri ▶
 Start playing ▶,Start playing ▶,Oynamaya başla ▶
-"[b]You don't build this valley.[/b] Its people do.
-You decide where the [color=#ffb347]consequences[/color] of what they do end up.","[b]You don't build this valley.[/b] Its people do.
-You decide where the [color=#ffb347]consequences[/color] of what they do end up.","[b]Bu vadiyi siz inşa etmiyorsunuz.[/b] İnsanları ediyor.
-Siz onların yaptıklarının [color=#ffb347]sonuçlarının[/color] nereye gideceğine karar veriyorsunuz."
-"A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.
+"[b]Welcome![/b] Troubles keep hitting this town: accidents, heat, pollution, unrest.
+You can't stop them. [b]You choose where they land.[/b]","[b]Welcome![/b] Troubles keep hitting this town: accidents, heat, pollution, unrest.
+You can't stop them. [b]You choose where they land.[/b]","[b]Hoş geldiniz![/b] Bu kasabaya sürekli dertler geliyor: kazalar, sıcak, kirlilik, huzursuzluk.
+Onları durduramazsınız. [b]Nereye düşeceklerini siz seçersiniz.[/b]"
+"Each floating shape is a trouble falling on the district below it. The number is its size.
 
-[color=#ffb347]Select the orange Heat orb above Industry.[/color]","A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.
+[color=#ffb347]Tap the orange shape above Industry.[/color]","Each floating shape is a trouble falling on the district below it. The number is its size.
 
-[color=#ffb347]Select the orange Heat orb above Industry.[/color]","Bir rafineri hattı patladı. Parlayan küreler onun sonuçları. [b]Yok olamazlar[/b] — yalnızca taşınabilir, bölünebilir, ertelenebilir ya da dönüştürülebilirler.
+[color=#ffb347]Tap the orange shape above Industry.[/color]","Havada duran her şekil, altındaki bölgeye düşecek bir dert. Üstündeki sayı büyüklüğü.
 
-[color=#ffb347]Sanayi'nin üstündeki turuncu Isı küresini seçin.[/color]"
-"Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).
+[color=#ffb347]Sanayi'nin üstündeki turuncu şekle dokunun.[/color]"
+"The panel shows what happens if you do nothing: Industry gets hurt.
 
-[color=#ffb347]Press Redirect, then choose the glowing Energy district.[/color]","Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).
+[color=#ffb347]Tap Redirect.[/color]","The panel shows what happens if you do nothing: Industry gets hurt.
 
-[color=#ffb347]Press Redirect, then choose the glowing Energy district.[/color]","Isı Sanayi'ye zarar verir. [b]Enerji ısıdan pek etkilenmez[/b] (hassasiyetine bakın).
+[color=#ffb347]Tap Redirect.[/color]","Panel, hiçbir şey yapmazsanız ne olacağını gösteriyor: Sanayi zarar görecek.
 
-[color=#ffb347]Yönlendir'e basın, sonra parlayan Enerji bölgesini seçin.[/color]"
-"Notice the small orb left at Industry: [b]20% always leaks[/b]. Rerouting is never clean.
+[color=#ffb347]Yönlendir'e dokunun.[/color]"
+"Heat barely hurts Energy.
 
-[color=#ffb347]Now select the Heat at Energy and press Transform: Thermal Capture.[/color]","Notice the small orb left at Industry: [b]20% always leaks[/b]. Rerouting is never clean.
+[color=#ffb347]Tap the glowing Energy district.[/color]","Heat barely hurts Energy.
 
-[color=#ffb347]Now select the Heat at Energy and press Transform: Thermal Capture.[/color]","Sanayi'de kalan küçük küreye dikkat: [b]%20'si her zaman sızar[/b]. Yönlendirme asla temiz olmaz.
+[color=#ffb347]Tap the glowing Energy district.[/color]","Isı Enerji'ye neredeyse hiç zarar vermez.
 
-[color=#ffb347]Şimdi Enerji'deki Isı'yı seçin ve Dönüştür: Isı Yakalama'ya basın.[/color]"
-"Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.
+[color=#ffb347]Parlayan Enerji bölgesine dokunun.[/color]"
+"Moved! A small piece always stays behind.
+Energy can turn heat into power.
 
-[color=#ffb347]Press END (Space) and watch where everything lands.[/color]","Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.
+[color=#ffb347]Tap Transform.[/color]","Moved! A small piece always stays behind.
+Energy can turn heat into power.
 
-[color=#ffb347]Press END (Space) and watch where everything lands.[/color]","Isı yeşil [b]Fazla[/b]'ya dönüştü (Enerji'yi iyileştirir) — ama egzoz [color=#9a7bd6]Kirliliği[/color] artık Çevre'ye gidiyor. Her kazancın bir artığı vardır.
+[color=#ffb347]Tap Transform.[/color]","Taşındı! Küçük bir parça her zaman geride kalır.
+Enerji, ısıyı güce çevirebilir.
 
-[color=#ffb347]BİTİR'e (Boşluk) basın ve her şeyin nereye düştüğünü izleyin.[/color]"
-"Pipes are [b]causal links[/b]: healthy systems support neighbours, failing ones drag them down next season (numbers on the pipes). The left panel forecasts next season's event.","Pipes are [b]causal links[/b]: healthy systems support neighbours, failing ones drag them down next season (numbers on the pipes). The left panel forecasts next season's event.","Borular [b]nedensel bağlardır[/b]: sağlıklı sistemler komşularını destekler, çökenler bir sonraki sezon onları aşağı çeker (borulardaki sayılar). Sol panel gelecek sezonun olayını tahmin eder."
-"[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.
-[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.
-Select a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.","[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.
-[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.
-Select a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.","[b]Kazanmak:[/b] 12 sezon sonunda ortalama sağlık ≥ 55 ve her sistem ≥ 25.
-[b]Kaybetmek:[/b] Nüfus çöker, iki sistem çöker ya da istikrarsızlık 100'e ulaşır.
-Zayıf noktalarını ve [b]Kontrollü Kriz[/b]'ini görmek için bir bölge seçin — güçlüdür ama vadi unutmaz."
+[color=#ffb347]Dönüştür'e dokunun.[/color]"
+"Heat became a [color=#62e3a8]green bonus[/color] that heals Energy. A little purple smoke goes to Environment. Every fix has a cost.
+
+[color=#ffb347]Tap END to finish the season.[/color]","Heat became a [color=#62e3a8]green bonus[/color] that heals Energy. A little purple smoke goes to Environment. Every fix has a cost.
+
+[color=#ffb347]Tap END to finish the season.[/color]","Isı, Enerji'yi iyileştiren [color=#62e3a8]yeşil bir bonusa[/color] dönüştü. Biraz mor duman Çevre'ye gidiyor. Her çözümün bir bedeli var.
+
+[color=#ffb347]Sezonu bitirmek için BİTİR'e dokunun.[/color]"
+"[b]That's the whole game.[/b] Each season, tap the big dangerous shapes and send them where they hurt less. You have 3 moves per season.
+
+[b]Win:[/b] survive 12 seasons with every district above 25 health.
+Not sure what to do? Tap [b]Hint[/b].","[b]That's the whole game.[/b] Each season, tap the big dangerous shapes and send them where they hurt less. You have 3 moves per season.
+
+[b]Win:[/b] survive 12 seasons with every district above 25 health.
+Not sure what to do? Tap [b]Hint[/b].","[b]Oyunun hepsi bu.[/b] Her sezon büyük ve tehlikeli şekillere dokunun, daha az zarar verecekleri yere gönderin. Her sezon 3 hamleniz var.
+
+[b]Kazanmak:[/b] 12 sezon boyunca her bölgenin sağlığı 25'in üstünde kalsın.
+Ne yapacağınızdan emin değil misiniz? [b]İpucu[/b]'na dokunun."
 Pressure,Pressure,baskı
 Music,Music,Müzik
 Sound effects,Sound effects,Ses efektleri
+Show a sensible move for this season,Show a sensible move for this season,Bu sezon için mantıklı bir hamle göster
 Energy,Energy,Enerji
 Industry,Industry,Sanayi
 Infrastructure,Infrastructure,Altyapı

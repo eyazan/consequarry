@@ -4,6 +4,7 @@ extends Control
 
 signal start_run(scenario_id: String, run_seed: int)
 signal start_daily
+signal language_changed
 signal continue_run
 signal open_settings
 
@@ -31,7 +32,19 @@ func _ready() -> void:
 	vb.custom_minimum_size = Vector2(356, 0)
 	scroll.add_child(vb)
 	vb.resized.connect(func(): scroll.custom_minimum_size = Vector2(360, minf(vb.size.y, size.y - 24.0)))
-	vb.add_child(UIKit.label("CONSEQUARRY", 26 if GameSettings.compact else 40, Palette.ACCENT))
+	var title_row := HBoxContainer.new()
+	var title := UIKit.label("CONSEQUARRY", 26 if GameSettings.compact else 40, Palette.ACCENT)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_row.add_child(title)
+	var is_tr := TranslationServer.get_locale().begins_with("tr")
+	var lang_btn := UIKit.button("EN | TR", func():
+		GameSettings.language = "en" if is_tr else "tr"
+		GameSettings.save_settings()
+		GameSettings.apply_language()
+		language_changed.emit(), "English / Türkçe")
+	lang_btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	title_row.add_child(lang_btn)
+	vb.add_child(title_row)
 	if not GameSettings.compact:
 		vb.add_child(UIKit.label("Every consequence must go somewhere.", 16, Palette.TEXT_DIM))
 		vb.add_child(HSeparator.new())

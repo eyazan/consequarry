@@ -5,14 +5,15 @@ extends Control
 
 signal finished
 
+# Each step teaches one thing. "target" tells GameView what to point at.
 const STEPS := [
-	{"text": "[b]You don't build this valley.[/b] Its people do.\nYou decide where the [color=#ffb347]consequences[/color] of what they do end up.", "wait": "next"},
-	{"text": "A refinery line just ruptured. The glowing orbs are its consequences. [b]They cannot vanish[/b] — only be moved, split, delayed or transformed.\n\n[color=#ffb347]Select the orange Heat orb above Industry.[/color]", "wait": "select_heat"},
-	{"text": "Heat would hurt Industry. [b]Energy barely minds heat[/b] (see its vulnerability).\n\n[color=#ffb347]Press Redirect, then choose the glowing Energy district.[/color]", "wait": "redirect_energy"},
-	{"text": "Notice the small orb left at Industry: [b]20% always leaks[/b]. Rerouting is never clean.\n\n[color=#ffb347]Now select the Heat at Energy and press Transform: Thermal Capture.[/color]", "wait": "transform"},
-	{"text": "Heat became green [b]Surplus[/b] (it heals Energy) — but exhaust [color=#9a7bd6]Pollution[/color] now heads to Environment. Every gain has a residue.\n\n[color=#ffb347]Press END (Space) and watch where everything lands.[/color]", "wait": "end_turn"},
-	{"text": "Pipes are [b]causal links[/b]: healthy systems support neighbours, failing ones drag them down next season (numbers on the pipes). The left panel forecasts next season's event.", "wait": "next"},
-	{"text": "[b]Win:[/b] after 12 seasons, average health ≥ 55 and every system ≥ 25.\n[b]Lose:[/b] Population collapses, two systems collapse, or instability reaches 100.\nSelect a district to see its weaknesses and its [b]Controlled Crisis[/b] — powerful, but the valley remembers.", "wait": "next"},
+	{"text": "[b]Welcome![/b] Troubles keep hitting this town: accidents, heat, pollution, unrest.\nYou can't stop them. [b]You choose where they land.[/b]", "wait": "next", "target": {}},
+	{"text": "Each floating shape is a trouble falling on the district below it. The number is its size.\n\n[color=#ffb347]Tap the orange shape above Industry.[/color]", "wait": "select_heat", "target": {"kind": "orb", "type": "heat", "dest": "industry"}},
+	{"text": "The panel shows what happens if you do nothing: Industry gets hurt.\n\n[color=#ffb347]Tap Redirect.[/color]", "wait": "redirect_mode", "target": {"kind": "action", "id": "redirect", "orb": {"type": "heat", "dest": "industry"}}},
+	{"text": "Heat barely hurts Energy.\n\n[color=#ffb347]Tap the glowing Energy district.[/color]", "wait": "redirect_energy", "target": {"kind": "district", "id": "energy", "via": "redirect", "orb": {"type": "heat", "dest": "industry"}}},
+	{"text": "Moved! A small piece always stays behind.\nEnergy can turn heat into power.\n\n[color=#ffb347]Tap Transform.[/color]", "wait": "transform", "target": {"kind": "action", "id": "transform", "orb": {"type": "heat", "dest": "energy"}}},
+	{"text": "Heat became a [color=#62e3a8]green bonus[/color] that heals Energy. A little purple smoke goes to Environment. Every fix has a cost.\n\n[color=#ffb347]Tap END to finish the season.[/color]", "wait": "end_turn", "target": {"kind": "end"}},
+	{"text": "[b]That's the whole game.[/b] Each season, tap the big dangerous shapes and send them where they hurt less. You have 3 moves per season.\n\n[b]Win:[/b] survive 12 seasons with every district above 25 health.\nNot sure what to do? Tap [b]Hint[/b].", "wait": "next", "target": {"kind": "hint"}},
 ]
 
 var step := 0
@@ -43,7 +44,7 @@ func _ready() -> void:
 	head.add_child(t)
 	head.add_child(UIKit.button("Skip", _finish))
 	vb.add_child(head)
-	text = UIKit.rich("", 10 if GameSettings.compact else 13)
+	text = UIKit.rich("", 11 if GameSettings.compact else 14)
 	text.custom_minimum_size = Vector2(222, 0)
 	vb.add_child(text)
 	next_btn = UIKit.button("Next ▶", _advance)
@@ -86,7 +87,8 @@ func notify(event: String, data: Dictionary = {}) -> void:
 
 func _matches(wait: String, event: String, data: Dictionary) -> bool:
 	match wait:
-		"select_heat": return event == "select" and data.get("type", "") == "heat"
+		"select_heat": return event == "select" and data.get("type", "") == "heat" and data.get("dest", "") == "industry"
+		"redirect_mode": return event == "mode" and data.get("mode", "") == "redirect"
 		"redirect_energy": return event == "redirect" and data.get("target", "") == "energy"
 		"transform": return event == "transform"
 		"end_turn": return event == "end_turn_done"
@@ -95,3 +97,8 @@ func _matches(wait: String, event: String, data: Dictionary) -> bool:
 
 func current_wait() -> String:
 	return STEPS[step]["wait"]
+
+
+## What the on-screen pointer should show for the current step.
+func target() -> Dictionary:
+	return STEPS[step].get("target", {})
