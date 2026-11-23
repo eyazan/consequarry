@@ -16,7 +16,7 @@
 3. [x] Compact touch layout for phones; web build tested with touch emulation
 4. [x] Playtest kit: guide, feedback questions, in-game "Copy run report"
 5. [ ] Owner: test the web build on iPhone Safari (K-12) and report issues
-4. [ ] In-game "why did this happen?" replay of last season's landings
+4. [x] In-game "why did this happen?" season report
 5. [ ] Gamepad orb cursor (K-6)
 6. [ ] Translation table (K-5)
 7. [ ] Second scenario to test replay variety

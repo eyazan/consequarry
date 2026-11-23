@@ -22,6 +22,8 @@ var hovered_orb := -1
 var hovered_district := ""
 var busy := false
 var undo_stack: Array = []
+var last_report: Dictionary = {}
+var report_open := false
 var _shake_t := 0.0
 var _target_cursor := 0
 
@@ -180,8 +182,10 @@ func _refresh_ui() -> void:
 		hud.show_consequence(world, c, mode)
 	elif selected_district != "":
 		hud.show_district(world, selected_district)
+	elif report_open and not last_report.is_empty():
+		hud.show_report(world, last_report)
 	else:
-		hud.show_idle(world)
+		hud.show_idle(world, not last_report.is_empty())
 	_apply_selection_visuals()
 
 
@@ -276,6 +280,8 @@ func _select_orb(id: int) -> void:
 func _cancel() -> void:
 	if mode != "":
 		mode = ""
+	elif selected_id < 0 and selected_district == "":
+		report_open = false
 	else:
 		selected_id = -1
 		selected_district = ""
@@ -335,6 +341,12 @@ func _key_action(kind: String) -> void:
 
 func _on_action(kind: String, arg: String) -> void:
 	if busy:
+		return
+	if kind == "report":
+		report_open = true
+		selected_id = -1
+		selected_district = ""
+		_refresh_ui()
 		return
 	if kind == "redirect" or kind == "split":
 		mode = kind
@@ -451,6 +463,8 @@ func end_turn() -> void:
 		shown[id] = map.districts[id].display_health
 	var report := SimulationEngine.end_turn(world)
 	undo_stack.clear()
+	last_report = report
+	report_open = true
 	var sc := GameSettings.anim_scale()
 	if sc > 0.0:
 		await _animate_report(report, positions, shown, sc)

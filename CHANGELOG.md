@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 — 2026-11-23
+- Season report panel: every landing traced from origin to impact, causal-link drag, cascades, collapses and new world memory; reopenable from the idle panel.
+- iPhone install verified on device via `tools/ios/install_on_iphone.sh`.
+
 ## 0.1.1-p0.5 — 2026-11-22
 - Export presets for Web, Windows, macOS (universal, ad-hoc signed), Linux and iOS (Xcode project).
 - Compact touch layout for phones: larger canvas scale, collapsible Season panel, scrollable detail panel, bigger tap targets, rotate-to-landscape guard; Settings → Layout override.

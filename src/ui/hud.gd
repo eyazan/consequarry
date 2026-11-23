@@ -316,7 +316,7 @@ func _close_row() -> void:
 		right_box.add_child(b)
 
 
-func show_idle(w: WorldState) -> void:
+func show_idle(w: WorldState, has_report: bool = false) -> void:
 	_right_active = false
 	right_scroll.scroll_vertical = 0
 	UIKit.clear(right_box)
@@ -337,6 +337,8 @@ func show_idle(w: WorldState) -> void:
 		if not ContentDB.is_positive(c.type):
 			harm += c.current_magnitude
 	right_box.add_child(UIKit.label("%d consequences arrive this season (%d harm)." % [arriving, harm], 13, Palette.TEXT_DIM, true))
+	if has_report:
+		right_box.add_child(UIKit.button("Last season report", func(): action_requested.emit("report", "")))
 	if compact:
 		right_box.add_child(UIKit.label("Tap an orb to route it. Tap a district to inspect it.", 12, Palette.TEXT_DIM, true))
 	else:
@@ -492,3 +494,66 @@ func show_district(w: WorldState, sid: String) -> void:
 		right_box.add_child(b)
 		if reason != "":
 			right_box.add_child(UIKit.label(reason, 11, Color("c98a80"), true))
+
+
+## "What happened last season": every landing traced from origin to impact,
+## plus causal-link drag, cascades, collapses and new world memory.
+func show_report(w: WorldState, r: Dictionary) -> void:
+	_right_active = true
+	right_scroll.scroll_vertical = 0
+	UIKit.clear(right_box)
+	_close_row()
+	right_box.add_child(UIKit.label("SEASON %d REPORT" % int(r["turn"]), 18, Palette.ACCENT))
+	var harm := 0
+	var heal := 0
+	var rows: Array = r["landings"].duplicate()
+	for l in rows:
+		var d := int(l["delta"])
+		if d < 0:
+			harm -= d
+		else:
+			heal += d
+	right_box.add_child(UIKit.rich("Health lost [color=#%s]%d[/color] · gained [color=#%s]%d[/color]" % [UIKit.hex(Palette.BAD), harm, UIKit.hex(Palette.GOOD), heal], 13))
+	rows.sort_custom(func(a, b): return absi(int(a["delta"])) > absi(int(b["delta"])))
+	right_box.add_child(UIKit.label("WHERE CONSEQUENCES LANDED", 11, Palette.TEXT_DIM))
+	for k in mini(10, rows.size()):
+		var l: Dictionary = rows[k]
+		var hb := HBoxContainer.new()
+		hb.add_child(GlyphIcon.make(String(l["type"]), 16))
+		var d := int(l["delta"])
+		var extra := ""
+		if int(l["absorbed"]) > 0 and d < 0:
+			extra = " (cushioned %d)" % int(l["absorbed"])
+		if String(l["spill_to"]) != "":
+			extra += ", overflowed to %s" % ContentDB.system_def(l["spill_to"])["name"]
+		var t := UIKit.rich("%s → [b]%s[/b] [color=#%s]%+d[/color][color=#9aa0ad]%s[/color]" % [
+			SimulationEngine.source_label(String(l["source"])), ContentDB.system_def(l["to"])["name"],
+			UIKit.hex(Palette.GOOD if d >= 0 else Palette.BAD), d, extra], 12)
+		t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		hb.add_child(t)
+		right_box.add_child(hb)
+	if rows.size() > 10:
+		right_box.add_child(UIKit.label("+ %d smaller landings" % (rows.size() - 10), 11, Palette.TEXT_DIM))
+	var links := {}
+	for e in r["effects"]:
+		links[e["to"]] = int(links.get(e["to"], 0)) + int(e["delta"])
+	if not links.is_empty():
+		right_box.add_child(UIKit.label("CAUSAL LINKS (DRAG FROM NEIGHBOURS)", 11, Palette.TEXT_DIM))
+		var parts: Array = []
+		for sid in links:
+			var v: int = links[sid]
+			parts.append("%s [color=#%s]%+d[/color]" % [ContentDB.system_def(sid)["name"], UIKit.hex(Palette.GOOD if v >= 0 else Palette.BAD), v])
+		right_box.add_child(UIKit.rich(" · ".join(parts), 12))
+	for c in r["cascades"]:
+		right_box.add_child(UIKit.rich("[color=#%s]Cascade:[/color] %s is failing, %d damage heads to %s next season." % [
+			UIKit.hex(Palette.BAD), ContentDB.system_def(c["from"])["name"], int(c["amount"]), ContentDB.system_def(c["to"])["name"]], 12))
+	for sid in r["collapses"]:
+		right_box.add_child(UIKit.rich("[color=#%s][b]%s collapsed.[/b][/color]" % [UIKit.hex(Palette.BAD), ContentDB.system_def(sid)["name"]], 13))
+	var ch := w.memory.chronicle
+	if ch.size() > int(r["memory_from"]):
+		right_box.add_child(UIKit.label("THE VALLEY REMEMBERS", 11, Palette.TEXT_DIM))
+		for k in range(int(r["memory_from"]), ch.size()):
+			var note := UIKit.label(String(ch[k]["text"]), 12, Color("9fd3ff"), true)
+			note.custom_minimum_size = Vector2(280, 0)
+			right_box.add_child(note)
+	right_box.add_child(UIKit.label("Select an orb to plan this season.", 12, Palette.TEXT_DIM, true))
