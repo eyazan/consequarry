@@ -15,6 +15,7 @@ static var fullscreen: bool = false
 static var always_show_links: bool = true
 static var tutorial_done: bool = false
 static var runs_started: int = 0
+static var haptics: bool = true
 static var layout_mode: int = 0  # 0 auto, 1 desktop, 2 compact (phones/tablets)
 const LAYOUT_NAMES := ["Auto", "Desktop", "Compact (touch)"]
 static var compact: bool = false
@@ -140,3 +141,9 @@ static func apply_language() -> void:
 	if lang == "auto":
 		lang = "tr" if OS.get_locale_language() == "tr" else "en"
 	TranslationServer.set_locale(lang)
+
+
+## Short vibration on phones (no-op on desktop/web).
+static func buzz(ms: int) -> void:
+	if haptics and OS.has_feature("mobile"):
+		Input.vibrate_handheld(ms)

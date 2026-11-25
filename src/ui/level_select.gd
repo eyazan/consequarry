@@ -51,19 +51,37 @@ func _ready() -> void:
 			grid.add_theme_constant_override("v_separation", 8)
 			list.add_child(grid)
 		var unlocked := Campaign.is_unlocked(i)
+		var paid_lock := not Entitlements.can_play_level(i)
 		var st := Campaign.best(String(lv["id"]))
 		var b := Button.new()
 		b.custom_minimum_size = Vector2(76, 70) if not GameSettings.compact else Vector2(78, 64)
-		b.text = "%d\n%s" % [int(lv["number"]), ("★".repeat(st) + "☆".repeat(3 - st)) if unlocked else "—"]
+		b.text = "%d\n%s" % [int(lv["number"]), Loc.t("FULL") if paid_lock else (("★".repeat(st) + "☆".repeat(3 - st)) if unlocked else "—")]
 		b.add_theme_font_size_override("font_size", 18)
 		b.tooltip_text = Loc.t(String(lv["name"]))
-		b.disabled = not unlocked
+		b.disabled = not unlocked and not paid_lock
 		if st > 0:
 			b.add_theme_color_override("font_color", Palette.ACCENT)
 		var id := String(lv["id"])
-		b.pressed.connect(func(): level_chosen.emit(id))
+		if paid_lock:
+			b.pressed.connect(_show_paywall)
+		else:
+			b.pressed.connect(func(): level_chosen.emit(id))
 		grid.add_child(b)
 		if unlocked and st == 0 and focus_btn == null:
 			focus_btn = b
 	if focus_btn:
 		focus_btn.call_deferred("grab_focus")
+
+
+func _show_paywall() -> void:
+	var pw := Paywall.new()
+	pw.theme = theme
+	add_child(pw)
+	pw.unlocked.connect(func():
+		var parent := get_parent()
+		var fresh := LevelSelect.new()
+		fresh.theme = theme
+		parent.add_child(fresh)
+		fresh.level_chosen.connect(func(id): level_chosen.emit(id))
+		fresh.back.connect(func(): back.emit())
+		hide())

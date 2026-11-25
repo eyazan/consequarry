@@ -20,7 +20,7 @@ PATTERNS = [
 
 
 FORCE = {" (in %d)"}  # short strings the word heuristic would skip
-EXTRA = ["Pressure", "Music", "Sound effects", "Show a sensible move for this season"]  # keys chosen at runtime that the patterns cannot see
+EXTRA = ["Pressure", "Music", "Sound effects", "Show a sensible move for this season", "20 more valleys: Dry Hills and Boomtown", "New moves: Split, Delay, Controlled Crisis", "Daily valley and Classic mode", "One-time purchase. No ads. No subscription.", "Purchases are not available in this build.", "Nothing to restore.", "The purchase did not complete.", "The store did not answer. Please try again."]  # keys chosen at runtime that the patterns cannot see
 
 
 def unescape(s):

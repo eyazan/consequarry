@@ -26,6 +26,8 @@ func _ready() -> void:
 		_play_level("lvl_01")
 	elif args.has("--map"):
 		_show_map()
+		if args.has("--paywall"):
+			_open_paywall()
 	elif i >= 0 and args.size() > i + 2:
 		_start(args[i + 1], int(args[i + 2]))
 	else:
@@ -126,9 +128,9 @@ func _show_menu() -> void:
 	var menu := MainMenu.new()
 	menu.theme = ui_theme
 	layer.add_child(menu)
-	menu.start_run.connect(_start)
+	menu.start_run.connect(func(sid, sd): _start(sid, sd) if (Entitlements.can_play_extras() or sid == "tutorial") else _open_paywall())
 	menu.continue_run.connect(_continue)
-	menu.start_daily.connect(_start_daily)
+	menu.start_daily.connect(func(): _start_daily() if Entitlements.can_play_extras() else _open_paywall())
 	menu.open_campaign.connect(_show_map)
 	menu.language_changed.connect(_show_menu)
 	menu.open_settings.connect(func():
@@ -155,8 +157,29 @@ func _play_level(level_id: String) -> void:
 	if level_id == "":
 		_show_map()
 		return
+	var idx := 0
+	for i in Campaign.levels().size():
+		if Campaign.levels()[i]["id"] == level_id:
+			idx = i
+	if not Entitlements.can_play_level(idx):
+		_show_map()
+		_open_paywall()
+		return
 	var attempt := GameSettings.next_attempt(level_id)
 	_start(level_id, Campaign.level_seed(level_id, attempt))
+
+
+func _open_paywall() -> void:
+	var pw := Paywall.new()
+	pw.theme = ui_theme
+	var layer := CanvasLayer.new()
+	layer.layer = 50
+	add_child(layer)
+	layer.add_child(pw)
+	pw.unlocked.connect(func():
+		layer.queue_free()
+		_show_map())
+	pw.closed.connect(func(): layer.queue_free())
 
 
 func _show_map() -> void:

@@ -1,19 +1,22 @@
-# Status — 2026-11-22
+# Status — 2026-11-25
 
-**Phase:** P0 playable prototype — feature complete for P0 scope, pending owner review and human playtests.
+**Version:** 0.3.0. Main mode: Valleys campaign (30 short levels, drag & drop). Classic mode kept.
 
-## Quality gates (directive §13)
-| Gate | Status |
+## Directive checklist
+| Area | State |
 |---|---|
-| Game launches | ✅ Verified (editor-free run via `godot --path .`, Xvfb screenshots) |
-| Complete loop playable | ✅ 12-season runs end-to-end through the UI (autoplay smoke + manual-equivalent demo) |
-| Win and lose possible | ✅ both occur in batch and UI runs |
-| Signature mechanic visible | ✅ tutorial makes the player Redirect → Transform within the first season |
-| Test results documented | ✅ `reports/test_summary.md` |
-| No known blocker/critical defect | ⚠️ No critical code defect known. Process blocker: no git remote (K-1) |
-| Determinism verified | ✅ tests + 50-seed batch re-check |
-| Clean checkout reproduces build | ✅ clone → import → 23/23 tests (platform export not yet built, K-2) |
-| Testable by external players | ⚠️ Requires Godot install until exports are produced (K-2) |
+| Research (competitors, market, originality, trademark pre-check) | Done; trademark databases still to be searched by owner |
+| P0 prototype quality gates | Met (see reports/test_summary.md) |
+| Deterministic engine, ledger invariants, tests | 29 automated tests; CI on every push |
+| Balance | Classic: 12,300 bot runs; campaign: per-level calibration (reports/campaign_calibration.md) |
+| Platforms | Web, Windows, macOS, Linux, iOS (installed on owner's iPhone); Steam demo preset |
+| Localization | English (default) + Turkish |
+| Monetization | Free tier + one-time unlock implemented; real purchases need store accounts |
+| Store kit | Screenshots, listing text, privacy policy drafted |
+| **Human validation (directive §13: ≥30 testers)** | **Not done.** Only data point: owner did not understand the first format. The campaign format has not been tested by humans yet. |
 
-## Next
-See docs/TASKS.md (P0.5).
+## Blockers needing the owner
+1. External playtest: share the web link/TestFlight with 10–30 people (see docs/playtest/PLAYTEST_GUIDE.md).
+2. Paid accounts: Apple Developer (USD 99/yr), Steamworks (USD 100) — approval and payment.
+3. Public play repo `consequarry-play` for the PWA link and privacy-policy hosting.
+4. Trademark search for the name.

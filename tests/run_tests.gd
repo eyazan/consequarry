@@ -17,7 +17,7 @@ func _init() -> void:
 		"test_transform_capacity", "test_crisis_escalation", "test_memory_adaptation",
 		"test_memory_dependency", "test_memory_familiarity", "test_runs_terminate",
 		"test_spill_depth_bounded", "test_tutorial_script", "test_no_crisis_fallout_past_end",
-		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization", "test_music", "test_campaign",
+		"test_collapsed_target_rejected", "test_save_system_file", "test_seed_code", "test_preview_matches_resolution", "test_scenarios", "test_daily_and_score", "test_localization", "test_music", "test_campaign", "test_entitlements",
 	]
 	for t in tests:
 		current = t
@@ -417,3 +417,19 @@ func test_campaign() -> void:
 		check(heat.children.is_empty() and heat.destination == "energy", "no leak on level 1")
 	check(Campaign.next_level_id("lvl_01") == "lvl_02", "next level")
 	check(Campaign.next_level_id("lvl_30") == "", "last level has no next")
+
+
+func test_entitlements() -> void:
+	Entitlements.test_flavour = "full"
+	check(Entitlements.can_play_level(29) and Entitlements.can_play_extras(), "full builds unlock everything")
+	Entitlements.test_flavour = "demo"
+	check(Entitlements.can_play_level(9), "demo: level 10 free")
+	check(not Entitlements.can_play_level(10), "demo: level 11 locked")
+	check(not Entitlements.can_play_extras(), "demo: extras locked")
+	Entitlements.test_flavour = "store"
+	Entitlements._cache = 0
+	check(Entitlements.can_play_level(0) and not Entitlements.can_play_level(10), "store: free tier only before purchase")
+	Entitlements._cache = 1
+	check(Entitlements.can_play_level(29) and Entitlements.can_play_extras(), "store: purchase unlocks all")
+	Entitlements._cache = -1
+	Entitlements.test_flavour = ""

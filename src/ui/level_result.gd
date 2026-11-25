@@ -44,6 +44,11 @@ func _ready() -> void:
 			tw.tween_interval(0.25 + 0.25 * k)
 			tw.tween_property(s, "scale", Vector2.ONE, 0.35)
 	vb.add_child(row)
+	if won:
+		GameSettings.buzz(60)
+		var c := Confetti.new()
+		add_child(c)
+		move_child(c, 1)
 	if new_best and won:
 		vb.add_child(UIKit.label("New best!", 14, Palette.ACCENT))
 	var reason := UIKit.label(Loc.outcome(world), 15, Palette.TEXT, true)

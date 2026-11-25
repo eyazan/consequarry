@@ -208,6 +208,7 @@ New best!,New best!,Yeni rekor!
 Next level ▶,Next level ▶,Sonraki seviye ▶
 Retry,Retry,Tekrar dene
 Map,Map,Harita
+FULL,FULL,TAM
 ◀ Menu,◀ Menu,◀ Menü
 VALLEYS,VALLEYS,VADİLER
 "Rotate your device to landscape
@@ -225,13 +226,22 @@ Play seed,Play seed,Tohumu oyna
 Quit,Quit,Çıkış
 Invalid seed code.,Invalid seed code.,Geçersiz tohum kodu.
 Scenario,Scenario,Senaryo
+Unlock for %s,Unlock for %s,%s karşılığında aç
+Opening the store…,Opening the store…,Mağaza açılıyor…
+Checking your purchases…,Checking your purchases…,Satın alımlarınız kontrol ediliyor…
+You finished the demo!,You finished the demo!,Demoyu bitirdiniz!
+"The full game has 20 more valleys in the Dry Hills and Boomtown, the Daily valley and Classic mode.","The full game has 20 more valleys in the Dry Hills and Boomtown, the Daily valley and Classic mode.","Tam oyunda Kurak Tepeler ve Patlayan Şehir'de 20 vadi daha, Günün vadisi ve Klasik mod var."
+Get CONSEQUARRY on Steam to keep playing. Your progress carries over.,Get CONSEQUARRY on Steam to keep playing. Your progress carries over.,Oynamaya devam etmek için CONSEQUARRY'yi Steam'den alın. İlerlemeniz korunur.
+Close,Close,Kapat
+Unlock the full game,Unlock the full game,Tam oyunu aç
+Restore purchase,Restore purchase,Satın alımı geri yükle
+Not now,Not now,Şimdi değil
 SETTINGS,SETTINGS,AYARLAR
 Master volume,Master volume,Ana ses
 Resolution animation speed,Resolution animation speed,Sonuçlanma animasyon hızı
 Language (applies when you return to the menu),Language (applies when you return to the menu),Dil (menüye dönünce uygulanır)
 Layout (applies on restart),Layout (applies on restart),Düzen (yeniden başlatınca uygulanır)
 Consequence types are always shape-coded for colour-blind play.,Consequence types are always shape-coded for colour-blind play.,Sonuç türleri renk körlüğü için her zaman şekille de ayırt edilir.
-Close,Close,Kapat
 Screen shake,Screen shake,Ekran sarsıntısı
 Always show causal links,Always show causal links,Nedensel bağları her zaman göster
 Fullscreen,Fullscreen,Tam ekran
@@ -321,6 +331,14 @@ Pressure,Pressure,baskı
 Music,Music,Müzik
 Sound effects,Sound effects,Ses efektleri
 Show a sensible move for this season,Show a sensible move for this season,Bu sezon için mantıklı bir hamle göster
+20 more valleys: Dry Hills and Boomtown,20 more valleys: Dry Hills and Boomtown,20 vadi daha: Kurak Tepeler ve Patlayan Şehir
+"New moves: Split, Delay, Controlled Crisis","New moves: Split, Delay, Controlled Crisis","Yeni hamleler: Böl, Ertele, Kontrollü Kriz"
+Daily valley and Classic mode,Daily valley and Classic mode,Günün vadisi ve Klasik mod
+One-time purchase. No ads. No subscription.,One-time purchase. No ads. No subscription.,Tek seferlik satın alma. Reklam yok. Abonelik yok.
+Purchases are not available in this build.,Purchases are not available in this build.,Bu sürümde satın alma yok.
+Nothing to restore.,Nothing to restore.,Geri yüklenecek bir şey yok.
+The purchase did not complete.,The purchase did not complete.,Satın alma tamamlanmadı.
+The store did not answer. Please try again.,The store did not answer. Please try again.,Mağaza yanıt vermedi. Lütfen tekrar deneyin.
 Energy,Energy,Enerji
 Industry,Industry,Sanayi
 Infrastructure,Infrastructure,Altyapı

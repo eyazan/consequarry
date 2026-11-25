@@ -448,6 +448,7 @@ func _apply(it: Intervention) -> void:
 	match it.kind:
 		Intervention.REDIRECT:
 			sfx.play("redirect")
+			GameSettings.buzz(15)
 			fx.flight(origin, map.district_pos(it.target) + Vector2(0, -66), world.ledger.get_c(world.last_focus_id).type, world.ledger.get_c(world.last_focus_id).current_magnitude, 0.45 * maxf(sc, 0.05))
 			selected_id = world.last_focus_id
 			if tutorial:
@@ -464,6 +465,7 @@ func _apply(it: Intervention) -> void:
 			selected_id = -1
 		Intervention.TRANSFORM:
 			sfx.play("transform")
+			GameSettings.buzz(25)
 			fx.sparks(origin, Palette.GOOD, 22, 0.8)
 			fx.ring(origin, Palette.GOOD, 0.6, 50)
 			fx.text(origin, Loc.t(String(ContentDB.transformation_def(it.rule_id)["name"])), Palette.GOOD, 1.3, 16)
@@ -604,6 +606,7 @@ func _impact(l: Dictionary, shown: Dictionary) -> void:
 		sfx.play("impact", 1.0 + randf() * 0.2)
 		if d <= -8:
 			_shake(0.25)
+			GameSettings.buzz(30)
 	if int(l["absorbed"]) > 0 and not ContentDB.is_positive(l["type"]):
 		fx.text(pos + Vector2(60, -10), Loc.t("cushioned %d") % int(l["absorbed"]), Color("9fd3ff"), 1.0, 12)
 	if String(l["spill_to"]) != "":

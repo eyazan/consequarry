@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — 2026-11-25 (store readiness)
+- Business model (D-018): free to try (River Valley, 10 levels) + one-time full-game unlock; no ads, no subscriptions.
+- Entitlements by build flavour (`store`, `demo`, full); paywall screen with price, restore and "not now"; locked tiles on the map; Steam demo end screen.
+- Store purchase layer ready for Godot's iOS `InAppStore` plugin (not yet in the build: needs the Apple Developer account and product).
+- Export presets: "Windows Demo" (feature `demo`) and "iOS Store" (feature `store`).
+- Premium feel: haptics on phones, confetti on saved valleys.
+- Store kit: official-size screenshots (Steam 1920×1080, iPhone 6.7" 2796×1290) via `tools/store_shots.sh`, EN/TR store listing draft, privacy policy, monetization guide.
+
 ## 0.2.0 — 2026-11-23 (campaign + drag & drop)
 - New main mode **Valleys**: 30 short levels (4–6 seasons, 2–5 minutes) in three regions (River Valley, Dry Hills, Boomtown), 1–3 stars, unlock-as-you-go map, local progress, new seed per attempt.
 - Levels start with 3 districts and grow to 6; moves unlock gradually (move → transform → split → delay → controlled crisis); early levels have no rerouting leak.
